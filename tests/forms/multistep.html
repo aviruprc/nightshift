@@ -1,0 +1,6 @@
+<!doctype html><meta charset=utf-8><title>Apply multi</title>
+<div id=s1><label for=fn>First name *</label><input id=fn required><label for=em>Email *</label><input id=em type=email required>
+ <button onclick="document.getElementById('s1').style.display='none';document.getElementById('s2').style.display='block'">Next</button></div>
+<div id=s2 style="display:none"><label for=cv>Resume *</label><input id=cv type=file required>
+ <label for=ctc>Expected CTC (LPA) *</label><input id=ctc required>
+ <button onclick="document.body.innerHTML='<h1>Application submitted successfully</h1>'">Submit application</button></div>

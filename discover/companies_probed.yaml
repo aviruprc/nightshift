@@ -1,0 +1,32 @@
+# Probed 2026-11-10 by _scratch/probe_ats.py: each entry answered a live ATS API call with jobs located in Bengaluru/India/Remote.
+companies:
+  - {name: "Agoda", ats: greenhouse, slug: agoda, tier: probed}
+  - {name: "Airbnb", ats: greenhouse, slug: airbnb, tier: probed}
+  - {name: "Airbyte", ats: ashby, slug: airbyte, tier: probed}
+  - {name: "Amplitude", ats: ashby, slug: amplitude, tier: probed}
+  - {name: "Bounce", ats: ashby, slug: bounce, tier: probed}
+  - {name: "Coinbase", ats: greenhouse, slug: coinbase, tier: probed}
+  - {name: "Collibra", ats: greenhouse, slug: collibra, tier: probed}
+  - {name: "Coursera", ats: greenhouse, slug: coursera, tier: probed}
+  - {name: "Databricks", ats: greenhouse, slug: databricks, tier: probed}
+  - {name: "Datadog", ats: greenhouse, slug: datadog, tier: probed}
+  - {name: "Elastic", ats: greenhouse, slug: elastic, tier: probed}
+  - {name: "Fivetran", ats: greenhouse, slug: fivetran, tier: probed}
+  - {name: "Glance", ats: greenhouse, slug: glance, tier: probed}
+  - {name: "InMobi", ats: greenhouse, slug: inmobi, tier: probed}
+  - {name: "Ixigo", ats: smartrecruiters, slug: ixigo, tier: probed}
+  - {name: "Mixpanel", ats: greenhouse, slug: mixpanel, tier: probed}
+  - {name: "MongoDB", ats: greenhouse, slug: mongodb, tier: probed}
+  - {name: "New Relic", ats: greenhouse, slug: newrelic, tier: probed}
+  - {name: "Okta", ats: greenhouse, slug: okta, tier: probed}
+  - {name: "Rubrik", ats: greenhouse, slug: rubrik, tier: probed}
+  - {name: "ServiceNow", ats: smartrecruiters, slug: servicenow, tier: probed}
+  - {name: "Sigmoid", ats: greenhouse, slug: sigmoid, tier: probed}
+  - {name: "Sisense", ats: ashby, slug: sisense, tier: probed}
+  - {name: "Slice", ats: greenhouse, slug: slice, tier: probed}
+  - {name: "Snowflake", ats: ashby, slug: snowflake, tier: probed}
+  - {name: "Stripe", ats: greenhouse, slug: stripe, tier: probed}
+  - {name: "Sumo Logic", ats: greenhouse, slug: sumologic, tier: probed}
+  - {name: "Twilio", ats: greenhouse, slug: twilio, tier: probed}
+  - {name: "Udemy", ats: greenhouse, slug: udemy, tier: probed}
+  - {name: "Western Digital", ats: smartrecruiters, slug: westerndigital, tier: probed}

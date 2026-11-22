@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispatch desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e13; --panel:#0f151d; --panel2:#151d27; --line:#1a2330; --line2:#263340;
+  --ink:#e7edf4; --mute:#8b99ab; --faint:#586779;
+  --page:#3ddc97; --account:#6ea8e8; --email:#a99bf0; --wait:#f6b73c; --need:#ff6b6b;
+  --on-accent:#06120c;
+  --fx-sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fx-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--fx-sans);font-variant-numeric:tabular-nums;
+  background-image:radial-gradient(1100px 460px at 15% -10%,rgba(90,169,255,.055),transparent 70%);
+  background-attachment:fixed}
+a{color:var(--account);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--account);outline-offset:2px;border-radius:4px}
+h1,h2,h3,p{margin:0}
+
+/* buttons */
+.btn{appearance:none;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);padding:6px 11px;border-radius:7px;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.btn:hover:not(:disabled){border-color:var(--mute);background:#1a2431}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.oplink{color:var(--mute);font-weight:700;letter-spacing:.02em}
+.oplink:hover{color:var(--ink)}
+.btn.primary{background:var(--ink);color:#0a0e13;border-color:var(--ink)}
+.btn.primary:hover:not(:disabled){background:#fff}
+.btn.danger{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line2))}
+.btn.danger:hover:not(:disabled){background:color-mix(in srgb,var(--need) 12%,var(--panel2));border-color:var(--need)}
+.btn.sm{padding:3px 8px;font-size:11.5px;border-radius:6px}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--mute)}
+.btn.ghost:hover:not(:disabled){color:var(--ink);background:var(--panel2);border-color:var(--line2)}
+.btn.amber{background:color-mix(in srgb,var(--wait) 85%,#000);border-color:var(--wait);color:#1a1100}
+.btn.amber:hover:not(:disabled){background:var(--wait)}
+.btn.redfill{background:color-mix(in srgb,var(--need) 85%,#000);border-color:var(--need);color:#1c0505}
+.btn.redfill:hover:not(:disabled){background:var(--need)}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:11px clamp(14px,3vw,28px);background:rgba(10,14,19,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand h1{font-size:17px;font-weight:800;font-stretch:115%;letter-spacing:-.01em}
+.clock{color:var(--faint);font-size:12.5px}
+.clock b{color:var(--mute);font-weight:600;font-size:13px;margin-right:6px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:4px 11px;border-radius:999px;border:1px solid var(--line2);font-weight:700;font-size:12px;background:var(--panel);color:var(--mute)}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.pill.live{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line2))}
+.pill.live .dot{background:var(--page);animation:pulse 1.6s infinite}
+.pill.dry{color:var(--account);border-color:color-mix(in srgb,var(--account) 45%,var(--line2))}
+.pill.dry .dot{background:var(--account);animation:pulse 1.6s infinite}
+.pill.bad{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line2))}
+.pill.bad .dot{background:var(--need)}
+.aichip{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;border:1px solid var(--line2);font-size:11.5px;font-weight:600;color:var(--mute);text-decoration:none;white-space:nowrap;max-width:min(560px,58vw);overflow:hidden;text-overflow:ellipsis}
+.aichip:hover{text-decoration:none;border-color:var(--mute);color:var(--ink)}
+.aichip .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+.aichip.ok .dot{background:var(--page)}
+.aichip.bad{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line2))}
+.aichip.bad .dot{background:var(--need)}
+.aichip .down{color:var(--wait);font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.actions{display:flex;flex-wrap:wrap;gap:7px}
+.slider{display:flex;align-items:center;gap:9px;padding:0 10px 0 12px;height:30px;border:1px solid var(--line2);border-radius:6px;background:var(--panel2)}
+.slider .lbl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+.slider b{font-family:var(--fx-mono);font-size:13px;color:var(--ink);min-width:26px;text-align:right;font-weight:500}
+.slider input[type=range]{-webkit-appearance:none;appearance:none;width:132px;height:3px;border-radius:3px;background:linear-gradient(to right,var(--page) var(--fill,10%),var(--line2) var(--fill,10%));outline:none}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--page);border:0;cursor:pointer;box-shadow:0 0 0 3px rgba(61,220,151,.12)}
+.slider input[type=range]::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:var(--page);cursor:pointer}
+.slider input[type=range]:disabled{opacity:.45;cursor:not-allowed}
+.slider input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(61,220,151,.18)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+/* page frame */
+.shell{max-width:1180px;margin:0 auto;padding:16px clamp(14px,3vw,28px) 84px;display:grid;gap:16px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-width:0}
+
+/* historical totals strip = the History expander's summary (total first, proven as side data) */
+.history{min-width:0}
+.history>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:2px 4px;color:var(--mute)}
+.history>summary::-webkit-details-marker{display:none}
+.history>summary:focus-visible{outline:2px solid var(--account);outline-offset:2px;border-radius:8px}
+.history>summary:hover .hist-label{color:var(--ink)}
+.hist-label{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.hist-label .chev2{font-size:9px;transition:transform .15s}
+.history[open] .hist-label .chev2{transform:rotate(180deg)}
+.histstrip{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;min-width:0;color:var(--mute);font-size:12.5px}
+.histstrip .tot{display:flex;align-items:baseline;gap:9px;color:var(--ink)}
+.histstrip .tot b{font-size:27px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.histstrip .tot span{font-size:12.5px;color:var(--mute);font-weight:600}
+.histstrip .prov,.histstrip .wk{display:flex;align-items:baseline;gap:6px}
+.histstrip .prov b{font-size:15px;font-weight:700;color:var(--page)}
+.histstrip .wk b{font-size:15px;font-weight:700;color:var(--ink)}
+.histstrip .prov span,.histstrip .wk span{font-size:12px;color:var(--mute)}
+.histstrip .side{font-size:11.5px;color:var(--faint)}
+.histstrip .sep{color:var(--faint);opacity:.7}
+.spark{display:inline-flex;gap:2px;align-items:flex-end;height:20px;margin-left:2px}
+.sparkbar{display:inline-flex;align-items:flex-end;justify-content:center;height:100%;padding:6px 3px 0;cursor:pointer;border-radius:3px}
+.sparkbar i{width:4px;background:var(--line2);border-radius:1px;min-height:2px}
+.sparkbar i.on{background:var(--page)}
+.sparkbar:hover{background:var(--panel2)}
+.sparkbar.sel i{background:var(--page);box-shadow:0 0 0 1px var(--ink)}
+
+/* TODAY hero: one calm block, proven headline, quieter secondary numbers */
+.hero{padding:26px clamp(18px,3vw,30px) 24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,320px);gap:22px 44px;align-items:start;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--page),transparent 62%);opacity:.45}
+.hero-main{min-width:0}
+.eyebrow{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.hero.live .eyebrow i{background:var(--page);animation:pulse 1.6s infinite}
+.hero.dry .eyebrow i{background:var(--account);animation:pulse 1.6s infinite}
+.eyebrow .modetag{margin-left:2px;padding:1px 7px;border-radius:999px;background:var(--panel2);color:var(--mute);font-size:10.5px;letter-spacing:.03em}
+.hero.live .eyebrow .modetag{color:var(--page)}
+.hero.dry .eyebrow .modetag{color:var(--account)}
+.bignum{display:flex;align-items:baseline;gap:16px;margin:12px 0 2px}
+.bignum b{font-size:76px;line-height:.9;font-weight:800;font-stretch:115%;letter-spacing:-.045em;color:var(--page)}
+.bignum span{font-size:14.5px;color:var(--mute);font-weight:600}
+.secondary{display:flex;flex-wrap:wrap;gap:4px 24px;margin-top:16px;color:var(--mute);font-size:12.5px;align-items:baseline}
+.secondary .sn{display:inline-flex;align-items:baseline;gap:6px}
+.secondary b{font-size:17px;color:var(--ink);font-weight:700}
+.secondary .sn.dim b{color:var(--mute)}
+.secondary .sn.bad b{color:var(--need)}
+.rule{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;max-width:660px}
+.rule b{color:var(--mute);font-weight:600}
+
+/* today's sends, under the hero (and the same rows when a day is opened in History) */
+.hero-list{grid-column:1/-1;border-top:1px solid var(--line);margin-top:4px;padding-top:13px;min-width:0}
+.hero-list .hl-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:2px}
+.hero-list h3{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}
+.hero-list .hl-head .hint{margin-left:auto;color:var(--faint);font-size:11.5px}
+.hero-list .more{text-align:right;padding-top:6px}
+.send{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);font-size:12px;min-width:0}
+.send:first-of-type{border-top:0}
+.send .co{font-weight:700;color:var(--ink);white-space:nowrap;max-width:46%;overflow:hidden;text-overflow:ellipsis}
+.send .ti{color:var(--mute);flex:1 1 150px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.send .tm{color:var(--faint);font-size:11.5px;white-space:nowrap}
+.send .src{color:var(--mute);font-size:10px;font-weight:700;letter-spacing:.02em;padding:1px 7px;border:1px solid var(--line2);border-radius:999px;background:var(--panel2);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.send .lk{margin-left:auto;display:flex;gap:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.pbadge{font-size:9.5px;font-weight:800;letter-spacing:.04em;padding:1px 6px;border-radius:3px;border:1px solid var(--line2);white-space:nowrap;color:var(--mute);flex:none}
+.pbadge.ok{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line));background:color-mix(in srgb,var(--page) 8%,transparent)}
+.pbadge.no{color:var(--wait);border-color:color-mix(in srgb,var(--wait) 45%,var(--line));border-style:dashed}
+/* employer replies: what a company answered, shown against the job */
+.obadge{font-size:9.5px;font-weight:800;letter-spacing:.04em;padding:1px 6px;border-radius:3px;border:1px solid var(--line2);white-space:nowrap;flex:none;margin-left:6px;color:var(--mute)}
+.obadge.rejected{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line))}
+.obadge.closed{color:var(--faint);border-style:dashed}
+.obadge.interview,.obadge.offer{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line));background:color-mix(in srgb,var(--page) 8%,transparent)}
+.obadge.assessment{color:var(--wait);border-color:color-mix(in srgb,var(--wait) 45%,var(--line))}
+.rsp-sum{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:0 0 10px;color:var(--mute);font-size:12.5px}
+.rsp-sum b{color:var(--ink);font-weight:700}
+.rsp-row{display:grid;grid-template-columns:auto minmax(0,1.1fr) minmax(0,1.6fr) auto;gap:4px 12px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);min-width:0}
+.rsp-row .co{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rsp-row .ti{color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rsp-row .ti.co-only{font-style:italic;color:var(--faint)}
+.rsp-row .when{color:var(--faint);font-size:11.5px;white-space:nowrap}
+.rsp-row .obadge{margin-left:0}
+@media (max-width:640px){.rsp-row{grid-template-columns:auto minmax(0,1fr) auto}.rsp-row .ti{grid-column:1 / -1;order:5}}
+/* application tracker sheet: the status of every application after it was sent, and what to do next */
+.trk-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.trk-tabs button{font:inherit;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mute);cursor:pointer}
+.trk-tabs button[aria-pressed=true]{color:var(--ink);border-color:var(--ink);font-weight:700}
+.trk-tabs b{font-weight:700}
+.trk-row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.5fr) auto;gap:3px 12px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line);min-width:0}
+.trk-row .co{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk-row .ro{color:var(--mute);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk-row .st{min-width:0}
+.trk-row .st .step{display:block}
+.trk-row .st .mail{display:block;color:var(--faint);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk-row .dl{white-space:nowrap;font-size:12px;color:var(--mute);text-align:right}
+.trk-row .dl.soon{color:var(--need);font-weight:700}
+.trk-row .dl a{margin-left:6px}
+.obadge.done{color:var(--page);border-style:dashed}
+.obadge.past{color:var(--faint);border-style:dashed}
+.obadge.waiting{color:var(--faint);border-style:dashed}
+@media (max-width:640px){.trk-row{grid-template-columns:auto minmax(0,1fr) auto}.trk-row .st{grid-column:1 / -1;order:5}}
+.dayview{border-top:1px solid var(--line);padding-top:15px}
+.dayview .sh h3{color:var(--ink)}
+.dayview .sh .btn{margin-left:10px}
+.toklines{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:2px;font-size:11.5px;min-width:0}
+.toklines .tl{font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:10.5px;color:var(--faint)}
+.toklines .tl span{font-weight:500;letter-spacing:0;text-transform:none;color:var(--faint)}
+.toklines .tprov{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;color:var(--mute);min-width:0}
+.toklines .tprov b{color:var(--ink);font-weight:700}
+.toklines .tprov span{color:var(--faint)}
+.toklines .tprov.muted{color:var(--faint)}
+.toklines .tmeta{color:var(--faint);font-size:11px;margin-top:2px}
+/* tokens + sources sit side by side at the same level, each is an expander: collapsed shows the headline, open shows the detail */
+.statpair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 26px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);min-width:0}
+.statpair .toklines{margin-top:0;padding-top:0;border-top:0}
+.statbox .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0}
+.statbox .hd .val{margin-left:auto;color:var(--mute);font-weight:600;letter-spacing:0;text-transform:none;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52%}
+.statbox .hd .morebtn{flex:none;padding:1px 8px;font-size:10.5px;line-height:1.7}
+.statbox .hd .morebtn:focus-visible{outline:2px solid var(--account);outline-offset:2px;border-radius:6px}
+.statbox .tbody{display:grid;gap:2px;margin-top:4px;min-width:0}
+@media (max-width:760px){.statpair{grid-template-columns:minmax(0,1fr);gap:14px}}
+
+/* now applying / last result, side column of the hero */
+.now{border-left:1px solid var(--line);padding-left:24px;min-width:0}
+.now.idle{border-left-color:var(--line)}
+.now-tag{display:flex;align-items:center;gap:7px;color:var(--mute);font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.now-tag i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.now-tag i.on{background:var(--page);animation:pulse 1.6s infinite}
+.now-tag i.dry{background:var(--account);animation:pulse 1.6s infinite}
+.now-tag i.bad{background:var(--need)}
+.now-co{font-size:17px;font-weight:800;margin-top:8px;overflow-wrap:anywhere;line-height:1.25}
+.now-ti{color:var(--mute);font-size:12.5px;overflow-wrap:anywhere}
+.segs{display:flex;gap:3px;margin:13px 0 7px;height:3px}
+.segs i{flex:1;background:var(--line2);border-radius:2px}
+.segs i.on{background:var(--page)}
+.segs i.cur{background:var(--wait)}
+.stlbl{font-size:11.5px;color:var(--ink);font-weight:600}
+.now-meta{font-size:11.5px;color:var(--faint);margin-top:4px;overflow-wrap:anywhere}
+.now-say{margin-top:8px;font-size:12px;color:var(--mute);overflow-wrap:anywhere;display:flex;gap:10px;justify-content:space-between}
+.now-say span:last-child{color:var(--faint);white-space:nowrap;flex:none}
+.now-say.bad{color:var(--need)}
+.now-run{margin-top:12px;font-size:11.5px;color:var(--faint)}
+.now-run b{color:var(--mute);font-weight:700}
+
+/* systems + health: compact, borderless chips */
+.systems,.health{display:flex;flex-wrap:wrap;gap:2px 20px;padding:0 4px;align-items:baseline}
+.systems{padding-top:4px}
+.sys{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--mute);padding:4px 0;min-width:0}
+.sys i{width:7px;height:7px;border-radius:50%;background:var(--page);flex:none}
+.sys.warn i{background:var(--wait)}
+.sys.bad{color:var(--need)}
+.sys.bad i{background:var(--need)}
+.sys.stale{color:var(--wait)}
+.sys.stale i{background:none;border:1.5px solid currentColor;width:6px;height:6px}
+.sys small{font-weight:500;color:var(--faint);max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sys .btn.sm{margin-left:2px}
+
+/* AI: one live summary line; the provider switches live in a small expander, not in the connection row */
+.llm{flex-basis:100%;min-width:0;margin-top:2px}
+.llm>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:8px;min-width:0}
+.llm>summary::-webkit-details-marker{display:none}
+.llm>summary:focus-visible{outline:2px solid var(--account);outline-offset:2px;border-radius:6px}
+.llm>summary .chev{font-size:9px;color:var(--faint);transition:transform .15s;flex:none}
+.llm[open]>summary .chev{transform:rotate(180deg)}
+.llm>summary .sys small{white-space:normal}
+.provs{display:grid;gap:0;padding:6px 0 2px 14px;max-width:980px}
+.provnote{font-size:11px;color:var(--faint);padding:0 0 6px}
+.prov{display:flex;align-items:baseline;gap:8px;font-size:11.5px;color:var(--mute);padding:5px 0;border-top:1px solid var(--line);min-width:0}
+.prov:first-child{border-top:0}
+.prov i{width:6px;height:6px;border-radius:50%;background:var(--page);flex:none;align-self:center}
+.prov i.warn{background:var(--wait)}
+.prov i.bad{background:var(--need)}
+.prov i.off{background:none;border:1.5px solid var(--faint);width:5px;height:5px}
+.prov b{color:var(--ink);font-size:12px;white-space:nowrap;font-weight:700}
+.prov small{color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.pbtns{margin-left:auto;display:inline-flex;gap:2px;flex-wrap:wrap;justify-content:flex-end}
+.pbtns .btn.sm{color:var(--faint);padding:2px 6px}
+.pbtns .btn.sm:hover:not(:disabled){color:var(--ink)}
+.health{padding-top:0}
+.health .hlast{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:2px 0 0;font-size:11.5px;color:var(--faint)}
+.health .hlast b{color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10.5px}
+.health .hlast code{font:11.5px/1.4 var(--fx-mono);color:#a9b4c2;overflow-wrap:anywhere;flex:1 1 340px;min-width:0}
+.health .hlast .lmeta{white-space:nowrap;color:var(--faint)}
+
+/* History / all data: one expander, collapsed by default; the body is the only box it adds */
+.hbody{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-top:10px;padding:20px clamp(14px,3vw,20px) 24px;display:grid;gap:26px}
+.hsec{min-width:0}
+.sh{display:flex;align-items:baseline;gap:10px;padding:0 0 8px;min-width:0}
+.sh h3{font-size:12.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.sh .n{font-weight:700;font-size:11px;padding:0 7px;border-radius:999px;background:var(--panel2);color:var(--mute)}
+.sh .hint{margin-left:auto;color:var(--faint);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh .tot{margin-left:auto;color:var(--faint);font-size:11.5px;white-space:nowrap}
+.sh .tot b{color:var(--mute)}
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+.stack{display:grid;gap:26px;align-content:start;min-width:0}
+.scroll{max-height:520px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.empty{padding:8px 0 4px;color:var(--faint);font-size:12.5px;max-width:560px}
+.empty b{color:var(--mute)}
+.usage .uline{color:var(--faint);font-size:12px}
+.usage .uline b{color:var(--mute);font-weight:600}
+
+/* lists inside history */
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;padding:9px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top-color:transparent}
+.row .head{display:flex;gap:8px;align-items:baseline;min-width:0}
+.row .head .co{flex:none;max-width:60%;font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .head .ti{color:var(--mute);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.row .right{text-align:right;color:var(--faint);font-size:11.5px;white-space:nowrap}
+.row .proof{grid-column:1/-1;display:flex;gap:10px;align-items:baseline;font-size:11.5px;min-width:0}
+.row .proof .txt{flex:1 1 0;min-width:0;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .proof .kind,.row .proof .links{flex:none}
+.kind{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:11px;color:var(--mute);white-space:nowrap}
+.kind::before{content:"";width:6px;height:6px;border-radius:2px;background:currentColor}
+.kind.page{color:var(--page)} .kind.account{color:var(--account)} .kind.email{color:var(--email)}
+.kind.wait{color:var(--wait)} .kind.wait::before{background:none;border:1.5px dashed currentColor}
+.kind.need{color:var(--need)}
+.links{display:flex;gap:11px;font-size:11.5px;font-weight:600}
+.need-row{border-left:2px solid var(--need);padding-left:12px}
+.need-row.ask{border-left-color:var(--wait)}
+.need-row .why{grid-column:1/-1;color:var(--ink);font-size:12px;overflow-wrap:anywhere}
+.need-row .why em{color:var(--faint);font-style:normal}
+.btns{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:5px}
+.ask-box{grid-column:1/-1;display:grid;gap:6px;margin-top:4px}
+.ask-box label{font-size:12px;color:var(--mute);display:grid;gap:3px}
+.ask-box label b{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.ask-box input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:6px;padding:5px 9px;color:var(--ink)}
+.ask-box input[type=text]:focus{border-color:var(--wait);outline:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--wait) 28%,transparent)}
+.ask-box .perjob{display:flex;flex-direction:row;gap:6px;align-items:center;font-size:11.5px}
+.fit{display:flex;align-items:center;gap:8px;justify-content:flex-end;min-width:130px}
+.fit .chip{max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--panel2);color:var(--mute)}
+.fit .bar{width:64px;height:5px;background:var(--line2);border-radius:3px;overflow:hidden}
+.fit .bar i{display:block;height:100%;background:var(--account)}
+.fit .bar i.hi{background:var(--page)}
+.fit b{font-size:12px;color:var(--ink);min-width:22px;text-align:right}
+.more{padding:9px 0 0;text-align:center}
+
+/* dispatch grid (inside history) */
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.slot{border-radius:6px;min-width:0;padding:6px 8px;display:flex;flex-direction:column;gap:2px;background:var(--panel2);border:1px solid var(--line);min-height:58px;justify-content:space-between;font-size:11px;color:var(--ink);text-decoration:none}
+.slot.empty-slot{background:none;border:1px dashed var(--line);color:var(--faint);display:grid;place-items:center;font-size:10.5px;font-weight:600}
+.slot.empty-slot.beyond{opacity:.45}
+.slot.wait{border-style:dashed;border-color:color-mix(in srgb,var(--wait) 55%,var(--line));color:var(--ink)}
+.slot.wait .ft{color:var(--wait)}
+.stamp{border-left:2px solid var(--page)}
+.stamp.account{border-left-color:var(--account)}
+.stamp.email{border-left-color:var(--email)}
+.slot:hover{text-decoration:none;filter:brightness(1.12)}
+.slot .pf{font-size:9.5px;font-weight:700;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .co{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .ft{display:flex;justify-content:space-between;gap:4px;font-size:9.5px;color:var(--faint);font-weight:600}
+.stamp.fresh{animation:thunk .4s cubic-bezier(.2,1.5,.4,1)}
+@keyframes thunk{from{transform:scale(1.25);opacity:0}to{transform:none;opacity:1}}
+
+/* tables (by platform) */
+.tablewrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-weight:600;color:var(--faint);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);font-size:11.5px;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left;padding-left:0;white-space:nowrap}
+th:last-child,td:last-child{padding-right:0}
+tr:last-child td{border-bottom:0}
+tr.grp th{border-bottom:0;padding-bottom:0;color:var(--faint)}
+td.zero{color:var(--faint)}
+td.g{color:var(--page);font-weight:700} td.r{color:var(--need);font-weight:700} td.a{color:var(--wait);font-weight:700}
+.hit{display:flex;gap:1px;height:3px;width:100%;max-width:120px;margin-top:4px;border-radius:2px;overflow:hidden;background:var(--line2)}
+.hit i{display:block;height:100%}
+td.tk{color:var(--faint);white-space:nowrap}
+td.tk b{color:var(--mute)}
+.weektbl tr.now td{background:color-mix(in srgb,var(--page) 5%,transparent)}
+.weektbl tbody tr[data-day]{cursor:pointer}
+.weektbl tbody tr[data-day]:hover td{background:var(--panel2)}
+.weektbl tr.sel td{background:color-mix(in srgb,var(--page) 11%,transparent)}
+.wkbar{display:inline-block;width:44px;height:4px;margin-left:8px;background:var(--line2);border-radius:2px;overflow:hidden;vertical-align:middle}
+.wkbar i{display:block;height:100%;background:var(--page)}
+.caps{display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 0 0;color:var(--faint);font-size:11.5px}
+.caps b{color:var(--mute)}
+
+/* what is failing */
+.lesson{border-top:1px solid var(--line)}
+.lesson:first-of-type{border-top:0}
+.lesson summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:150px minmax(0,1fr) 30px 12px;gap:10px;padding:8px 0;align-items:baseline}
+.lesson summary::-webkit-details-marker{display:none}
+.lesson summary:hover{background:var(--panel2)}
+.lesson .pf{font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lesson .rs{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.lesson .cnt{font-weight:800;color:var(--need);text-align:right}
+.lesson .caret{color:var(--faint);font-size:10px}
+.lesson[open] .caret{transform:rotate(90deg)}
+.lesson .ex{padding:0 0 10px 160px;display:grid;gap:6px}
+.lesson .ex div{font-size:11.5px;color:var(--faint);overflow-wrap:anywhere}
+.lesson .ex b{color:var(--ink);font-weight:600}
+.st{font-size:10.5px;font-weight:700;padding:0 6px;border-radius:4px;border:1px solid var(--line2);margin-left:6px;color:var(--faint)}
+.st.ok{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line))}
+
+/* tools drawer */
+.foot{padding:0}
+.foot summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 20px;color:var(--faint);font-size:12px}
+.foot summary::-webkit-details-marker{display:none}
+.foot summary .tl{margin-left:auto;font-weight:700;color:var(--mute)}
+.foot[open] summary .tl::after{content:" (hide)"}
+.foot .sess{display:inline-flex;gap:6px;align-items:center}
+.foot .sess i{width:7px;height:7px;border-radius:50%;background:var(--page);display:inline-block}
+.foot .sess.no i{background:var(--need)}
+.foot .tools{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 16px}
+
+/* live log = bottom drawer */
+.logdock{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,calc(100vw - 24px));z-index:40;background:var(--panel);border:1px solid var(--line2);border-bottom:0;border-radius:12px 12px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.45)}
+.logbar{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:9px 16px;cursor:pointer;color:var(--ink);font-size:12.5px}
+.logbar:focus-visible{outline:2px solid var(--account);outline-offset:-2px}
+.logbar .lt{font-weight:700;flex:none}
+.logbar .lastline{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--faint)}
+.logbar .chev{flex:none;transition:transform .2s;color:var(--faint)}
+.logdock[data-open="1"] .chev{transform:rotate(180deg)}
+.logbody{display:none;border-top:1px solid var(--line2)}
+.logdock[data-open="1"] .logbody{display:flex;flex-direction:column;height:min(52vh,460px)}
+.log{flex:1;min-height:0;overflow:auto;font:11.5px/1.5 var(--fx-mono);padding:0 0 8px;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.ln{display:grid;grid-template-columns:56px 38px minmax(0,1fr);gap:0 6px;padding:3px 14px}
+.ln:hover{background:var(--panel2)}
+.ln .tm{color:var(--faint)}
+.ln .kd{font-weight:500;color:var(--k,var(--mute));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ln .ms{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;color:#c3cdd9}
+.ln .ms b{font-weight:500;color:var(--ink)}
+.ln.k-step{--k:#7fa2d8} .ln.k-fill{--k:#6b7a8d} .ln.k-portal{--k:#4fc3d6} .ln.k-ai{--k:var(--email)} .ln.k-llm{--k:#8f7bd6}
+.ln.k-park{--k:var(--wait)} .ln.k-result{--k:var(--page)} .ln.k-info{--k:var(--mute)} .ln.k-error{--k:var(--need)}
+.ln.k-error .ms,.ln.k-park .ms{color:color-mix(in srgb,var(--k) 75%,#fff)}
+.ln.k-result .ms{color:color-mix(in srgb,var(--page) 70%,#fff)}
+.ln.k-fill .ms,.ln.k-step .ms{color:#93a0b1}
+.logdock .ph{display:flex;align-items:center;gap:10px;padding:8px 16px}
+.logdock .ph h2{display:none}
+.toggle{display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--faint);cursor:pointer;margin-left:auto}
+.toggle input{accent-color:var(--page)}
+
+#toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#0a0e13;padding:8px 15px;border-radius:8px;font-weight:600;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#toast.err{background:var(--need);color:#1c0505}
+
+@media (max-width:1100px){
+  /* on narrow laptops the fixed log bar would sit over the health strip: let it live in the page flow instead */
+  .logdock{position:static;left:auto;transform:none;margin:0 auto 18px;width:min(760px,calc(100vw - 28px));border-radius:12px;border-bottom:1px solid var(--line2)}
+  .shell{padding-bottom:24px}
+}
+@media (max-width:1000px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:18px}
+  .now{border-left:0;border-top:1px solid var(--line);padding:16px 0 0}
+  .cols{grid-template-columns:minmax(0,1fr);gap:26px}
+  .lesson .ex{padding-left:0}
+}
+@media (max-width:640px){
+  .bignum b{font-size:58px}
+  .hero{padding:20px 16px}
+  .secondary{gap:4px 16px}
+  .stamps{grid-template-columns:repeat(auto-fill,minmax(86px,1fr))}
+  .actions{width:100%}
+  .actions .btn{flex:1 1 auto}
+  .top{padding:10px 14px;position:static}
+  .lesson summary{grid-template-columns:100px minmax(0,1fr) 24px 10px}
+  .scroll{max-height:none}
+  .sys small{max-width:220px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* collapsible sections */
+.panel.cz{padding:12px 18px}
+.panel.cz:empty{display:none}
+.panel.cz > .sh{cursor:pointer;padding:4px 0;margin:0;user-select:none}
+.panel.cz > .sh::before{content:"";width:0;height:0;flex:none;align-self:center;border-left:6px solid #7d8a99;border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:2px;transition:transform .15s}
+.panel.cz:not(.collapsed) > .sh::before{transform:rotate(90deg)}
+.panel.cz.collapsed > *:not(.sh){display:none !important}
+.panel.cz.collapsed > .sh{margin-top:0 !important}
+.panel.cz.collapsed > .sh .hint{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (prefers-reduced-motion: reduce){.panel.cz > .sh::before{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><h1>Dispatch desk</h1><span class="clock" id="clock"></span></div>
+  <span class="pill idle" id="pill"><i class="dot"></i><span>Connecting</span></span>
+  <a class="aichip" id="aichip" href="/ops" title="Live AI provider status (core.llm.status()). Open Ops for the full provider panel."></a>
+  <span class="spacer"></span>
+  <div class="actions" id="actions"></div>
+</header>
+
+<div class="shell">
+  <details class="history" id="history">
+    <summary aria-controls="history-body" title="Weekly totals, today's dispatches, applied with proof, tokens"><span class="histstrip" id="histstrip" aria-label="Totals"></span><span class="hist-label">History / all data <span class="chev2" aria-hidden="true">&#9660;</span></span></summary>
+    <div class="hbody" id="history-body">
+      <section class="hsec" id="week"></section>
+      <section class="hsec dayview" id="dayview" hidden></section>
+      <section class="hsec" id="dispatch"></section>
+      <section class="hsec" id="responses"></section>
+      <section class="hsec">
+        <div class="sh"><h3>Applied with proof</h3><span class="n" id="n-applied">0</span><span class="hint">newest first &middot; all time</span></div>
+        <div class="scroll" id="applied"></div>
+      </section>
+      <section class="hsec usage" id="usage"></section>
+    </div>
+  </details>
+
+  <!--. Today's status comes first; the sections below
+       show one header line each and open on a click (remembered in this browser). -->
+  <section class="panel hero" id="hero" aria-live="polite"></section>
+
+  <section class="panel cz" id="tracker" data-cz="tracker" aria-label="Application tracker"></section>
+
+  <section class="panel cz" id="outreach" data-cz="outreach" aria-label="LinkedIn low-competition jobs and startup outreach"></section>
+
+  <details class="panel foot" id="foot"></details>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = (u) => /^https?:\/\//i.test(u || "") ? u : "";
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+let S = null, offset = 0, uiVersion = null, firstRender = true;
+const seenStamps = new Set();
+const drafts = {};
+let open = {};
+try { open = JSON.parse(store.get("jh.open") || "{}") || {}; } catch(e){ open = {}; }
+let trkTab = store.get("jh.trk") || "todo";
+let daySel = null;                       // the day opened in History (click a sparkline bar or week row)
+const dayCache = new Map();              // day -> {at, jobs} for past days (today always comes from the live poll)
+const LIM = {applied: 8, needs: 4, plan: 8, plat: 8, lessons: 6, log: 24, responses: 10, tracker: 15, outreach_li: 8, outreach_st: 10};
+// what an employer answered, per job (apply/replies.py -> jobs.outcome)
+const OUT = {offer: ["OFFER", "Offer received"], interview: ["INTERVIEW", "Invited to interview"], assessment: ["ASSESSMENT", "Asked to take an assessment"],
+             rejected: ["REJECTED", "Rejection received"], closed: ["CLOSED", "Position closed or filled"], waiting: ["WAITING", "Sent - no reply yet"], past: ["PAST", "Interview or test whose date has passed"], done: ["DONE", "Marked done by you"]};
+const outcomeBadge = (j) => { const o = j && j.outcome && OUT[j.outcome]; return o ? '<span class="obadge ' + esc(j.outcome) + '" title="' + esc(o[1] + (j.outcome_at ? " · " + String(j.outcome_at).replace("T", " ").slice(0, 16) : "")) + '">' + o[0] + "</span>" : ""; };
+const cap = (sec, list) => open[sec] ? list : list.slice(0, LIM[sec]);
+const more = (sec, total) => total <= LIM[sec] ? "" : '<div class="more"><button class="btn sm ghost" data-act="more" data-sec="' + sec + '" aria-expanded="' + (!!open[sec]) + '">' + (open[sec] ? "Show fewer" : "Show all " + total) + "</button></div>";
+// Tokens today / Sources today: the headline stays, the detail is behind this button. It uses the same data-act="more"
+// handler as the lists, so the choice is stored in jh.open and survives every refresh and auto-reload.
+const moreBtn = (sec, isOpen) => '<button class="btn sm ghost morebtn" data-act="more" data-sec="' + sec + '" aria-expanded="' + (!!isOpen) + '">' + (isOpen ? "See less" : "See more") + "</button>";
+const cache = new Map();
+
+/* ---------- helpers ---------- */
+function setHTML(el, html){
+  if (cache.get(el.id) === html) return;
+  cache.set(el.id, html);
+  const ae = document.activeElement;
+  const key = ae && el.contains(ae) && ae.dataset ? ae.dataset.key : null;
+  const pos = key && ae.selectionStart != null ? ae.selectionStart : null;
+  el.innerHTML = html;
+  if (key){
+    const n = el.querySelector('[data-key="' + CSS.escape(key) + '"]');
+    if (n){ n.focus(); if (pos != null && n.setSelectionRange) try { n.setSelectionRange(pos, pos); } catch(e){} }
+  }
+}
+const nowSec = () => Date.now() / 1000 + offset;
+function ago(t){
+  if (!t) return "";
+  const s = Math.max(0, nowSec() - t);
+  if (s < 45) return "just now";
+  if (s < 3600) return Math.round(s / 60) + "m ago";
+  if (s < 86400) return Math.round(s / 3600) + "h ago";
+  return Math.round(s / 86400) + "d ago";
+}
+const isoSec = (iso) => { const d = iso ? new Date(iso) : null; return d && !isNaN(d) ? d.getTime() / 1000 : 0; };
+const hhmm = (t) => new Date(t * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false});
+const hhmmss = (t) => new Date(t * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false});
+const todayStr = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); };
+const todayDate = () => new Date().toLocaleDateString([], {weekday: "short", day: "numeric", month: "short"});
+const platShort = (p) => String(p || "other").replace("LinkedIn Easy Apply", "LinkedIn Easy").replace("Oracle HCM", "Oracle").replace("SmartRecruiters","SmartRec.");
+const KIND = {
+  page:    {label: "Confirmation page", short: "Page"},
+  account: {label: "Shows in account",  short: "Acct"},
+  email:   {label: "Email receipt",     short: "Email"},
+  none:    {label: "Sent, no proof yet", short: "No proof"}
+};
+const proofText = (j) => String(j.email_proof || "").replace(/^(PAGE|ACCOUNT|NAUKRI):\s*/i, "");
+const jobLink = (j) => safeUrl(j.apply_url) || safeUrl(j.url);
+const sourceLabel = (s) => String(s || "").replace(/^(board|ats):/, "").replace(/^\w/, (c) => c.toUpperCase());
+/* where the application actually went: the server sends `portal` for today/recent rows (core.activity.portal_of);
+   for older day rows (no portal field) derive the same label from the apply URL here, and fall back to the discovery board. */
+const PLATFORM_HOSTS = [["myworkdayjobs","Workday"],["workday","Workday"],["naukri.com","Naukri"],["linkedin.com","LinkedIn"],
+  ["oraclecloud","Oracle HCM"],["greenhouse","Greenhouse"],["lever.co","Lever"],["ashbyhq","Ashby"],["smartrecruiters","SmartRecruiters"],
+  ["successfactors","SuccessFactors"],["sapsf","SuccessFactors"],["icims","iCIMS"],["taleo","Taleo"],["eightfold","Eightfold"],
+  ["phenom","Phenom"],["jobvite","Jobvite"],["workable","Workable"],["indeed.","Indeed"],["shine.com","Shine"],["foundit","Foundit"],
+  ["instahyre","Instahyre"],["hirist","Hirist"],["apna.co","Apna"],["ripplehire","RippleHire"],["amazon.jobs","Amazon Jobs"],["higher.gs.com","Goldman Sachs"]];
+function platformOf(j){
+  if (!j) return "unknown";
+  if (j.portal) return platShort(j.portal);
+  if (j.apply_route === "easy_apply") return "LinkedIn Easy";
+  let h = "";
+  try { h = new URL(j.apply_url || j.url || "").hostname.toLowerCase().replace(/^www\./, ""); } catch(e){ h = ""; }
+  for (const [k, v] of PLATFORM_HOSTS) if (h.includes(k)) return platShort(v);
+  return sourceLabel(j.source) || h || "unknown";
+}
+function sourceVia(j){ return sourceLabel(j && j.source ? j.source : ""); }
+function sourceTip(j){
+  const on = platformOf(j), via = sourceVia(j);
+  const generic = !via || /^(custom|jsonld sitemap|unknown|other)$/i.test(via) || via.toLowerCase() === on.toLowerCase();
+  return "Applied on " + on + (generic ? "" : " · found via " + via);
+}
+function sourceMix(jobs){
+  const m = new Map();
+  for (const j of (jobs || [])) { const p = platformOf(j); m.set(p, (m.get(p) || 0) + 1); }
+  return [...m.entries()].sort((a, b) => b[1] - a[1]).map(([p, n]) => p + " " + n).join(" · ");
+}
+const defTip = (s, k) => { const v = s && s.numbers && s.numbers.defs ? s.numbers.defs[k] : ""; return v ? ' title="' + esc(v) + '"' : ""; };
+const kTok = (v) => {
+  v = v || 0;
+  if (v >= 1e6) return (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + "M";
+  if (v >= 1e3) return Math.round(v / 1e3) + "k";
+  return String(v);
+};
+
+/* ---------- actions ---------- */
+let toastT;
+function toast(msg, bad){
+  const t = $("#toast");
+  t.textContent = msg; t.className = "on" + (bad ? " err" : "");
+  clearTimeout(toastT); toastT = setTimeout(() => { t.className = ""; }, 4200);
+}
+async function post(body){
+  try {
+    const r = await fetch("/api/action", {method: "POST", headers: {"Content-Type": "application/json", "X-JH": "1"}, body: JSON.stringify(body)});
+    const j = await r.json();
+    toast(j.message || (j.ok ? "Done." : "Could not do that."), !j.ok);
+  } catch(e){ toast("Could not reach the dashboard server.", true); }
+  poll();
+}
+/* target slider: the number of jobs a run aims for. Kept in a module variable so a state poll never resets the thumb under her hand. */
+let targetN = +(store.get("jh.target") || 10);
+document.addEventListener("input", (ev) => {
+  const s = ev.target.closest("#target");
+  if (!s) return;
+  targetN = +s.value;
+  store.set("jh.target", targetN);
+  const box = s.closest(".slider"), out = box.querySelector("b");
+  if (out) out.textContent = targetN;
+  s.style.setProperty("--fill", Math.round(100 * (targetN - s.min) / (s.max - s.min)) + "%");
+});
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-act]");
+  if (!b || b.disabled) return;
+  const a = b.dataset.act, id = b.dataset.id;
+  if (a === "run"){
+    const n = +(b.dataset.n || targetN);
+    if (!confirm("Start applying for real to " + n + " jobs?")) return;
+    post({type: "start_run", live: true, target: n});
+  } else if (a === "more"){
+    open[b.dataset.sec] = !open[b.dataset.sec]; store.set("jh.open", JSON.stringify(open)); if (S) render(S);
+  } else if (a === "trkdone"){
+    post({type: "tracker_done", key: b.dataset.key});
+  } else if (a === "trktab"){
+    trkTab = b.dataset.tab; store.set("jh.trk", trkTab); if (S) renderTracker(S);
+  } else if (a === "stop"){ post({type: "stop_run"});
+  } else if (a === "tool"){ post({type: b.dataset.t, name: b.dataset.name});
+  } else if (a === "openhistory"){
+    const h = $("#history"); h.open = true;
+    const target = b.dataset.what === "week" ? $("#week") : $("#dispatch");
+    if (target) setTimeout(() => target.scrollIntoView({behavior: "smooth", block: "start"}), 30);
+  } else if (a === "closeday"){ daySel = null; renderDay(null); if (S){ renderWeek(S); renderStrip(S); }
+  } else if (a === "open"){ post({type: "open_path", what: b.dataset.what});
+  }
+});
+
+/* click a date (sparkline bar or week-table row) to open that day's applications in place */
+$("#histstrip").addEventListener("click", (ev) => {
+  const b = ev.target.closest(".sparkbar");
+  if (!b) return;
+  ev.preventDefault(); ev.stopPropagation();   // a bar click selects a day; it must not just toggle the drawer
+  openDay(b.dataset.day);
+});
+$("#histstrip").addEventListener("keydown", (ev) => {
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  const b = ev.target.closest(".sparkbar");
+  if (!b) return;
+  ev.preventDefault(); ev.stopPropagation();
+  openDay(b.dataset.day);
+});
+$("#week").addEventListener("click", (ev) => {
+  if (ev.target.closest("a")) return;
+  const tr = ev.target.closest("tr[data-day]");
+  if (tr) openDay(tr.dataset.day);
+});
+
+/* ---------- renderers ---------- */
+function runMode(s){
+  const r = s.run || {};
+  if (r.alive) return r.dry_run ? "dry" : "live";
+  if (r.status === "stalled") return "bad";
+  return "idle";
+}
+function renderTop(s){
+  const r = s.run || {}, m = runMode(s);
+  const alive = !!r.alive;
+  const extra = (s.runs || []).filter((x) => x.alive && x.label !== (r.label || "A")).length;
+  const label = m === "live" ? "Live applying" : m === "dry" ? "Dry run" : m === "bad" ? "Stalled" : "Idle";
+  const p = $("#pill");
+  p.className = "pill " + m;
+  p.innerHTML = '<i class="dot"></i><span>' + label + (extra ? " +" + extra + " parallel" : "") + "</span>";
+  const dis = alive ? ' disabled title="A run is already in progress"' : "";
+  const box = $("#actions");
+  const slider = '<span class="slider" title="How many jobs this run aims for"><span class="lbl">Apply to</span>' +
+    '<input type="range" id="target" data-key="target" min="1" max="100" step="1" value="' + targetN + '" aria-label="How many jobs to apply to"' + dis + ">" +
+    "<b>" + targetN + "</b></span>" +
+    '<button class="btn primary" data-act="run"' + (alive ? ' disabled title="A run is already in progress"' : "") + ">Start</button>";
+  const tail = '<button class="btn danger" data-act="stop"' + (alive ? "" : " disabled") + ">Stop</button>" +
+    '<a class="btn ghost oplink" href="/ops" title="The bot\'s performance: failure classes, queues, health, AI providers and tokens">Ops / performance &rarr;</a>';
+  const rng0 = $("#target");
+  if (!rng0 || document.activeElement !== rng0) setHTML(box, slider + tail);  // never rebuild under her hand mid-drag
+  const rng = $("#target");  // paint the filled part of the track
+  if (rng) rng.style.setProperty("--fill", Math.round(100 * (targetN - 1) / 99) + "%");
+}
+
+/* ---------- one compact, LIVE AI status chip (from core.llm.status(); click for /ops) ---------- */
+function renderAiChip(s){
+  const c = (s.systems || {}).ai_chip, el = $("#aichip");
+  const down = ((c && c.down) || []).map((d) => d.state === "resting"
+    ? d.name + " resting" + (d.minutes != null ? " (" + d.minutes + "m)" : "")
+    : d.name + " " + d.state);
+  if (!c){
+    el.className = "aichip bad";
+    el.innerHTML = '<i class="dot"></i><span>AI status unavailable</span>';
+    el.title = "core.llm.status() did not answer; open Ops for the provider panel.";
+    return;
+  }
+  const html = '<i class="dot"></i><span>' + esc(c.text) + "</span>" + down.map((x) => '<span class="down">' + esc(x) + "</span>").join("");
+  el.className = "aichip " + (c.any ? "ok" : "bad");
+  el.title = c.text + (down.length ? " · " + down.join(" · ") : "") + " · live from core.llm.status(). Click for the full provider panel.";
+  if (el.innerHTML !== html) el.innerHTML = html;
+}
+
+/* ---------- historical totals strip: total sent overall first, proven as side data ---------- */
+function renderStrip(s){
+  const n = s.numbers || {}, days = n.per_day || [];
+  const weekTokens = days.reduce((a, x) => a + (x.tokens || 0), 0);
+  const mx = Math.max(1, ...days.map((x) => x.n));
+  const spark = '<span class="spark">' + days.map((x) => {
+    const tip = x.day + ": " + x.n + " proven · " + kTok(x.tokens) + " tokens" + (x.calls ? " · " + x.calls + " calls" : "") + ". Click to show that day's applications.";
+    return '<span class="sparkbar' + (daySel === x.day ? " sel" : "") + '" role="button" tabindex="0" data-day="' + esc(x.day) + '" title="' + esc(tip) + '">' +
+      '<i class="' + (x.n ? "on" : "") + '" style="height:' + Math.max(2, Math.round(14 * x.n / mx)) + 'px"></i></span>';
+  }).join("") + "</span>";
+  setHTML($("#histstrip"),
+    '<span class="tot"' + defTip(s, "sent_total") + '><b>' + esc(n.sent_total) + '</b><span>sent overall</span></span>' +
+    '<span class="sep">&middot;</span>' +
+    '<span class="prov"' + defTip(s, "proven_total") + '><b>' + esc(n.proven_total) + '</b><span>proven</span></span>' +
+    '<span class="side">' + (n.sent_total ? Math.round(100 * n.proven_total / n.sent_total) : 0) + "% of sent</span>" +
+    '<span class="sep">&middot;</span>' +
+    '<span class="wk"' + defTip(s, "proven_week") + '><b>' + esc(n.proven_week) + '</b><span>proven this week</span></span>' +
+    '<span class="sep">&middot;</span>' +
+    '<span class="wk"' + defTip(s, "tokens_week") + '><b>~' + kTok(weekTokens) + '</b><span>tokens this week</span></span>' +
+    (s.responses && s.responses.ready ? '<span class="sep">&middot;</span><span class="wk" title="Employer replies read from Gmail: rejected / closed / interview / assessment / offer"><b>' +
+      esc(Object.values(s.responses.by_outcome || {}).reduce((a, x) => a + x, 0)) + '</b><span>replies</span></span>' : "") + spark);
+}
+
+/* ---------- last 7 days: the sparkline expanded into weekly metrics (same rules as Today) ---------- */
+function renderWeek(s){
+  const days = (s.numbers && s.numbers.per_day) || [];
+  if (!days.length){ setHTML($("#week"), ""); return; }
+  const sum = (key) => days.reduce((a, d) => a + (d[key] || 0), 0);
+  const mx = Math.max(1, ...days.map((d) => d.n));
+  const label = (iso) => new Date(iso + "T12:00:00").toLocaleDateString([], {weekday: "short", day: "numeric", month: "short"});
+  const cells = (v, cls) => '<td class="' + (v ? cls : "zero") + '">' + v + "</td>";
+  const body = days.map((d) => {
+    const isToday = d.day === todayStr();
+    const n = d.n || 0, sent = d.sent || 0, unprov = d.unproven || 0;
+    const cls = [isToday ? "now" : "", daySel === d.day ? "sel" : ""].filter(Boolean).join(" ");
+    return '<tr data-day="' + esc(d.day) + '"' + (cls ? ' class="' + cls + '"' : "") + ' title="Show what was sent on ' + esc(label(d.day)) + '"><td>' + esc(label(d.day)) + (isToday ? ' <span class="st ok">today</span>' : "") + "</td>" +
+      '<td class="' + (n ? "g" : "zero") + '">' + n + '<span class="wkbar" title="' + n + ' proven"><i style="width:' + Math.round(100 * n / mx) + '%"></i></span></td>' +
+      cells(sent, "") + cells(unprov, "") +
+      '<td class="tk">' + (d.tokens ? "~" + kTok(d.tokens) + (d.calls ? ' <span class="zero">(' + d.calls + ")</span>" : "") : "&ndash;") + "</td></tr>";
+  }).join("");
+  const totalTokens = days.reduce((a, d) => a + (d.tokens || 0), 0);
+  const totalCalls = days.reduce((a, d) => a + (d.calls || 0), 0);
+  const defs = (s.numbers && s.numbers.defs) || {};
+  setHTML($("#week"),
+    '<div class="sh"><h3>Last 7 days</h3><span class="hint">per day, same proven / sent rules as today &middot; click a day to open its sends</span></div>' +
+    '<div class="tablewrap"><table class="weektbl"><thead><tr><th>Day</th><th title="' + esc(defs.proven_today || "") + '">Proven</th>' +
+    '<th title="' + esc(defs.sent_today || "") + '">Sent</th><th title="' + esc(defs.unproven_today || "") + '">Unproven</th>' +
+    '<th title="' + esc(defs.tokens_day || "") + '">Tokens (calls)</th></tr></thead><tbody>' + body +
+    '</tbody><tfoot><tr><td><b>All 7 days</b></td><td class="g"><b>' + sum("n") + '</b></td><td><b>' + sum("sent") + '</b></td><td><b>' + sum("unproven") +
+    '</b></td><td class="tk"><b>~' + kTok(totalTokens) + "</b>" +
+    (totalCalls ? ' <span class="zero">(' + totalCalls + ")</span>" : "") + "</td></tr></tfoot></table></div>");
+}
+
+/* ---------- today hero: proven headline, sent / unproven / tokens quieter, honest rule ---------- */
+const STAGES = [
+  {k: "cv", name: "CV tailored"}, {k: "page", name: "Application opened"}, {k: "in", name: "Account ready"},
+  {k: "form", name: "Form complete"}, {k: "sent", name: "Submit clicked"}, {k: "proof", name: "Proof received"}
+];
+function heroStage(s, now){
+  const acts = (s.activity || []).filter((a) => a.company === now.company && (!now.title || a.title === now.title));
+  let start = 0;
+  acts.forEach((a, i) => { if (a.kind === "step" && /tailoring CV/i.test(a.msg)) start = i; });
+  const cur = acts.slice(start);
+  let top = -1, formPage = 0, ai = {a: 0, q: 0}, fail = null;
+  cur.forEach((a) => {
+    const m = a.msg || "";
+    if (a.kind === "step" && /tailoring CV/i.test(m)) top = Math.max(top, 0);
+    if (a.kind === "step" && /finding the real|hand-off|filling application|LLM navigator/i.test(m)) top = Math.max(top, 1);
+    if (a.kind === "portal" && /signing in with|signed in|creating an account|account created/i.test(m) && !/reject|reset|exists/i.test(m)) top = Math.max(top, 2);
+    if (a.kind === "fill"){ top = Math.max(top, 2); const mm = m.match(/page (\d+)/i); if (mm) formPage = Math.max(formPage, +mm[1]); }
+    if (a.kind === "portal" && /^Workday: (autofill|my |voluntary|application questions)/i.test(m)) top = Math.max(top, 2);
+    if (a.kind === "portal" && /^Workday: review/i.test(m)) top = Math.max(top, 3);
+    if (a.kind === "ai" && /navigator step/i.test(m)){
+      if (/sign|log ?in|account|password|verification|otp|code|email/i.test(m) && !/fill|answer|select|upload|question/i.test(m)) top = Math.max(top, 1);
+      if (/fill|answer|select|upload|question|dropdown|education|experience|skills|resume|cv/i.test(m)) top = Math.max(top, 2);
+      if (/submit/i.test(m) && /click|press|final/i.test(m)) top = Math.max(top, 3);
+    }
+    if (a.kind === "ai" && a.asked != null){ ai.a += a.answered || 0; ai.q += a.asked || 0; }
+    if (a.kind === "result" && /applied|submitted|sent/i.test(m) && a.status !== "email_proof") top = Math.max(top, 4);
+    if (a.kind === "park" || a.kind === "error") fail = a;
+    if (a.kind === "info" && /^failed/i.test(m)) fail = a;
+  });
+  const proven = (s.applied || []).find((j) => j.company === now.company && (!now.title || j.title === now.title) && isoSec(j.applied_at) >= ((s.run && s.run.started_at) || 0) - 60);
+  if (proven) top = 5;
+  const sub = {
+    cv: top >= 0 ? "ATS checked" : "",
+    form: (top === 2 ? "filling now" + (formPage ? ", page " + formPage : "") : formPage ? "page " + formPage : "") + (ai.q ? (formPage ? ", " : "") + "AI answered " + ai.a + " of " + ai.q : ""),
+    proof: proven ? KIND[proven.proof_kind].label : ""
+  };
+  return {top, sub, fail, last: cur[cur.length - 1]};
+}
+function renderNow(s){
+  const r = s.run || {}, now = r.now, m = runMode(s);
+  if (r.alive && now && now.company){
+    const st = heroStage(s, now);
+    let elapsed = "";
+    if (r.started_at){ const e = Math.max(0, Math.round(nowSec() - r.started_at)); elapsed = Math.floor(e / 60) + ":" + String(e % 60).padStart(2, "0"); }
+    const idx = Math.max(0, Math.min(st.top + 1, STAGES.length - 1));
+    const segs = STAGES.map((x, i) => '<i class="' + (i <= st.top ? "on" : i === idx && !st.fail ? "cur" : "") + '"></i>').join("");
+    const sub = st.sub.form || now.step || "";
+    return '<aside class="now">' +
+      '<div class="now-tag"><i class="' + (m === "dry" ? "dry" : "on") + '"></i>Now applying' + (m === "dry" ? ", dry run" : "") + '</div>' +
+      '<div class="now-co">' + esc(now.company) + '</div>' +
+      '<div class="now-ti">' + esc(now.title) + '</div>' +
+      '<div class="segs" aria-hidden="true">' + segs + '</div>' +
+      '<div class="stlbl">' + esc(STAGES[idx].name) + (st.sub.proof ? ' &middot; ' + esc(st.sub.proof) : "") + '</div>' +
+      (sub ? '<div class="now-meta">' + esc(sub) + '</div>' : "") +
+      (st.fail ? '<div class="now-say bad"><span>' + esc(st.fail.msg) + '</span></div>' :
+        st.last ? '<div class="now-say"><span>' + esc(st.last.msg) + '</span><span>' + ago(st.last.t) + '</span></div>' : "") +
+      '<div class="now-run"><b>' + (r.applied || 0) + '</b> submitted this run &middot; ' + (elapsed || "0:00") + ' &middot; target ' + (r.target || 0) + '</div>' +
+      (now.portal ? '<div class="now-run">' + esc(platShort(now.portal)) + (now.score != null ? " &middot; fit " + esc(now.score) : "") + '</div>' : "") +
+      '</aside>';
+  }
+  // idle (or stalled): last result, quietly
+  const acts = s.activity || [];
+  let last = null;
+  for (let i = acts.length - 1; i >= 0; i--){
+    const a = acts[i];
+    if (a.company && (a.kind === "result" || a.kind === "park" || (a.kind === "info" && /^(failed|closed)/i.test(a.msg || "")))){ last = a; break; }
+  }
+  const stalled = r.status === "stalled";
+  const verdict = (a) => a.kind === "result" ? (a.status === "applied" || a.status === "unconfirmed" ? "submitted, waiting for proof" : /^already/i.test(a.msg || "") ? "already applied" : "result") : a.kind === "park" ? "parked" : "did not go through";
+  return '<aside class="now idle">' +
+    '<div class="now-tag"><i class="' + (stalled ? "bad" : "") + '"></i>' + (stalled ? "Run stalled, no update for 4 minutes" : r.alive ? "Picking the next job, last result" : "Idle") + '</div>' +
+    (last ? '<div class="now-co">' + esc(last.company) + '</div><div class="now-ti">' + esc(last.title) + '</div>' +
+      '<div class="now-meta">' + (last.portal ? esc(platShort(last.portal)) + " &middot; " : "") + esc(verdict(last)) + " &middot; " + ago(last.t) + '</div>' +
+      '<div class="now-say"><span>' + esc(last.msg) + '</span></div>'
+      : '<div class="now-meta">Set the number of jobs and press Start.</div>') +
+    '<div class="now-run"><b>' + (s.numbers ? s.numbers.queue : 0) + '</b> ready in queue</div>' +
+    '</aside>';
+}
+function tokenLines(s){
+  const u = s.usage || {}, t = s.tokens || {};
+  const models = Object.entries(u.by_model_tokens || {})
+    .filter(([, v]) => (v.today || {}).calls)
+    .sort((a, b) => (((b[1].today || {}).tokens) || 0) - (((a[1].today || {}).tokens) || 0));
+  const avg = t.calls_today ? Math.round((t.today || 0) / t.calls_today) : 0;
+  const body = models.length
+    ? models.map(([name, v]) => {
+        const calls = (v.today || {}).calls || 0;
+        return '<div class="tprov"><b>' + esc(name) + '</b><span>~' + kTok((v.today || {}).tokens) + " · " + calls + (calls === 1 ? " call" : " calls") + "</span></div>";
+      }).join("")
+    : '<div class="tprov muted">No token usage recorded today.</div>';
+  const head = "~" + kTok(t.today || 0) + " · " + (t.calls_today || 0) + ((t.calls_today === 1) ? " call" : " calls");
+  const isOpen = !!open.tokens;   // minimal by default, and the See more choice survives a refresh (jh.open)
+  return '<div class="toklines statbox" title="Recorded token usage (input+output) from data/llm_usage.jsonl, per provider. Average per call and the month total are secondary; nothing is estimated.">' +
+    '<div class="hd"><span class="tl">Tokens today <span>recorded</span></span><span class="val">' + esc(head) + '</span>' + moreBtn("tokens", isOpen) + '</div>' +
+    (isOpen ? '<div class="tbody">' + body +
+      '<div class="tmeta">~' + avg.toLocaleString() + "/call · " + (t.month ? "~" + kTok(t.month) + " this month" : "no month usage recorded") + "</div></div>" : "") + "</div>";
+}
+function sourceLines(s){
+  const jobs = s.today_jobs || [], m = new Map();
+  for (const j of jobs){ const p = platformOf(j); m.set(p, (m.get(p) || 0) + 1); }
+  const rows = [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const body = rows.length
+    ? rows.map(([p, n]) => '<div class="tprov"><b>' + esc(p) + '</b><span>' + n + (n === 1 ? " send" : " sends") + "</span></div>").join("")
+    : '<div class="tprov muted">Nothing sent today.</div>';
+  const head = rows.length ? jobs.length + (jobs.length === 1 ? " send" : " sends") : "none yet";
+  const isOpen = !!open.sources;
+  return '<div class="toklines srclines statbox" title="Where today’s applications went, read from each apply URL (Workday, Naukri, LinkedIn, Oracle, Greenhouse, ...); the discovery board is used only when the URL names no known platform.">' +
+    '<div class="hd"><span class="tl">Sources today <span>' + esc(head) + '</span></span><span class="val">' + esc(rows.length ? sourceMix(jobs) : "no sends yet") + '</span>' + moreBtn("sources", isOpen) + '</div>' +
+    (isOpen ? '<div class="tbody">' + body + "</div>" : "") + "</div>";
+}
+function sendRow(j){
+  const k = j.proof_kind || "none", proven = k !== "none", t = isoSec(j.applied_at);
+  const badge = proven
+    ? '<span class="pbadge ok" title="Proof: ' + esc(proofText(j) || KIND[k].label) + '">PROVEN &middot; ' + KIND[k].short.toUpperCase() + "</span>"
+    : '<span class="pbadge no" title="Sent, no receipt/badge recorded yet: not a proven application">UNPROVEN</span>';
+  const links = [];
+  if (j.proof_url) links.push('<a href="' + esc(j.proof_url) + '" target="_blank" rel="noopener">proof</a>');
+  if (j.form_url) links.push('<a href="' + esc(j.form_url) + '" target="_blank" rel="noopener">form</a>');
+  return '<div class="send"><span class="co" title="' + esc(j.company) + '">' + esc(j.company) + '</span>' +
+    '<span class="ti" title="' + esc(j.title) + '">' + esc(j.title) + "</span>" +
+    '<span class="src" title="' + esc(sourceTip(j)) + '">' + esc(platformOf(j)) + "</span>" +
+    '<span class="tm">' + (t ? hhmm(t) : "no time") + "</span>" + badge + outcomeBadge(j) +
+    '<span class="lk">' + links.join("") + "</span></div>";
+}
+function renderTodayList(s){
+  const jobs = s.today_jobs || [], show = jobs.slice(0, 5), more = Math.max(0, jobs.length - show.length);
+  return '<div class="hero-list">' +
+    '<div class="hl-head"><h3>Sent today</h3><span class="hint">' + (jobs.length ? jobs.length + " send(s), newest first" : "") + "</span></div>" +
+    (jobs.length ? show.map(sendRow).join("") : '<div class="empty">Nothing sent today yet.</div>') +
+    (more ? '<div class="more"><button class="btn sm ghost" data-act="openhistory" data-what="dispatch">+' + more + " more &rarr;</button></div>" : "") +
+    "</div>";
+}
+function renderHero(s){
+  const n = s.numbers || {}, m = runMode(s);
+  const el = $("#hero");
+  el.className = "panel hero" + (m === "live" ? " live" : m === "dry" ? " dry" : "");
+  const modeTag = m === "live" ? '<span class="modetag">live run</span>' : m === "dry" ? '<span class="modetag">dry run</span>' : "";
+  const undated = n.awaiting_undated
+    ? ' <span title="Older navigator submissions stored without applied_at: they stay visible on the Ops page and are never counted in today">' + esc(n.awaiting_undated) + " older undated send(s) are kept separate.</span>"
+    : "";
+  setHTML(el,
+    '<div class="hero-main">' +
+      '<div class="eyebrow"><i></i>Today &middot; ' + esc(todayDate()) + modeTag + '</div>' +
+      '<div class="bignum"' + defTip(s, "proven_today") + '><b>' + esc(n.proven_today == null ? "-" : n.proven_today) + '</b><span>proven today</span></div>' +
+      '<div class="secondary">' +
+        '<span class="sn"' + defTip(s, "sent_today") + '><b>' + esc(n.sent_today == null ? "-" : n.sent_today) + '</b>sent today</span>' +
+        '<span class="sn dim"' + defTip(s, "unproven_today") + '><b>' + esc(n.unproven_today == null ? "-" : n.unproven_today) + '</b>unproven</span>' +
+        '<span class="sn"' + defTip(s, "tokens_today") + '><b>~' + kTok((s.tokens || {}).today) + '</b>tokens today</span>' +
+      '</div>' +
+      '<div class="rule"><b>Rule:</b> a job counts as applied only with proof (receipt, account badge or confirmation page). A send without proof stays <b>unproven</b> until one arrives.' + undated + '</div>' +
+      '<div class="statpair">' + tokenLines(s) + sourceLines(s) + '</div>' +
+    '</div>' + renderNow(s) + renderTodayList(s));
+}
+
+/* ---------- one day's sends, opened in place from the sparkline or the week table ---------- */
+function dayLabel(iso){
+  return new Date(iso + "T12:00:00").toLocaleDateString([], {weekday: "short", day: "numeric", month: "short", year: "numeric"});
+}
+function renderDay(day, jobs, err){
+  const el = $("#dayview");
+  if (!day){ el.hidden = true; el.innerHTML = ""; cache.delete("dayview"); return; }
+  el.hidden = false;
+  const proven = jobs ? jobs.filter((j) => (j.proof_kind || "none") !== "none").length : 0;
+  const prow = S && S.numbers ? (S.numbers.per_day || []).find((d) => d.day === day) : null;
+  const tok = prow && prow.tokens ? "~" + kTok(prow.tokens) + " tokens" + (prow.calls ? " (" + prow.calls + " calls)" : "") : "&ndash; tokens";
+  let body;
+  if (err) body = '<div class="empty">Could not load that day. Click the date again to retry.</div>';
+  else if (jobs == null) body = '<div class="empty">Loading&hellip;</div>';
+  else if (!jobs.length) body = '<div class="empty">Nothing sent that day.</div>';
+  else body = jobs.map(sendRow).join("");
+  setHTML(el,
+    '<div class="sh"><h3>' + esc(dayLabel(day)) + '</h3><span class="hint"' + defTip(S, "tokens_day") + '>' +
+    (jobs ? jobs.length + " sent &middot; " + proven + " proven &middot; " : "") + tok + "</span>" +
+    '<button class="btn sm ghost" data-act="closeday">close</button></div>' + body);
+}
+function renderDayView(){
+  if (!S) return;
+  if (!daySel){ renderDay(null); return; }
+  if (daySel === todayStr()){ renderDay(daySel, S.today_jobs || []); return; }
+  const hit = dayCache.get(daySel);
+  renderDay(daySel, hit ? hit.jobs : null, hit ? hit.err : false);
+}
+async function openDay(day){
+  const h = $("#history");
+  h.open = true;                                  // one click from the collapsed state: drawer opens on that day
+  if (daySel === day){ daySel = null; renderDay(null); if (S){ renderWeek(S); renderStrip(S); } return; }   // same date again collapses
+  daySel = day;
+  if (S){ renderWeek(S); renderStrip(S); }        // highlight the selected row/bar immediately
+  if (day === todayStr()){ renderDay(day, S ? (S.today_jobs || []) : []); return; }
+  const hit = dayCache.get(day);
+  if (hit && Date.now() - hit.at < 60000){ renderDay(day, hit.jobs, hit.err); return; }
+  renderDay(day, null);
+  try {
+    const r = await fetch("/api/day/" + encodeURIComponent(day), {cache: "no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    const jobs = j.jobs || [];
+    dayCache.set(day, {at: Date.now(), jobs});
+    if (daySel === day) renderDay(day, jobs);
+  } catch(e){
+    if (daySel === day) renderDay(day, null, true);   // transient: not cached, the next click retries
+  }
+}
+
+/* ---------- history sections ---------- */
+function renderDispatch(s){
+  const r = s.run || {};
+  // server-side list of today's submissions (applied + unconfirmed), so the stamps cannot drift from the Today numbers
+  const items = (s.recent || []).slice().sort((a, b) => (a.applied_at < b.applied_at ? -1 : 1));
+  const goal = r.target || 10;
+  // a calm board: today's stamps plus a few open slots, never one empty box per goal (a 50-goal run would draw 50 boxes)
+  const slots = Math.max(10, Math.ceil(Math.max(items.length, 10) / 10) * 10);
+  let html = "";
+  for (let i = 0; i < slots; i++){
+    const j = items[i];
+    if (!j){
+      html += '<div class="slot empty-slot' + (i >= goal ? " beyond" : "") + '" title="' + (i < goal ? "Open slot, within run goal" : "Open slot") + '">' + (i + 1) + "</div>";
+      continue;
+    }
+    const kind = j.proof_kind, t = isoSec(j.applied_at);
+    const link = jobLink(j);
+    const tag = link ? "a" : "div", href = link ? ' href="' + esc(link) + '" target="_blank" rel="noopener"' : "";
+    const fresh = !firstRender && !seenStamps.has(j.id) ? " fresh" : "";
+    seenStamps.add(j.id);
+    const tip = esc(j.company + ", " + j.title + ". " + KIND[kind].label);
+    if (kind === "none"){
+      html += "<" + tag + ' class="slot wait" title="' + tip + '"' + href + '><span class="pf">' + esc(platShort(j.portal)) + '</span><span class="co">' + esc(j.company) + '</span><span class="ft"><span>' + (t ? hhmm(t) : "") + "</span><span>" + (j.page_proof ? "Page seen" : "No proof") + "</span></span></" + tag + ">";
+    } else {
+      html += "<" + tag + ' class="slot stamp ' + kind + fresh + '" title="' + tip + '"' + href + '><span class="pf">' + esc(platShort(j.portal)) + '</span><span class="co">' + esc(j.company) + '</span><span class="ft"><span>' + (t ? hhmm(t) : "") + "</span><span>" + KIND[kind].short + "</span></span></" + tag + ">";
+    }
+  }
+  const proven = items.filter((j) => j.proof_kind !== "none").length;
+  setHTML($("#dispatch"),
+    '<div class="sh"><h3>Today&rsquo;s dispatches</h3><span class="tot"><b>' + proven + "</b> with proof &middot; <b>" + (items.length - proven) + "</b> without &middot; run goal <b>" + goal + "</b></span></div>" +
+    '<div class="stamps">' + html + "</div>");
+}
+
+function rowApplied(j){
+  const k = j.proof_kind, t = isoSec(j.applied_at);
+  const shot = j.proof_url ? '<a href="' + esc(j.proof_url) + '" target="_blank" rel="noopener">Confirmation</a>' : "";
+  const link = jobLink(j);
+  return '<div class="row"><div class="who head"><span class="co">' + esc(j.company) + '</span><span class="ti" title="' + esc(j.title) + '">' + esc(j.title) + "</span></div>" +
+    '<div class="right">' + esc(platShort(j.portal)) + ", " + (t ? ago(t) : "") + outcomeBadge(j) + "</div>" +
+    '<div class="proof"><span class="kind ' + k + '">' + KIND[k].label + '</span><span class="txt" title="' + esc(proofText(j)) + '">' + esc(proofText(j)) + "</span>" +
+    '<span class="links">' + shot + (link ? '<a href="' + esc(link) + '" target="_blank" rel="noopener">Open job</a>' : "") + "</span></div></div>";
+}
+/* ---------- application tracker: status after applying + the next step (assessment deadline, interview, rejection) ---------- */
+function renderTracker(s){
+  const T = s.tracker || {};
+  if (!T.ready){ setHTML($("#tracker"), ""); return; }
+  const rows = T.rows || [], c = T.counts || {}, today = T.today || "";
+  const tabs = [["todo", "To do", (c.offer || 0) + (c.assessment || 0) + (c.interview || 0), (r) => ["offer", "assessment", "interview"].includes(r.status)],
+                ["rejected", "Rejected", c.rejected || 0, (r) => r.status === "rejected"],
+                ["closed", "Closed", (c.closed || 0) + (c.past || 0) + (c.done || 0), (r) => ["closed", "past", "done"].includes(r.status)],
+                ["waiting", "Waiting", c.waiting || 0, (r) => r.status === "waiting"],
+                ["all", "All", rows.length, () => true]];
+  if (!tabs.some((t) => t[0] === trkTab)) trkTab = "todo";
+  const cur = tabs.find((t) => t[0] === trkTab);
+  const shown = rows.filter(cur[3]);
+  const days = (d) => d ? Math.round((new Date(d + "T00:00:00") - new Date(today + "T00:00:00")) / 86400000) : null;
+  const list = (open.tracker ? shown : shown.slice(0, LIM.tracker)).map((r) => {
+    const dd = days(r.deadline);
+    const dl = r.deadline ? '<span class="dl' + (dd != null && dd <= 2 ? " soon" : "") + '" title="Date or deadline the employer wrote in the mail">' + esc(r.deadline) +
+      (dd == null ? "" : dd < 0 ? " (passed)" : dd === 0 ? " (today)" : " (" + dd + "d)") + "</span>" : '<span class="dl"></span>';
+    const act = safeUrl(r.link) ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener">open link</a>' : "";
+    const dn = ["offer", "assessment", "interview"].includes(r.status) ? ' <button class="btn sm ghost" data-act="trkdone" data-key="' + esc(r.key) + '" title="Hide this until the employer writes again">Mark done</button>' : "";
+    const job = safeUrl(r.job_url) ? ' <a href="' + esc(r.job_url) + '" target="_blank" rel="noopener">job</a>' : "";
+    const o = OUT[r.status] || [r.status, r.status];
+    const n = r.mails > 1 ? ' <span style="color:var(--faint)">&times;' + r.mails + "</span>" : "";
+    return '<div class="trk-row"><span class="obadge ' + esc(r.status) + '" title="' + esc(o[1]) + '">' + esc(o[0]) + "</span>" +
+      '<span><span class="co" title="' + esc(r.company) + '">' + esc(r.company) + n + '</span><span class="ro" title="' + esc(r.title) + '">' + esc(r.title || "(role not named in the mail)") + "</span></span>" +
+      '<span class="st"><span class="step">' + esc(r.step) + '</span><span class="mail" title="' + esc(r.mail) + '">' + esc(r.mail) + "</span></span>" +
+      '<span class="dl-wrap">' + dl + act + job + dn + "</span></div>";
+  }).join("");
+  const tabHtml = '<div class="trk-tabs" role="group" aria-label="Filter">' + tabs.map((t) => '<button data-act="trktab" data-tab="' + t[0] + '" aria-pressed="' + (t[0] === trkTab) + '">' + t[1] + " <b>" + t[2] + "</b></button>").join("") + "</div>";
+  const moreB = shown.length > LIM.tracker ? '<div class="more"><button class="btn sm ghost" data-act="more" data-sec="tracker" aria-expanded="' + (!!open.tracker) + '">' + (open.tracker ? "Show fewer" : "Show all " + shown.length) + "</button></div>" : "";
+  setHTML($("#tracker"), '<div class="sh"><h3>Application tracker</h3><span class="n">' + rows.length + '</span><span class="hint">what happens next for every application &middot; <a href="/api/tracker.csv" download="application-tracker.csv">download sheet (CSV)</a></span></div>' +
+    tabHtml + (shown.length ? list + moreB : '<div class="empty"><b>Nothing here.</b> ' + (trkTab === "todo" ? "No assessments, interviews or offers waiting for you." : "No applications in this view.") + "</div>"));
+}
+/* ---------- employer replies (rejections, closed positions, interviews, assessments, offers) ---------- */
+function renderResponses(s){
+  const R = s.responses || {};
+  if (!R.ready){
+    setHTML($("#responses"), '<div class="sh"><h3>Employer replies</h3><span class="hint">not scanned yet</span></div><div class="empty">No replies read yet. Run <b>python hunt.py replies</b> (the guardian does it every 30 minutes).</div>');
+    return;
+  }
+  const b = R.by_outcome || {}, rows = R.recent || [];
+  const chip = (k, label) => '<span><b>' + (b[k] || 0) + "</b> " + label + "</span>";
+  const sum = '<div class="rsp-sum">' + chip("interview", "interview") + chip("assessment", "assessment") + chip("offer", "offer") + chip("rejected", "rejected") + chip("closed", "closed") +
+    '<span title="Replies matched to one of the applications this system sent. The rest answer older or manual applications, or do not name the role.">' +
+    "<b>" + (R.answered || 0) + "</b> tied to a job &middot; <b>" + (R.company_only || 0) + "</b> to a company only &middot; <b>" + (R.sent || 0) + "</b> sends in all</span></div>";
+  const list = cap("responses", rows).map((r) => {
+    const link = safeUrl(r.apply_url) || safeUrl(r.url);
+    const role = r.title ? esc(r.title) : '<span class="co-only" title="No application in this system matches it (an older or manual application, or the mail does not name the role)">' + esc(r.subject || "") + "</span>";
+    const when = r.received_at ? String(r.received_at).replace("T", " ").slice(0, 16) : "";
+    const n = r.count > 1 ? ' <span style="color:var(--faint)">&times;' + r.count + "</span>" : "";
+    return '<div class="rsp-row"><span class="obadge ' + esc(r.kind) + '" title="' + esc((OUT[r.kind] || ["", r.kind])[1]) + '">' + esc((OUT[r.kind] || [r.kind])[0]) + "</span>" +
+      '<span class="co" title="' + esc(r.company) + '">' + esc(r.company) + n + "</span>" +
+      '<span class="ti" title="' + esc(r.subject) + '">' + role + "</span>" +
+      '<span class="when">' + esc(when) + (link ? ' &middot; <a href="' + esc(link) + '" target="_blank" rel="noopener">job</a>' : "") + "</span></div>";
+  }).join("");
+  setHTML($("#responses"),
+    '<div class="sh"><h3>Employer replies</h3><span class="n">' + rows.length + '</span><span class="hint">' + (R.last_scan ? "last read " + esc(String(R.last_scan).replace("T", " ").slice(0, 16)) : "") + "</span></div>" +
+    sum + (rows.length ? list + more("responses", rows.length) : '<div class="empty"><b>No replies yet.</b> Rejections, interview invites and assessments appear here as they arrive.</div>'));
+}
+/* ---------- LinkedIn low-competition scan + startup email drafts ---------- */
+function renderOutreach(s){
+  const O = s.outreach || {}, li = O.li || [], st = O.startups || [], lc = O.li_counts || {}, sc = O.startup_counts || {};
+  const limit = O.li_limit;
+  const liLabel = {qualified: "under limit - applying on the company site", crowded: "skipped - too many applicants (or no exact count)", easy_apply: "Easy Apply only", closed: "closed", error: "error"};
+  const liRows = cap("outreach_li", li).map((r) => {
+    const when = r.t ? new Date(r.t * 1000).toLocaleString([], {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false}) : "";
+    const link = safeUrl(r.url);
+    return '<div class="rsp-row"><span class="obadge ' + (r.decision === "qualified" ? "applied" : "closed") + '" title="' + esc(liLabel[r.decision] || r.decision) + '">' + esc(r.decision) + "</span>" +
+      '<span class="co" title="' + esc(r.company) + '">' + esc(r.company) + "</span>" +
+      '<span class="ti" title="' + esc(r.title) + '">' + esc(r.title) + "</span>" +
+      '<span class="when">' + esc(r.text || "no count shown") + " &middot; " + esc(when) + (link ? ' &middot; <a href="' + esc(link) + '" target="_blank" rel="noopener">job</a>' : "") + "</span></div>";
+  }).join("");
+  const stRows = cap("outreach_st", st).map((r) => {
+    const src = safeUrl(r.source_page);
+    const what = r.email ? esc(r.email) + (src ? ' &middot; <a href="' + esc(src) + '" target="_blank" rel="noopener" title="the page this address was read from">source</a>' : "") : esc(r.note || "");
+    return '<div class="rsp-row"><span class="obadge ' + ((r.status === "drafted" || r.status === "sent") ? "applied" : "closed") + '">' + esc(r.status.replace("_", " ")) + "</span>" +
+      '<span class="co" title="' + esc(r.company) + '">' + esc(r.company) + (r.priority === 0 ? " &#9733;" : "") + "</span>" +
+      '<span class="ti">' + what + "</span>" +
+      '<span class="when">' + esc(r.drafted_at ? "drafted " + String(r.drafted_at).slice(0, 16) : (r.found_at || "").slice(0, 16)) + "</span></div>";
+  }).join("");
+  setHTML($("#outreach"),
+    '<div class="sh"><h3>LinkedIn: few applicants</h3><span class="n">' + (lc.qualified || 0) + '</span><span class="hint">' +
+    (limit ? "applies on the company site only when LinkedIn shows an exact count under " + limit : "filter off") + " &middot; " + (lc.crowded || 0) + " skipped as crowded &middot; read in the worker's signed-in session</span></div>" +
+    (li.length ? liRows + more("outreach_li", li.length) : '<div class="empty"><b>Nothing scanned yet.</b> Each LinkedIn job the applier opens is listed here with what LinkedIn said about applicants.</div>') +
+    '<div class="sh" style="margin-top:18px"><h3>Startup emails</h3><span class="n">' + (sc.drafted || 0) + '</span><span class="hint">' +
+    (sc.sent || 0) + " sent, " + (sc.bounced || 0) + " bounced, " + (sc.drafted || 0) + " drafted (not sent) &middot; " + (sc.found || 0) + " found, waiting &middot; " + (sc.no_hiring_email || 0) + " with no published hiring address &middot; &#9733; = data/analytics firm</span></div>" +
+    (st.length ? stRows + more("outreach_st", st.length) : '<div class="empty"><b>No startups scanned yet.</b> Addresses are only taken from the company\'s own pages.</div>'));
+}
+function renderLists(s){
+  const ap = s.applied || [];
+  $("#n-applied").textContent = (s.numbers ? s.numbers.proven_total : ap.length);
+  setHTML($("#applied"), ap.length ? cap("applied", ap).map(rowApplied).join("") + more("applied", ap.length) : '<div class="empty"><b>No proven applications yet.</b> A job counts as applied only when a confirmation page, your account or a receipt email shows it.</div>');
+}
+function renderUsage(s){
+  const t = s.tokens || {}, n = s.numbers || {};
+  const per = (n.per_day || []).map((d) => {
+    const label = new Date(d.day + "T12:00:00").toLocaleDateString([], {weekday: "short", day: "numeric", month: "short"});
+    return "<span>" + esc(label) + " <b>" + (d.tokens ? "~" + kTok(d.tokens) : "&ndash;") + "</b>" + (d.calls ? ' <span style="color:var(--faint)">(' + d.calls + ")</span>" : "") + "</span>";
+  }).join(" &middot; ");
+  setHTML($("#usage"),
+    '<div class="sh"><h3>Tokens</h3><span class="hint">recorded usage from data/llm_usage.jsonl &middot; calls in brackets</span></div>' +
+    '<div class="uline"><b>~' + kTok(t.today) + '</b> today &middot; <b>~' + kTok(t.month) + "</b> this month &middot; " +
+    "<b>" + (t.calls_today || 0) + "</b> calls today</div>" +
+    '<div class="uline" style="margin-top:6px">Tokens per day: ' + per + "</div>");
+}
+
+function renderFoot(s){
+  const sites = (s.sessions && s.sessions.sites) || {};
+  const sess = Object.entries(sites).map(([k, v]) => '<span class="sess ' + (v.ok ? "" : "no") + '" title="' + esc(v.detail || "") + '"><i></i>' + esc(k) + (v.ok ? " signed in" : " signed out") + "</span>").join("");
+  const html = "<summary>" + sess + '<span class="tl">Tools</span></summary><div class="tools">' +
+    (s.refresh_last ? '<span style="color:var(--faint);font-size:11.5px;flex-basis:100%">' + esc(s.refresh_last) + "</span>" : "") +
+    '<button class="btn sm" data-act="tool" data-t="check_sessions">Check sign-ins</button>' +
+    '<button class="btn sm" data-act="tool" data-t="login_window">Open sign-in window</button>' +
+    '<button class="btn sm" data-act="tool" data-t="refresh_naukri">Refresh Naukri resume</button>' +
+    '<button class="btn sm" data-act="open" data-what="tracker">Open tracker</button>' +
+    '<button class="btn sm" data-act="open" data-what="proofs">Open proof folder</button>' +
+    '<button class="btn sm" data-act="open" data-what="logs">Open logs</button></div>';
+  if (cache.get("foot") === html) return;
+  cache.set("foot", html);
+  $("#foot").innerHTML = html;
+}
+
+function render(s){
+  renderTop(s); renderAiChip(s); renderStrip(s); renderHero(s);
+  renderWeek(s); renderDayView(); renderDispatch(s); renderResponses(s); renderTracker(s); renderOutreach(s); renderLists(s); renderUsage(s); renderFoot(s);
+  firstRender = false;
+}
+
+/* ---------- poll + clock ---------- */
+let busy = false;
+async function poll(){
+  if (busy) return; busy = true;
+  try {
+    const r = await fetch("/api/state", {cache: "no-store"});
+    const s = await r.json();
+    offset = s.now - Date.now() / 1000;
+    if (uiVersion == null) uiVersion = s.ui_version;
+    else if (s.ui_version !== uiVersion){ location.reload(); return; }
+    S = s; render(s);
+  } catch(e){
+    const p = $("#pill"); p.className = "pill bad"; p.innerHTML = '<i class="dot"></i><span>Server not reachable</span>';
+    cache.delete("actions");
+  } finally { busy = false; }
+}
+function tick(){
+  const d = new Date();
+  $("#clock").innerHTML = "<b>" + d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false}) + "</b>" + d.toLocaleDateString([], {weekday: "short", day: "numeric", month: "short"});
+}
+tick(); setInterval(tick, 1000);
+poll(); setInterval(poll, 3000);
+
+/* collapsible sections: collapsed by default, the choice is remembered per browser */
+(function(){
+  function get(k){ try { return localStorage.getItem("cz:" + k); } catch (e) { return null; } }
+  function put(k, v){ try { localStorage.setItem("cz:" + k, v); } catch (e) {} }
+  document.querySelectorAll(".panel.cz").forEach(function(sec){
+    if (get(sec.dataset.cz) !== "open") sec.classList.add("collapsed");
+    sec.addEventListener("click", function(ev){
+      var head = ev.target.closest(".sh");
+      if (!head || head.parentElement !== sec || ev.target.closest("a,button,input,select")) return;
+      var nowCollapsed = sec.classList.toggle("collapsed");
+      put(sec.dataset.cz, nowCollapsed ? "closed" : "open");
+    });
+  });
+})();
+</script>
+</body>
+</html>

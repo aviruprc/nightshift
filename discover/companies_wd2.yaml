@@ -1,0 +1,88 @@
+# Workday career sites found in stored job links and verified live 2026-11-10 (_scratch/add_workday_tenants.py).
+# Hitachi, Caterpillar, Lowe's, 3M added after their account passwords were reset and proven by sign-in (2026-11-10).
+# STILL HELD BACK: MUFG (needs her answer to the 'Certification' question).
+companies:
+- name: Marsh McLennan
+  ats: workday
+  tenant: mmc
+  host: wd1
+  site: MMC
+  tier: probed
+- name: Danaher
+  ats: workday
+  tenant: danaher
+  host: wd1
+  site: DanaherJobs
+  tier: probed
+- name: Collins Aerospace
+  ats: workday
+  tenant: globalhr
+  host: wd5
+  site: REC_RTX_Ext_Gateway
+  tier: probed
+- name: Chevron
+  ats: workday
+  tenant: chevron
+  host: wd5
+  site: jobs
+  tier: probed
+- name: Revantage
+  ats: workday
+  tenant: revantage
+  host: wd1
+  site: Revantage
+  tier: probed
+- name: ICON plc
+  ats: workday
+  tenant: icon
+  host: wd3
+  site: broadbean_external
+  tier: probed
+- name: Thales Group
+  ats: workday
+  tenant: thales
+  host: wd3
+  site: Careers
+  tier: probed
+- name: Philips
+  ats: workday
+  tenant: philips
+  host: wd3
+  site: jobs-and-careers
+  tier: probed
+- name: Airbus
+  ats: workday
+  tenant: ag
+  host: wd3
+  site: Airbus
+  tier: probed
+- name: nVent
+  ats: workday
+  tenant: nvent
+  host: wd5
+  site: nVent
+  tier: probed
+- name: Hitachi Energy
+  ats: workday
+  tenant: hitachi
+  host: wd1
+  site: hitachi
+  tier: probed
+- name: Caterpillar Inc
+  ats: workday
+  tenant: cat
+  host: wd5
+  site: CaterpillarCareers
+  tier: probed
+- name: Lowe's India
+  ats: workday
+  tenant: lowes
+  host: wd5
+  site: LWS_External_CS
+  tier: probed
+- name: 3M
+  ats: workday
+  tenant: 3m
+  host: wd1
+  site: Search
+  tier: probed

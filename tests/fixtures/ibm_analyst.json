@@ -1,0 +1,179 @@
+{
+ "took": 37,
+ "timed_out": false,
+ "_shards": {
+  "total": 20,
+  "successful": 20,
+  "skipped": 0,
+  "failed": 0
+ },
+ "hits": {
+  "total": {
+   "value": 28,
+   "relation": "eq"
+  },
+  "max_score": 12.246113,
+  "hits": [
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "d34d365e2ec7371e52e02cb24f06955bb9f2b49fbdb5f3eb5589e20242ff55ed",
+    "_score": 12.246113,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=134541",
+     "title": "Workforce Analyst",
+     "description": "Detail-oriented Workforce Analyst based in Bangalore, collaborating with US-based clients to deliver high-quality, data-driven insights, dashboards, and reports during US business hours. The role focuses on providing end-to-end HR analytics and...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "6fbc780edfe568e66a7eeb027d9b78ca2588f2e904b820c0f9ab30108882d094",
+    "_score": 10.050716,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=136975",
+     "title": "Sr Business Systems Analyst",
+     "description": "At IBM Finance & Operations, we are the backbone of IBMâ€™s transformation driving efficiency, transparency, and smart decision-making across the business. Our teams provide the insight and discipline that guide strategy, ensure financial strength, and...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Data & Analytics",
+     "field_keyword_17": "Hybrid",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Multiple Cities"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "0e3025ada36b95a5c172ba086c1a8e662e439e81ebbe4c48a734d850c052f204",
+    "_score": 9.282267,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=135874",
+     "title": "Senior Full Stack Performance Analyst",
+     "description": "As a Senior Full Stack Performance Analyst you will drive performance engineering across different layers of the Power System stack starting from the Power Processor, Power Hypervisor and Operating System (AIX & Linux). You will identify performance...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Infrastructure & Technology",
+     "field_keyword_17": "Hybrid",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "6f5abadc6bc764b774ac948705485a2275e2a87998ad7e24886344a0fc827960",
+    "_score": 8.594431,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=130728",
+     "title": "Process Analyst Human Resource Operations - EDM",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of Consulting that, accelerates digital transformation using agile methodologies, process...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "f43103810ea9c7c6a11e38cdd113d435cecfd446439ad4b12246f931ffce52d8",
+    "_score": 8.591772,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=137962",
+     "title": "Sr. Process Analyst (HR Contact Center)",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of IBM Consulting, which accelerates digital transformation through agile methodologies,...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "26db889785ca5fcad8e36e09e2247db06087eb78942d26789003b32022824499",
+    "_score": 8.591772,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=130676",
+     "title": "Process Analyst Human Resource Operations - EDM",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of Consulting that, accelerates digital transformation using agile methodologies, process...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "7aedac611ef7193f58ff97c776c3b803c06f19e9abff396b496e2cb613de6664",
+    "_score": 8.572606,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=130740",
+     "title": "Process Analyst Human Resource Operations - EDM",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of Consulting that, accelerates digital transformation using agile methodologies, process...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "db43db4f9d71f9418698b14327688417adf9d873b7b7ebe85eea317ab3fff68e",
+    "_score": 8.572606,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=137963",
+     "title": "Sr. Process Analyst (HR Contact Center)",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of IBM Consulting, which accelerates digital transformation through agile methodologies,...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "ff067304a235266aa2608ccf7cacef99663608e55d462cfe166ea05439c213c7",
+    "_score": 8.499158,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=137923",
+     "title": "Sr. Process Analyst (HR Contact Center)",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of IBM Consulting, which accelerates digital transformation through agile methodologies,...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   },
+   {
+    "_index": "genesis-prod-1788036777996",
+    "_id": "b452094ac0197aecd91d6939a7160376de78e15a8b27a0d56dd6ef28af85a53b",
+    "_score": 8.499158,
+    "_source": {
+     "language": "en",
+     "url": "https://careers.ibm.com/careers/JobDetail?jobId=130674",
+     "title": "Process Analyst Human Resource Operations - EDM",
+     "description": "A career in IBM Consulting embraces long-term relationships and close collaboration with clients across the globe. In this role, you will work for IBM BPO, part of Consulting that, accelerates digital transformation using agile methodologies, process...",
+     "field_keyword_05": "India",
+     "field_keyword_08": "Enterprise Operations",
+     "field_keyword_17": "",
+     "field_keyword_18": "Professional",
+     "field_keyword_19": "Bangalore, IN"
+    }
+   }
+  ]
+ }
+}

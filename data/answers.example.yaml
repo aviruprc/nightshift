@@ -1,0 +1,90 @@
+# EXAMPLE ONLY - an invented person ("Asha Example"). Copy to data/answers.yaml and replace EVERY value with your own true answer.
+# These answer recurring application-form questions. A key that is missing (or empty) means "not recorded": the bot then parks the
+# job as needs_you with the exact question instead of guessing. Never put a value here that you could not defend in an interview.
+# The dashboard's "Needs you -> Questions" view adds your answers to this file (keys are slugs of the question text).
+# See docs/CONFIGURING_FACTS.md.
+
+# --- experience and pay -------------------------------------------------------------------------------------------------
+total_experience_years: '4'
+relevant_experience_years: '4'
+notice_period: Immediate
+has_notice_period: 'No'            # Yes/No form of "do you have a notice period?"
+available_to_join: Immediately
+available_immediately: 'Yes'
+currently_employed: 'No'
+current_ctc_lpa: '11.5'            # yearly, in lakh (LPA). Use your own unit consistently.
+expected_ctc_lpa: '12'
+last_ctc_lpa: '11.5'
+last_ctc_fixed_lpa: '11.5'
+last_ctc_variable_lpa: '0'
+expected_monthly: '100000'         # for "expected monthly salary" fields (same currency as the form)
+current_monthly: '95833'
+last_working_day: 31 Jan 2025      # format: DD Mon YYYY
+reason_for_leaving_last_job: Relocation for family
+career_gap_reason: Career break after relocating; available to join immediately.
+
+# --- current role (as you want it stated) --------------------------------------------------------------------------------
+current_employer_answer: Example Retail Co (until Jan 2025)   # what to write in a "current employer" box (say plainly if you have none)
+last_employer: Example Retail Co
+last_title: Marketing Analyst
+
+# --- work rights and location ----------------------------------------------------------------------------------------
+work_authorization_home: 'Yes'      # authorised to work in your home country
+work_authorization_india: 'Yes'     # legacy key kept for the dashboard's wording
+requires_sponsorship: 'No'
+willing_to_relocate: 'Yes'
+open_to_hybrid: 'Yes'
+nationality: Indian
+citizenship_status: Citizen (India)
+other_citizenship: 'No'
+current_location: Bengaluru, Karnataka, India
+current_city: Bengaluru
+current_state: Karnataka
+current_country: India
+city_aliases: [Bengaluru, Bangalore]   # spellings a form may offer for your city
+address: 12 Example Street, Sampletown, Bengaluru, Karnataka - 560001
+address_line_2: Sampletown
+area: Sampletown
+pincode: '560001'
+
+# --- personal ------------------------------------------------------------------------------------------------------------
+date_of_birth: 17/09/1993           # format: DD/MM/YYYY
+date_of_birth_long: 17 September 1993
+gender: Female
+prefix: Ms.
+eeo_veteran_disability_race: Decline to self-identify
+phone_device_type: Mobile
+languages: English, Tamil
+# language_proficiency: Advanced   # set ONLY if true for every language listed; otherwise level questions are parked
+linkedin: https://www.linkedin.com/in/asha-example/
+# github: https://github.com/your-handle     # omit if you have none
+# national_id_number: ...                     # only if you choose to give it; never invented
+
+# --- education -----------------------------------------------------------------------------------------------------------
+highest_degree: MSc (Statistics)
+degree: Master's (M.A., M.S., M.Sc.)
+degree_level_option: Master's degree (MSc)
+holds_degree: 'Yes'                 # "do you have a bachelor's degree or higher?"
+institution: Larkmoor University (Westfield School of Statistics)
+school_or_university: Larkmoor University, Westfield School of Statistics (WSS)
+field_of_study: Statistics
+graduation_year: '2022'
+
+# --- standard declarations -------------------------------------------------------------------------------------------
+# Set each ONLY if it is true for you. If a key is missing, such questions are parked for you instead of answered.
+over_18: 'Yes'
+knows_no_insider: 'Yes'          # you know no director/employee at the companies you apply to (referral / relative questions -> No)
+no_compliance_flags: 'Yes'       # no criminal record, sanctions, conflicts, non-competes, PEP relatives, disciplinary history
+how_did_you_hear: Company careers page
+
+# --- skill years -----------------------------------------------------------------------------------------------------------
+# Skill-specific years ("how many years of Tableau?") are answered ONLY after you confirm this table (set skill_years_confirmed: true).
+skill_years_confirmed: true
+skill_years:
+  '\bpower ?bi\b|\bdax\b': '2'
+  '\btableau\b': '2'
+  '\bsql\b|t-?sql|pl/?sql|sql server|stored procedures?|postgres': '3'
+  '\bexcel\b|google sheets|spreadsheet|pivot': '4'
+  'google analytics|\bga4\b': '2'
+  'a/?b test|experiment': '2'
+  'marketing analytics|campaign|customer segment': '2'

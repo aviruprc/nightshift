@@ -1,0 +1,30 @@
+# Career sites learned from web searches 2026-11-11 (round 4) and verified through their public APIs (_scratch/add_web_found.py).
+companies:
+- name: Gleanwork
+  ats: greenhouse
+  tier: probed
+  slug: gleanwork
+- name: Fictiv
+  ats: greenhouse
+  tier: probed
+  slug: fictiv
+- name: India
+  ats: greenhouse
+  tier: probed
+  slug: india
+- name: Moonpay
+  ats: lever
+  tier: probed
+  slug: moonpay
+- name: Sensor Tower
+  ats: ashby
+  tier: probed
+  slug: sensor-tower
+- name: Altisource
+  ats: smartrecruiters
+  tier: probed
+  slug: Altisource
+- name: Intersoftkk
+  ats: smartrecruiters
+  tier: probed
+  slug: Intersoftkk1

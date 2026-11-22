@@ -1,0 +1,14 @@
+# Workday career sites probed 2026-11-10 (_scratch/probe_wd_more.py): each answered the public job search with Bengaluru/India jobs.
+companies:
+- name: NAB
+  ats: workday
+  tenant: nab
+  host: wd3
+  site: nab_Careers
+  tier: probed
+- name: GSK
+  ats: workday
+  tenant: gsk
+  host: wd5
+  site: gskCareers
+  tier: probed

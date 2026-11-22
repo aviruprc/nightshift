@@ -1,0 +1,102 @@
+{
+ "totalRecords": 2,
+ "response": [
+  {
+   "organizationUnitComplete": "LT-Larsen & Toubro Limited>HYDR-L&T Energy - Hydrocarbon>HY09-Group Business Assurance & Enablers>HYVT-GROUP INFORMATION TECHNOLOGY>HYVT-GROUP INFORMATION TECHNOLOGY>CL-HY09-Group Business Assurance & Enablers>60044837-GROUP INFORMATION TECHNOLOGY",
+   "jobPostedDate": "2026-10-26",
+   "locationHierarchyComplete": "India>Maharashtra>AMN Tower, Powai",
+   "jobDetailUrl": "https://larsentoubrocareers.peoplestrong.com/job/detail/LNT_SA_1905664",
+   "designation": "E2",
+   "designationID": 662388,
+   "hrOrgUnitID": 37883105,
+   "functionalAreaID": null,
+   "worksiteID": 625189,
+   "targetNationalityID": null,
+   "promoteEmirates": false,
+   "jurisdictionTypeID": null,
+   "authorityTypeID": null,
+   "jurisdictionType": null,
+   "authorityType": null,
+   "requisitionId": 1905664,
+   "jobTitle": "SOC Analyst",
+   "jobCode": "LNT/SA/1905664",
+   "openings": 1,
+   "organizationUnit": "HYDR-L&T Energy - Hydrocarbon",
+   "industry": null,
+   "functionalArea": null,
+   "role": null,
+   "jobClosureDate": "2027-04-24",
+   "locationHierarchy": "AMN Tower, Powai",
+   "expRange": "3-8 years",
+   "CTCRange": null,
+   "skills": {
+    "mustTohave": [],
+    "goodtohave": [
+     "Information Technology"
+    ]
+   },
+   "applied": false,
+   "programType": "Information Technology",
+   "roleType": "Information Technology",
+   "roleContributionType": null,
+   "employmentTenureType": null,
+   "minBudgetSalary": null,
+   "maxBudgetSalary": null,
+   "DepartmentID": null,
+   "TargetNationality": null
+  },
+  {
+   "organizationUnitComplete": "LT-Larsen & Toubro Limited>LEDT-Edutech>EDT01-Edutech>EDT01-EDUTECH>EDT01-EDUTECH>EDT01-EDUTECH>19100010-EduTech - Common>19100010-EduTech - Common",
+   "jobPostedDate": "2026-10-05",
+   "locationHierarchyComplete": "India>Tamil Nadu>Chennai Head Qrs.",
+   "jobDetailUrl": "https://larsentoubrocareers.peoplestrong.com/job/detail/LNT_BA-P_1879361",
+   "designation": "O2",
+   "designationID": 662355,
+   "hrOrgUnitID": 1890210,
+   "functionalAreaID": null,
+   "worksiteID": 625220,
+   "targetNationalityID": null,
+   "promoteEmirates": false,
+   "jurisdictionTypeID": null,
+   "authorityTypeID": null,
+   "jurisdictionType": null,
+   "authorityType": null,
+   "requisitionId": 1879361,
+   "jobTitle": "Business Analyst - PMO",
+   "jobCode": "LNT/BA-P/1879361",
+   "openings": 1,
+   "organizationUnit": "LEDT-Edutech",
+   "industry": "E-Learning EdTech",
+   "functionalArea": null,
+   "role": null,
+   "jobClosureDate": "2027-04-03",
+   "locationHierarchy": "Chennai Head Qrs.",
+   "expRange": "3-6 years",
+   "CTCRange": "600000.0000-1100000.0000",
+   "skills": {
+    "mustTohave": [],
+    "goodtohave": [
+     "Project Management",
+     "Business Analysis",
+     "Program Management",
+     "Business Intelligence"
+    ]
+   },
+   "applied": false,
+   "programType": "Project Management Group",
+   "roleType": "Project Coordinator",
+   "roleContributionType": null,
+   "employmentTenureType": "\tEngineer",
+   "minBudgetSalary": 0.0,
+   "maxBudgetSalary": 0.0,
+   "DepartmentID": null,
+   "TargetNationality": null
+  }
+ ],
+ "messageCode": {
+  "code": 200,
+  "messages": "success"
+ },
+ "campusHiring": 0,
+ "solrSearch": false
+}

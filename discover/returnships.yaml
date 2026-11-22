@@ -1,0 +1,177 @@
+# Returnship / career-restart programmes in India (checked 2026-11-03)
+# Every url below returned HTTP 200 via curl (or was read via WebFetch) at check time.
+# status is taken from the page where it states one; otherwise it is "unknown" or
+# marked "per search" when the status came from a search snippet rather than the page.
+# Programme terms change every cycle; verify on the official page before applying.
+returnships:
+  - name: Goldman Sachs Returnship (global programme)
+    url: https://www.goldmansachs.com/careers/programs-for-professionals/returnship
+    status: unknown
+    notes: "12-week paid programme for people out of full-time work 2+ years; roles across divisions incl. technology, risk, finance. Americas cohort Jan-Mar 2027 per page; EMEA Fall 2026 applications closed."
+    relevant_for_analyst: true
+
+  - name: Goldman Sachs India Returnship
+    url: https://www.goldmansachs.com/worldwide/india/careers/india-returnship.html
+    status: unknown
+    notes: "Bengaluru and Hyderabad; technology, operations, compliance, risk and finance roles per search snippet. A 2026 India engineering returnship role is also listed on higher.gs.com. 2024 cycle applications closed."
+    relevant_for_analyst: true
+
+  - name: Morgan Stanley Return to Work (India)
+    url: https://www.morganstanley.com/people-opportunities/return-to-work
+    status: open (per search; Bengaluru and Mumbai deadline 30 Nov 2026, not confirmed on page text)
+    notes: "About 16 weeks, for people out of work 2+ years; placed in business units matching experience; some India interns converted to full-time."
+    relevant_for_analyst: true
+
+  - name: JPMorgan Chase ReEntry Program
+    url: https://www.jpmorganchase.com/careers/explore-opportunities/programs/reentry-program
+    status: unknown
+    notes: "15-week paid fellowship with possible permanent offer; 2+ year career break; Associate/VP level at departure. Technology, Data & Product roles in Bengaluru, Hyderabad, Mumbai, Pune. 2026 cohort not confirmed; 2025 cycle applications closed 28 Feb."
+    relevant_for_analyst: true
+
+  - name: Citi Reactivate Your Career
+    url: https://jobs.citi.com/reactivateyourcareer
+    status: unknown
+    notes: "Career-restart route into Citi technology and operations roles, mainly Pune and Chennai. Break threshold varies by posting (about 18 months to 2 years). Postings seen were developer roles dated 2025."
+    relevant_for_analyst: false
+
+  - name: Deutsche Bank Returners (Resume your Resume), India
+    url: https://careers.db.com/professionals/returners/returners-in-india
+    status: unknown
+    notes: "12-week internship-style returnship for people on a break of 18+ months; Pune, Mumbai, Bangalore, Jaipur; participants considered for permanent roles."
+    relevant_for_analyst: true
+
+  - name: Wells Fargo Glide - Relaunch India
+    url: https://www.wellsfargojobs.com/en/inclusion/return-to-work-programs/glide-program-india/
+    status: unknown
+    notes: "Return-to-work programme for women returning to full-time careers, with upskilling in industry tools and technologies. Eligibility and intake dates not stated in the text read."
+    relevant_for_analyst: true
+
+  - name: Visa Returnship Program (Bengaluru)
+    url: https://www.visa.co.in/careers/visa-returnship-program.html
+    status: unknown
+    notes: "Six-month full-time programme with stipend, targeted at women in technology; career break of 18+ months and in-person Bengaluru work. Graduates moved into engineering and test roles. Current window not found."
+    relevant_for_analyst: false
+
+  - name: Dell Career ReStart
+    url: https://jobs.dell.com/en/restart
+    status: unknown
+    notes: "16-week paid returnship; 5+ years experience and 12+ months away. Postings found were mostly US, and no India Career ReStart openings were confirmed."
+    relevant_for_analyst: false
+
+  - name: Amazon rekindle (India)
+    url: https://amazon.jobs/content/en/career-programs/rekindle
+    status: unknown
+    notes: "Return-to-work programme for women in India with a career break of 12+ months; mentorship and on-the-job learning. Links to open roles; the page does not state an application window."
+    relevant_for_analyst: true
+
+  - name: AWS Returners
+    url: https://www.amazon.jobs/en/landing_pages/AWS-returners
+    status: unknown
+    notes: "Permanent full-time role with onboarding support for people returning after time away; 2+ years out of work per search snippet. Mainly cloud and technology roles."
+    relevant_for_analyst: false
+
+  - name: Cognizant Returnship (India listings)
+    url: https://careers.cognizant.com/india-en/
+    status: "open (per search: listings dated Apr-Sep 2026)"
+    notes: "Several India returnship postings (data engineering, data science, Big Data, data integration, Java and Copilot roles) at Chennai, Pune, Bengaluru, Hyderabad and Bhubaneswar. Search for returnship on the careers site."
+    relevant_for_analyst: true
+
+  - name: Mahindra SOAR (Seamless Opportunity for Amazing Returnships)
+    url: https://www.mahindra.com/news-room/press-release/mahindra-leads-with-first-of-its-kind-returnship-for-women-in-mainstream-roles
+    status: unknown
+    notes: "Launched January 2025 for women returning to mainstream roles; offers full-time roles, training and mentorship. Current intake not confirmed."
+    relevant_for_analyst: true
+
+  - name: HSBC Power2Her Returnship (India)
+    url: https://apply.careers.hsbc.com/job/Mumbai-Power2Her-Associate-MH-400001/1362477457/
+    status: unknown
+    notes: "Six-month returnship for women; 5+ years experience and a break of 6+ months (per search snippets). A Mumbai Associate posting from Feb 2026 was seen; a Aug 2025 listing is closed."
+    relevant_for_analyst: true
+
+  - name: SAP Returnship (India)
+    url: https://jobs.sap.com/go/Returnship/9268401/
+    status: unknown
+    notes: "Full-time paid returnship for people with 1+ year career break for maternity or caregiving; roles in development, services and consulting; Bangalore or Gurgaon. Openings are allocated to the programme."
+    relevant_for_analyst: false
+
+  - name: TeamLease Digital POWER
+    url: https://www.teamleasedigital.com/
+    status: unknown
+    notes: "Returnship launched 30 Mar 2026 for women on career breaks, aimed at AI and digital roles (per news coverage). The official programme page was not located; the URL is the company home page."
+    relevant_for_analyst: true
+
+  - name: JobsForHer (Returnee Drives, HerShakti)
+    url: https://www.jobsforher.com/
+    status: unknown
+    notes: "Platform connecting women on career breaks with employers; runs Returnee Drives and HerShakti (Karnataka upskilling with tech partners). Current drives not confirmed."
+    relevant_for_analyst: true
+
+  - name: HerKey
+    url: https://herkey.com/
+    status: unknown
+    notes: "Career re-entry platform for women returning after breaks; lists returnship and re-entry roles from partner employers. Specific open cohorts not confirmed."
+    relevant_for_analyst: true
+
+  - name: Sheroes
+    url: https://sheroes.com/
+    status: unknown
+    notes: "Women's career community with career resources and mentors; used by returners to connect with employers. Not a formal returnship programme."
+    relevant_for_analyst: true
+
+  - name: iRelaunch
+    url: https://www.irelaunch.com/
+    status: unknown
+    notes: "Global returnship platform. No India-specific programme or listing was confirmed during this check."
+    relevant_for_analyst: true
+
+  # ---- fresh web search 2026-11-11 (WebSearch + the employers' own pages / live feeds where reachable) ----
+  - name: DBS Bank Return to Work Fellowship 2026 (Bangalore, Mumbai, Delhi/Gurgaon)
+    url: https://builtindelhi.in/job/return-work-fellowship-2026/9670770
+    status: unknown
+    notes: "24-week full-time fixed-term fellowship for women on a career break of 6+ months, mid-to-senior professionals, strategic assignments across the bank. The listing is a job-board repost ('3 months ago') with NO apply link, deadline or start date: find the application on DBS India's careers site before anything else."
+    relevant_for_analyst: true
+  - name: JPMorgan Chase ReEntry Program 2026 (Bengaluru)
+    url: https://www.jpmorganchase.com/careers/explore-opportunities/programs/reentry
+    status: closed
+    notes: "2026 cohort ran 20 Apr - 31 Jul 2026 (CCB Risk Architecture, Strategic Analytics, Data Management, Wholesale Credit, Controls). JPMorgan's own live job feed (jpmc.fa.oraclecloud.com, queried 2026-11-11) lists NO ReEntry programme roles now; re-check in early 2027."
+    relevant_for_analyst: true
+  - name: ReBIT (RBI-owned) Women Career Relaunch Program
+    url: https://getmereferred.com/job-listing/back-to-work-rebit-women-career-relaunch-program-rebit-bengaluru-mumbai-2-to-10-years-experience-08385ac4-d2cb-4ac4-89d4-ebdb51caf759
+    status: unknown
+    notes: "Posted 7 Mar 2026 (date format unclear), 2-10 years, 5-year fixed term. Roles: Java/Angular developer and testers (Bangalore/Navi Mumbai), Business Analyst HR Technology (Mumbai), Cyber Security Risk Analyst 2+ yrs (Navi Mumbai), Auditor 5+ yrs (Navi Mumbai). Only developer/testing roles are in Bangalore; no official ReBIT apply link on the page."
+    relevant_for_analyst: false
+  - name: Goldman Sachs 2026 India Returnship (Engineering, PWM Digital)
+    url: https://higher.gs.com/roles/167057
+    status: unknown
+    notes: "Posted 7 Apr 2026, Bengaluru; software / UI-UX developer roles, not analytics."
+    relevant_for_analyst: false
+  - name: insightsoftware Returnship (Bengaluru)
+    url: https://careers.ta.com/companies/insightsoftware/jobs/59636158-returnship-at-insightsoftware
+    status: closed
+    notes: "Page says 'no longer accepting applications' (read 2026-11-11)."
+    relevant_for_analyst: true
+  - name: Standard Chartered SheReturns (Bangalore GBS)
+    url: https://www.hrkatha.com/news/standard-chartered-bank-launches-shereturns-programme-for-women-on-career-break/
+    status: unknown
+    notes: "The only source is a September 2017 article (IT and banking operations roles). No current application window was found: treat as historic until the bank's careers site shows it."
+    relevant_for_analyst: false
+  - name: Godrej Gateway returnship (Godrej DEI Lab)
+    url: https://mediabrief.com/godrej-dei-lab-launches-gateway-returnship-programme-for-women/
+    status: unknown
+    notes: "Announced about Oct 2026 (India Included on Campus 2026); a structured pathway back for experienced women. Roles and application route not stated in the coverage found."
+    relevant_for_analyst: true
+  - name: TeamLease Digital returnship (launched Mar 2026)
+    url: https://www.autocarpro.in/news/teamlease-digital-launches-returnship-programme-amid-indias-ai-talent-shortage-131865
+    status: unknown
+    notes: "Aimed at AI / technology talent among women on career breaks; location and dates not confirmed."
+    relevant_for_analyst: false
+  - name: Thoughtworks returnship (Bangalore)
+    url: https://job-boards.greenhouse.io/thoughtworksreferral/jobs/6802072
+    status: unknown
+    notes: "5-week programme for women/gender-diverse DEVELOPERS on a 1-5 year break: not an analyst route."
+    relevant_for_analyst: false
+  - name: Infoblox Returnship India (via Women Back to Work)
+    url: https://womenbacktowork.org/job-seeker/current-returnships/infoblox-returnship-india/
+    status: unknown
+    notes: "Technical support engineering roles: not an analyst route."
+    relevant_for_analyst: false

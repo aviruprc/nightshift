@@ -1,0 +1,43 @@
+# Live-verified (2026-11-03) via discover/ats_misc.py fetchers; each entry returned >=1 Bengaluru job.
+# bengaluru_jobs = count at verification time (informational).
+companies:
+  - {name: HSBC, ats: eightfold, host: portal.careers.hsbc.com, domain: hsbc.com, queries: [analyst, data, risk, finance, reporting], tier: bank, bengaluru_jobs: 37}
+  - {name: Standard Chartered, ats: successfactors, host: jobs.standardchartered.com, tier: bank, bengaluru_jobs: 83}
+  - {name: Moody's, ats: talentbrew, host: careers.moodys.com, tier: data-ratings, bengaluru_jobs: 18}
+  - {name: Barclays, ats: talentbrew, host: search.jobs.barclays, prefix: '', queries: [analyst, data, risk], tier: bank, bengaluru_jobs: 29}
+  - {name: Wells Fargo, ats: jsonld_sitemap, sitemap: 'https://www.wellsfargojobs.com/sitemap.xml', url_re: '/en/jobs/r-[0-9]+', slug_title_re: analy|data|risk|report|financ|model|compliance, max_pages: 600, tier: bank, bengaluru_jobs: 8}
+  - {name: JPMorgan Chase, ats: oracle_hcm, host: jpmc.fa.oraclecloud.com, site: CX_1001, tier: bank, bengaluru_jobs: 127}
+  - {name: American Express, ats: oracle_hcm, host: egug.fa.us2.oraclecloud.com, site: CX_1, tier: payments, bengaluru_jobs: 10}
+  - {name: KPMG India, ats: oracle_hcm, host: ejgk.fa.em2.oraclecloud.com, site: CX_3001, tier: consulting, bengaluru_jobs: 9}
+  - {name: EXL, ats: oracle_hcm, host: fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com, site: CX_2, max_jobs: 1500, tier: analytics-bpo, bengaluru_jobs: 74}
+  - {name: Goldman Sachs, ats: goldman, tier: bank, bengaluru_jobs: 73}
+  - {name: Swiss Re, ats: successfactors, host: careers.swissre.com, tier: insurance, bengaluru_jobs: 17}
+  - {name: State Street, ats: phenom, host: careers.statestreet.com, tier: asset-manager, bengaluru_jobs: 97}
+  - {name: Marsh McLennan, ats: phenom, host: careers.marsh.com, tier: insurance, bengaluru_jobs: 8}
+  - {name: Wipro, ats: successfactors, host: careers.wipro.com, tier: it-services, bengaluru_jobs: 826}
+  - {name: HCLTech, ats: successfactors, mode: v1, host: careers.hcltech.com, queries: [analyst], max_pages: 300, tier: it-services, bengaluru_jobs: 242}
+  - {name: Cisco, ats: phenom, host: careers.cisco.com, tier: mnc, bengaluru_jobs: 236}
+  - {name: Philips, ats: phenom, host: www.careers.philips.com, tier: mnc, bengaluru_jobs: 24}
+  - {name: GE Aerospace, ats: phenom, host: careers.geaerospace.com, tier: mnc, bengaluru_jobs: 10}
+  - {name: Adobe, ats: phenom, host: careers.adobe.com, tier: mnc, bengaluru_jobs: 25}
+  - {name: Siemens Healthineers, ats: phenom, host: careers.siemens-healthineers.com, tier: mnc, bengaluru_jobs: 60}
+  - {name: ABB, ats: phenom, host: careers.abb, tier: mnc, bengaluru_jobs: 119}
+  - {name: Danaher, ats: phenom, host: jobs.danaher.com, tier: mnc, bengaluru_jobs: 65}
+  - {name: HPE, ats: phenom, host: careers.hpe.com, tier: mnc, bengaluru_jobs: 209}
+  - {name: Thermo Fisher, ats: phenom, host: jobs.thermofisher.com, tier: mnc, bengaluru_jobs: 90}
+  - {name: Abbott, ats: phenom, host: www.jobs.abbott, tier: mnc, bengaluru_jobs: 3}
+  - {name: Roche, ats: phenom, host: careers.roche.com, tier: mnc, bengaluru_jobs: 2}
+  - {name: Cargill, ats: talentbrew, host: careers.cargill.com, queries: [analyst], tier: mnc, bengaluru_jobs: 12}
+  - {name: Intuit, ats: talentbrew, host: jobs.intuit.com, prefix: '', queries: [analyst, data, finance], tier: mnc, bengaluru_jobs: 24}
+  - {name: Qualcomm, ats: eightfold, host: careers.qualcomm.com, domain: qualcomm.com, queries: [analyst, data, finance, risk], tier: mnc, bengaluru_jobs: 111}
+  - {name: Ericsson, ats: eightfold, host: jobs.ericsson.com, domain: ericsson.com, queries: [analyst, data, finance, risk], tier: mnc, bengaluru_jobs: 13}
+  - {name: Microsoft, ats: eightfold, host: apply.careers.microsoft.com, domain: microsoft.com, queries: [data analyst, business analyst, finance analyst, analyst], tier: mnc, bengaluru_jobs: 3}
+  - {name: Nvidia, ats: eightfold, host: nvidia.eightfold.ai, domain: nvidia.com, queries: [analyst, data, finance, risk], tier: mnc, bengaluru_jobs: 46}
+  - {name: Bayer, ats: eightfold, host: talent.bayer.com, domain: bayer.com, queries: [analyst, data, finance, risk], tier: mnc, bengaluru_jobs: 11}
+  - {name: Micron, ats: eightfold, host: micron.eightfold.ai, domain: micron.com, queries: [analyst, data, finance, risk], tier: mnc, bengaluru_jobs: 25}
+  - {name: Honeywell, ats: oracle_hcm, host: ibqbjb.fa.ocs.oraclecloud.com, site: Honeywell, tier: mnc, bengaluru_jobs: 113}
+  - {name: Texas Instruments, ats: oracle_hcm, host: edbz.fa.us2.oraclecloud.com, site: CX, tier: mnc, bengaluru_jobs: 50}
+  - {name: Emerson, ats: oracle_hcm, host: hdjq.fa.us2.oraclecloud.com, site: CX_1, tier: mnc, bengaluru_jobs: 6}
+  - {name: Amazon, ats: amazon, tier: mnc, bengaluru_jobs: 403}
+  - {name: Nutanix, ats: jobvite, slug: nutanix, tier: midsize, bengaluru_jobs: 14}
+  - {name: Ness Digital, ats: jobvite, slug: ness, tier: midsize, bengaluru_jobs: 10}

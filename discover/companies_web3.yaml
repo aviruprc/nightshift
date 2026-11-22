@@ -1,0 +1,14 @@
+# Career sites found by web search for employers seen on job boards but missing from the registry (2026-11-11); each verified through the live feed.
+companies:
+  - {name: Alstom, ats: successfactors, host: jobsearch.alstom.com, tier: mnc}
+  - {name: ExxonMobil, ats: successfactors, host: jobs.exxonmobil.com, tier: mnc}
+  - {name: ANZ, ats: successfactors, host: careers.anz.com, tier: bank}
+  - {name: LSEG, ats: workday, tenant: lseg, host: wd3, site: Careers, tier: fintech}
+  - {name: Payoneer, ats: greenhouse, slug: payoneer, tier: fintech}
+  - {name: IDFC FIRST Bank, ats: phenom, host: careers.idfcfirst.bank.in, tier: bank}
+  - {name: Precision Medicine Group, ats: greenhouse, slug: precisionmedicinegroup, tier: pharma}
+  - {name: Empower, ats: sitemap, host: jobs.empower.com, job_re: "/job/", tier: fintech}
+  - {name: Cushman & Wakefield, ats: sitemap, host: careers.cushmanwakefield.com, job_re: "/jobs/", max_pages: 300, tier: mnc}
+  - {name: Kroll, ats: sitemap, host: careers.kroll.com, job_re: "/en/job/", max_pages: 350, tier: consulting}
+  - {name: TE Connectivity, ats: sitemap, host: careers.te.com, job_re: "/job/", max_pages: 400, tier: mnc}
+  - {name: Kenvue, ats: sitemap, host: jobs.kenvue.com, job_re: "/job/", max_pages: 400, tier: mnc}

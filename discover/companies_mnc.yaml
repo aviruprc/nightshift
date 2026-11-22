@@ -1,0 +1,36 @@
+# Verified career-site registry, MNC / consulting / analytics / big-tech cluster
+# Each entry in `companies` returned valid job JSON from its ATS API during verification (2026-11-03).
+# Tiger Analytics, Deloitte, EY, Capgemini, Cognizant, Wells Fargo, Gartner, Walmart, Lowe's, Dell,
+# Siemens, Schneider, GE, BP, Bosch, Pfizer, Mercedes-Benz R&D, Mu Sigma, ZS, LatentView, Tredence,
+# Myntra, Flipkart, Swiggy, Microsoft, Amazon, Oracle, SAP are NOT listed: no verified ATS endpoint found.
+
+companies:
+  - {name: Adobe, ats: workday, tenant: adobe, host: wd5, site: external_experienced, tier: bigtech}
+  - {name: Fractal, ats: workday, tenant: fractal, host: wd1, site: Careers, tier: analytics}
+  - {name: Genpact, ats: workday, tenant: genpact, host: wd108, site: External_Careers, tier: consulting}
+  - {name: HP, ats: workday, tenant: hp, host: wd5, site: ExternalCareerSite, tier: bigtech}
+  - {name: Intel, ats: workday, tenant: intel, host: wd1, site: External, tier: bigtech}
+  - {name: Novartis, ats: workday, tenant: novartis, host: wd3, site: Novartis_Careers, tier: mnc}
+  - {name: Procter & Gamble, ats: workday, tenant: pg, host: wd5, site: "1000", tier: mnc}
+  - {name: PwC, ats: workday, tenant: pwc, host: wd3, site: Global_Experienced_Careers, tier: consulting}
+  - {name: Salesforce, ats: workday, tenant: salesforce, host: wd12, site: External_Career_Site, tier: bigtech}
+  - {name: Target, ats: workday, tenant: target, host: wd5, site: TargetCareers, tier: mnc}
+  - {name: Nielsen, ats: smartrecruiters, slug: TheNielsenCompany, tier: analytics}
+  - {name: NielsenIQ, ats: smartrecruiters, slug: NielsenIQ, tier: analytics}
+  - {name: Continental, ats: smartrecruiters, slug: Continental, tier: mnc}
+  - {name: Thoughtworks, ats: greenhouse, slug: thoughtworks, tier: consulting}
+  - {name: TCS, ats: greenhouse, slug: tcs, tier: mnc}
+  - {name: Razorpay, ats: greenhouse, slug: razorpaysoftwareprivatelimited, tier: fintech}
+  - {name: Eternal (Zomato), ats: lever, slug: eternal, tier: consumer}
+  - {name: Meesho, ats: lever, slug: meesho, tier: consumer}
+  - {name: Cred, ats: lever, slug: cred, tier: fintech}
+
+unsupported:
+  - {name: Honeywell, ats: oracle_hcm, careers_url: "https://www.honeywell.com/us/en/careers"}
+  - {name: KPMG, ats: oracle_hcm, careers_url: "https://www.kpmg.com/in/en/home/careers.html"}
+  - {name: EXL, ats: oracle_hcm, careers_url: "https://www.exlservice.com/careers"}
+  - {name: HCLTech, ats: successfactors, careers_url: "https://www.hcltech.com/careers"}
+  - {name: Wipro, ats: successfactors, careers_url: "https://careers.wipro.com/"}
+  - {name: Philips, ats: phenom, careers_url: "https://www.careers.philips.com/"}
+  - {name: Cisco, ats: phenom, careers_url: "https://jobs.cisco.com/"}
+  - {name: Unilever, ats: in_house, careers_url: "https://careers.unilever.com/"}

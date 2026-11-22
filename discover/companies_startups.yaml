@@ -1,0 +1,277 @@
+# Bengaluru-based or Bengaluru-hiring product companies (SaaS, fintech, edtech, healthtech, e-commerce, data/analytics).
+# companies: each entry was confirmed by a live curl to the ATS API returning job data on 2026-11-03.
+#   Greenhouse: https://boards-api.greenhouse.io/v1/boards/{slug}/jobs
+#   Lever:      https://api.lever.co/v0/postings/{slug}?mode=json
+#   Ashby:      https://api.ashbyhq.com/posting-api/job-board/{slug}
+#   SmartRecruiters: https://api.smartrecruiters.com/v1/companies/{slug}/postings?limit=1  (totalFound > 0)
+#   Workday:    POST https://{host}/wday/cxs/{tenant}/{site}/jobs
+# unsupported: careers page responded HTTP 200, but no supported ATS board was found in its HTML and no API
+#   was verified. The ats value is "custom" for these. Several sites render jobs with JavaScript, so a real
+#   board may exist that this check did not detect.
+# tier: startup = venture-funded or early/growth stage; midsize = established or listed company.
+companies:
+  - name: Razorpay
+    ats: greenhouse
+    slug: razorpaysoftwareprivatelimited
+    tier: startup
+  - name: Groww
+    ats: greenhouse
+    slug: groww
+    tier: startup
+  - name: Druva
+    ats: greenhouse
+    slug: druva
+    tier: midsize
+  - name: Observe.AI
+    ats: greenhouse
+    slug: observeai
+    tier: startup
+  - name: Hevo Data
+    ats: lever
+    slug: hevodata
+    tier: startup
+  - name: Paytm
+    ats: lever
+    slug: paytm
+    tier: midsize
+  - name: CRED
+    ats: lever
+    slug: cred
+    tier: startup
+  - name: Meesho
+    ats: lever
+    slug: meesho
+    tier: startup
+  - name: Porter
+    ats: lever
+    slug: porter
+    tier: startup
+  - name: Mindtickle
+    ats: lever
+    slug: mindtickle
+    tier: startup
+  - name: Atlan
+    ats: ashby
+    slug: atlan
+    tier: startup
+  - name: Navi
+    ats: ashby
+    slug: navi
+    tier: startup
+  - name: Sarvam AI
+    ats: ashby
+    slug: sarvam
+    tier: startup
+  - name: Freshworks
+    ats: smartrecruiters
+    slug: Freshworks
+    tier: midsize
+  - name: Lendingkart
+    ats: smartrecruiters
+    slug: lendingkart
+    tier: startup
+  - name: Whatfix
+    ats: smartrecruiters
+    slug: whatfix
+    tier: startup
+  - name: Swiggy
+    ats: smartrecruiters
+    slug: swiggy
+    tier: midsize
+  - name: Turtlemint
+    ats: smartrecruiters
+    slug: turtlemint
+    tier: startup
+  - name: CARS24
+    ats: smartrecruiters
+    slug: cars24
+    tier: startup
+  - name: Unacademy
+    ats: smartrecruiters
+    slug: unacademy
+    tier: startup
+  - name: Upstox
+    ats: smartrecruiters
+    slug: upstox
+    tier: startup
+  - name: BrowserStack
+    ats: workday
+    tenant: browserstack
+    host: browserstack.wd3.myworkdayjobs.com
+    site: External
+    tier: midsize
+  - name: Uniphore
+    ats: workday
+    tenant: uniphore
+    host: uniphore.wd503.myworkdayjobs.com
+    site: Uniphore
+    tier: startup
+  - name: Sprinklr
+    ats: workday
+    tenant: sprinklr
+    host: sprinklr.wd1.myworkdayjobs.com
+    site: careers
+    tier: midsize
+  - name: Fractal Analytics
+    ats: workday
+    tenant: fractal
+    host: fractal.wd1.myworkdayjobs.com
+    site: Careers
+    tier: midsize
+
+unsupported:
+  - name: Zerodha
+    ats: custom
+    careers_url: https://zerodha.com/careers/
+  - name: PhonePe
+    ats: custom
+    careers_url: https://www.phonepe.com/careers/
+  - name: Postman
+    ats: custom
+    careers_url: https://www.postman.com/company/careers/
+  - name: Zoho
+    ats: custom
+    careers_url: https://www.zoho.com/careers/
+  - name: Chargebee
+    ats: custom
+    careers_url: https://www.chargebee.com/careers/
+  - name: Innovaccer
+    ats: custom
+    careers_url: https://innovaccer.com/careers
+  - name: Ola
+    ats: custom
+    careers_url: https://www.olacabs.com/careers
+  - name: Licious
+    ats: custom
+    careers_url: https://www.licious.in/careers
+  - name: Lenskart
+    ats: custom
+    careers_url: https://www.lenskart.com/careers
+  - name: Delhivery
+    ats: custom
+    careers_url: https://www.delhivery.com/careers
+  - name: Spinny
+    ats: custom
+    careers_url: https://www.spinny.com/careers
+  - name: Vedantu
+    ats: custom
+    careers_url: https://www.vedantu.com/careers
+  - name: upGrad
+    ats: custom
+    careers_url: https://www.upgrad.com/careers
+  - name: Byjus
+    ats: custom
+    careers_url: https://byjus.com/careers
+  - name: Pine Labs
+    ats: custom
+    careers_url: https://www.pinelabs.com/careers
+  - name: Khatabook
+    ats: custom
+    careers_url: https://khatabook.com/careers
+  - name: Icertis
+    ats: custom
+    careers_url: https://www.icertis.com/company/careers/
+  - name: Hasura
+    ats: custom
+    careers_url: https://hasura.io/careers
+  - name: Yellow.ai
+    ats: custom
+    careers_url: https://yellow.ai/careers
+  - name: MoEngage
+    ats: custom
+    careers_url: https://www.moengage.com/careers
+  - name: CleverTap
+    ats: custom
+    careers_url: https://clevertap.com/careers
+  - name: Gramener
+    ats: custom
+    careers_url: https://www.gramener.com/careers
+  - name: Angel One
+    ats: custom
+    careers_url: https://www.angelone.in/careers
+  - name: Acko
+    ats: custom
+    careers_url: https://www.acko.com/careers
+  - name: PharmEasy
+    ats: custom
+    careers_url: https://pharmeasy.in/careers
+  - name: Scaler
+    ats: custom
+    careers_url: https://www.scaler.com/careers
+  - name: Flipkart
+    ats: custom
+    careers_url: https://www.flipkartcareers.com/
+  - name: LeadSquared
+    ats: custom
+    careers_url: https://www.leadsquared.com/careers/
+  - name: Perfios
+    ats: custom
+    careers_url: https://www.perfios.com/careers
+  - name: Stashfin
+    ats: custom
+    careers_url: https://www.stashfin.com/careers
+  - name: PolicyBazaar
+    ats: custom
+    careers_url: https://www.policybazaar.com/careers/
+  - name: Haptik
+    ats: custom
+    careers_url: https://www.haptik.ai/careers
+  - name: Eightfold AI
+    ats: custom
+    careers_url: https://eightfold.ai/careers/
+  - name: OYO
+    ats: custom
+    careers_url: https://www.oyorooms.com/careers/
+  - name: Pocketful
+    ats: custom
+    careers_url: https://pocketful.in/careers
+  - name: ShareChat
+    ats: custom
+    careers_url: https://sharechat.com/careers
+  - name: Exotel
+    ats: custom
+    careers_url: https://exotel.com/careers/
+  - name: Gupshup
+    ats: custom
+    careers_url: https://www.gupshup.io/careers
+  - name: Qualitas
+    ats: custom
+    careers_url: https://www.qualitas.co/careers
+  - name: Mintifi
+    ats: custom
+    careers_url: https://www.mintifi.com/careers
+  - name: cult.fit
+    ats: custom
+    careers_url: https://www.cult.fit/careers
+  - name: Jupiter
+    ats: custom
+    careers_url: https://jupiter.money/careers
+  - name: Slice
+    ats: custom
+    careers_url: https://www.sliceit.com/careers
+  - name: KreditBee
+    ats: custom
+    careers_url: https://kreditbee.in/careers
+  - name: Zeta
+    ats: custom
+    careers_url: https://www.zeta.tech/careers
+  - name: Juspay
+    ats: custom
+    careers_url: https://juspay.in/careers
+  - name: Setu
+    ats: custom
+    careers_url: https://setu.co/careers
+  - name: Cashfree
+    ats: custom
+    careers_url: https://www.cashfree.com/careers/
+  - name: BharatPe
+    ats: custom
+    careers_url: https://bharatpe.com/careers
+  - name: Dream11 (DreamSports)
+    ats: custom
+    careers_url: https://www.dreamsports.group/careers
+    notes: "A lever slug (dreamsports) was linked on the careers page but returned 404 via the API."
+  - name: Fi Money
+    ats: lever
+    careers_url: https://fi.money/careers
+    notes: "Lever slug epifi returns HTTP 200 with zero postings at check time, so it is not counted as verified."

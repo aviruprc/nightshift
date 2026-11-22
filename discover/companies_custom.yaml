@@ -1,0 +1,36 @@
+# Custom-backend employers. `key` indexes ats_custom.CUSTOM_FETCHERS. Verified live 2026-11-03 (Bengaluru/India jobs returned).
+companies:
+  - {name: Amazon, ats: custom, key: amazon, tier: bigtech}               # amazon.jobs search.json; 818 BLR jobs, full descriptions
+  - {name: Goldman Sachs, ats: custom, key: goldman, tier: bank}          # api-higher.gs.com GraphQL; 74 BLR roles (client-side city filter)
+  - {name: Google, ats: custom, key: google, tier: bigtech}               # careers HTML AF_initDataCallback; 169 BLR jobs
+  - {name: Microsoft, ats: custom, key: microsoft, tier: bigtech}         # apply.careers.microsoft.com PCSX (Eightfold); 24 BLR jobs, rate-limited (429)
+  - {name: American Express, ats: custom, key: amex, tier: payments}      # Oracle HCM egug.fa.us2 CX_1; 50 India jobs
+  - {name: Kotak Mahindra Bank, ats: custom, key: kotak, tier: bank}      # Oracle HCM hcbt.fa.em2 CX_4001; only 3 public jobs (1 BLR)
+  - {name: Axis Bank, ats: custom, key: axis, tier: bank}                 # RippleHire candidatejobsearch; ~250 BLR roles (mostly branch/ops)
+  - {name: Dell, ats: custom, key: dell, tier: mnc}                       # Oracle HCM enterpriseplatform.dell.com CX_1001; 30 India jobs
+
+browser_only:
+  - {name: ICICI Bank, careers_url: "https://www.icicicareers.com/CareerApplicant/Career/Home", why: "API at /CareerApplicantApi/Career/* exists but request and response bodies are client-side encrypted (AES blobs)"}
+  - {name: Federal Bank, careers_url: "https://www.federalbank.co.in/careers", why: "Radware bot-manager + hCaptcha block on automated load"}
+  - {name: HDFC Bank, careers_url: "https://www.hdfc.bank.in/careers", why: "Careers page blocked by CloudFront for headless; job-portal ATS not identified"}
+  - {name: Yes Bank, careers_url: "https://www.yesbank.in/careers", why: "ERR_HTTP2_PROTOCOL_ERROR for headless Chrome; ATS not identified"}
+  - {name: RBL Bank, careers_url: "https://rblcareers.peoplestrong.com/", why: "PeopleStrong candidate portal (Angular SPA); job-list API not captured without an interactive search"}
+  - {name: Bajaj Finserv, careers_url: "https://www.bajajfinserv.in/careers", why: "No job JSON on the careers page; jobs appear to live on a separate portal"}
+  - {name: IDFC First Bank, careers_url: "https://careers.idfcfirst.bank.in/in/en/", why: "Phenom People site (covered by Phenom family)"}
+  - {name: TCS iON / iBegin, careers_url: "https://ibegin.tcsapps.com/candidate/", why: "POST /candidate/next/api/en-IN/search/jobs returns 403 without browser session/token"}
+  - {name: Cognizant, careers_url: "https://careers.cognizant.com/global-en/jobs/", why: "Cloudflare challenge ('Just a moment')"}
+  - {name: Schneider Electric, careers_url: "https://careers.se.com/jobs", why: "Access Denied (bot protection) for headless Chrome"}
+  - {name: ZS, careers_url: "https://jobs.zs.com/", why: "403 Forbidden for automated load"}
+  - {name: Walmart, careers_url: "https://careers.walmart.com/results?q=data%20analyst&location=Bengaluru", why: "Own GraphQL at /api/graphql (1MB responses, persisted query); not replicated; use browser"}
+  - {name: Lowe's, careers_url: "https://talent.lowes.com/us/en/search-results", why: "Phenom People widgets API (covered by Phenom family); mostly US roles, Bengaluru hub small"}
+  - {name: Deloitte, careers_url: "https://apply.deloitte.com/en_IN/careers/SearchJobs", why: "Server-rendered search (no JSON XHR); redirects to en_US; needs HTML scraping or browser"}
+  - {name: EY, careers_url: "https://careers.ey.com/ey/search/?q=data%20analyst&locationsearch=Bengaluru", why: "SuccessFactors-style career site; only facet JSON seen, results server-rendered"}
+  - {name: Siemens, careers_url: "https://jobs.siemens.com/careers", why: "Redirects to externaljobs marketplace; no job JSON captured"}
+  - {name: Standard Chartered, careers_url: "https://www.sc.com/en/global-careers/experienced-hire/", why: "Redirects to a hire page; no job JSON captured (SC uses Workday/Avature-style portal; not identified)"}
+  - {name: Jio, careers_url: "https://careers.jio.com/", why: "No job JSON captured on landing page; needs interactive search"}
+  - {name: Myntra, careers_url: "https://careers.myntra.com/", why: "No job JSON captured on landing page"}
+  - {name: Tredence, careers_url: "https://www.tredence.com/careers", why: "No public job JSON found (chat bot lambdas only)"}
+  - {name: LatentView, careers_url: "https://www.latentview.com/careers/", why: "Careers URL 404; not located"}
+  - {name: Mu Sigma, careers_url: "https://www.mu-sigma.com/career/", why: "No job JSON captured"}
+  - {name: KPMG, careers_url: "https://kpmg.com/in/en/careers.html", why: "No job JSON captured; portal not identified"}
+  - {name: Capgemini, careers_url: "https://www.capgemini.com/in-en/careers/join-capgemini/job-search/", why: "No XHR JSON captured in 9s; needs longer interactive session"}

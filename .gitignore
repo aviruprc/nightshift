@@ -1,0 +1,54 @@
+# ---- personal data: NEVER commit ----
+# Everything under data/ is yours (database, answers, accounts, browser profiles, logs, screenshots, CVs, history).
+# Only the *.example.* templates are tracked. Note: "data/*" (not "data/") so the templates below can be re-included.
+data/*
+!data/answers.example.yaml
+!data/settings.example.json
+!data/llm_providers.example.json
+
+cv/facts.yaml
+cv/*.pdf
+*.pdf
+!tests/fixtures/profile/*.pdf
+
+# databases, logs, browser profiles (anywhere)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.log
+*.err
+*.jsonl
+browser_profile*/
+resumes/
+screenshots/
+failures/
+history/
+backups/
+tracker.xlsx
+tracker.csv
+
+# secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# your own scratch work
+_scratch/*
+!_scratch/funnel.py
+!_scratch/one.py
+
+# python / tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+*.bak
+*.bak-*

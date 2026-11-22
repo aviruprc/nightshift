@@ -1,0 +1,43 @@
+# Verified career-site registry: banks, NBFCs, insurers, payments, financial-services GCCs (Bengaluru-relevant)
+# Every entry in `companies` was checked live with curl; the ATS returned job JSON on the date of verification (2026-11-03).
+# `unsupported` lists companies whose careers site uses a custom or non-adapter ATS (name + careers_url only).
+
+companies:
+  # --- Workday (verified: total > 0) ---
+  - {name: Morgan Stanley, ats: workday, tenant: ms, host: wd5, site: External, tier: bank}
+  - {name: Citi, ats: workday, tenant: citi, host: wd5, site: "2", tier: bank}
+  - {name: Northern Trust, ats: workday, tenant: ntrs, host: wd1, site: northerntrust, tier: bank}
+  - {name: Lloyds Banking Group, ats: workday, tenant: lbg, host: wd3, site: lbg_Careers, tier: bank}
+  - {name: Santander, ats: workday, tenant: santander, host: wd3, site: SantanderCareers, tier: bank}
+  - {name: Deutsche Bank, ats: workday, tenant: db, host: wd3, site: DBWebsite, tier: bank}
+  - {name: Capital One, ats: workday, tenant: capitalone, host: wd12, site: Capital_One, tier: bank}
+  - {name: BlackRock, ats: workday, tenant: blackrock, host: wd1, site: BlackRock_Professional, tier: asset-manager}
+  - {name: Fidelity, ats: workday, tenant: fmr, host: wd1, site: FidelityCareers, tier: asset-manager}
+  - {name: PayPal, ats: workday, tenant: paypal, host: wd1, site: jobs, tier: payments}
+  - {name: Mastercard, ats: workday, tenant: mastercard, host: wd1, site: CorporateCareers, tier: payments}
+  - {name: FIS, ats: workday, tenant: fis, host: wd5, site: SearchJobs, tier: payments}
+  - {name: Fiserv, ats: workday, tenant: fiserv, host: wd5, site: EXT, tier: payments}
+  - {name: Equifax, ats: workday, tenant: equifax, host: wd5, site: External, tier: bureau}
+  - {name: TransUnion, ats: workday, tenant: transunion, host: wd5, site: TransUnion, tier: bureau}
+  - {name: S&P Global, ats: workday, tenant: spgi, host: wd5, site: SPGI_Careers, tier: data-ratings}
+  - {name: Broadridge, ats: workday, tenant: broadridge, host: wd5, site: Careers, tier: fs-services}
+  - {name: LSEG, ats: workday, tenant: lseg, host: wd3, site: Careers, tier: fs-data}
+
+  # --- Greenhouse (verified: jobs array) ---
+  - {name: Razorpay, ats: greenhouse, slug: razorpaysoftwareprivatelimited, tier: fintech}
+  - {name: Groww, ats: greenhouse, slug: groww, tier: fintech}
+
+  # --- Lever (verified: postings array) ---
+  - {name: Zeta, ats: lever, slug: zeta, tier: fintech}
+
+  # --- SmartRecruiters (verified: content + totalFound) ---
+  - {name: Experian, ats: smartrecruiters, slug: experian, tier: bureau}
+
+unsupported:
+  - {name: Moody's, ats: successfactors, careers_url: "https://careers.moodys.com/"}
+  - {name: MSCI, ats: icims, careers_url: "https://careers.msci.com/"}
+  - {name: HSBC, ats: successfactors, careers_url: "https://portal.careers.hsbc.com/careers"}
+  - {name: JPMorgan Chase, ats: oracle-hcm, careers_url: "https://careers.jpmorgan.com/"}
+  - {name: BNY, ats: oracle-hcm, careers_url: "https://www.bny.com/corporate/global/en/careers.html"}
+  - {name: Societe Generale, ats: taleo, careers_url: "https://careers.societegenerale.com/"}
+  - {name: PhonePe, ats: greenhouse-unverified, careers_url: "https://www.phonepe.com/careers/"}

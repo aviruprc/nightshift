@@ -1,0 +1,88 @@
+# Career-site registry, second batch: companies earlier agents could not resolve.
+# Every entry in `companies` was checked live with curl on 2026-11-03 (Workday CXS POST returned "total" > 0,
+# or the SmartRecruiters postings endpoint returned totalFound > 0). Location counts are from the curl check.
+# Companies in companies_banks.yaml and companies_mnc.yaml are not repeated here.
+# Tier values follow the schema: bank | mnc | analytics | insurance (financial exchanges, payments and data firms use bank; info services and tech use mnc).
+
+companies:
+  # --- Workday (verified: total > 0) ---
+  - {name: Wells Fargo, ats: workday, tenant: wf, host: wd1, site: WellsFargoJobs, tier: bank}          # Bengaluru 56
+  - {name: Barclays, ats: workday, tenant: barclays, host: wd3, site: External_Career_Site_Barclays, tier: bank}  # Bengaluru 28
+  - {name: State Street, ats: workday, tenant: statestreet, host: wd1, site: Global, tier: bank}         # Bangalore 126
+  - {name: Visa, ats: workday, tenant: visa, host: wd5, site: Visa, tier: bank}                          # Bengaluru 79
+  - {name: Synchrony, ats: workday, tenant: synchronyfinancial, host: wd5, site: careers, tier: bank}    # Hyderabad only seen (7 Bengaluru matches were Hyderabad)
+  - {name: Nasdaq, ats: workday, tenant: nasdaq, host: wd1, site: Global_External_Site, tier: bank}     # Bangalore 20
+  - {name: CME Group, ats: workday, tenant: cmegroup, host: wd1, site: cme_careers, tier: bank}         # Bangalore 18
+  - {name: Cboe, ats: workday, tenant: cboe, host: wd1, site: External_Career_CBOE, tier: bank}         # India only 2, low fit
+  - {name: Western Union, ats: workday, tenant: westernunion, host: wd5, site: WesternUnionJobs, tier: bank}  # Pune only (3), low fit
+  - {name: Thomson Reuters, ats: workday, tenant: thomsonreuters, host: wd5, site: External_Career_Site, tier: mnc}  # India 45 (mostly Hyderabad)
+  - {name: Wolters Kluwer, ats: workday, tenant: wk, host: wd3, site: External, tier: mnc}              # Chennai and Pune
+  - {name: RELX Elsevier, ats: workday, tenant: relx, host: wd3, site: ElsevierJobs, tier: mnc}         # Bengaluru 12, Chennai 32
+  - {name: Walmart Global Tech, ats: workday, tenant: walmart, host: wd504, site: WalmartExternal, tier: mnc}  # Bangalore 166 (wd5 returns 422, wd504 works)
+  - {name: Gartner, ats: workday, tenant: gartner, host: wd5, site: EXT, tier: mnc}                     # Bangalore 4
+  - {name: GE Vernova, ats: workday, tenant: gevernova, host: wd5, site: Vernova_ExternalSite, tier: mnc}  # Bengaluru 107
+  - {name: Pfizer, ats: workday, tenant: pfizer, host: wd1, site: PfizerCareers, tier: mnc}             # India: Vizag, Chennai, Mumbai (no Bengaluru seen)
+  - {name: Prudential, ats: workday, tenant: prudential, host: wd3, site: prudential, tier: insurance}  # Bangalore 4, Mumbai 30
+  - {name: Sun Life, ats: workday, tenant: sunlife, host: wd3, site: Experienced-Jobs, tier: insurance}  # Gurugram only, low fit
+
+  # --- SmartRecruiters (verified: totalFound > 0) ---
+  - {name: Swiggy, ats: smartrecruiters, slug: swiggy, tier: mnc}                                        # totalFound 181, 21 of first 100 in Bengaluru
+
+unsupported:
+  # Workday tenant found but no usable endpoint or no India roles
+  - {name: Dell, ats: workday, careers_url: "https://jobs.dell.com/"}   # dell.wd1 site External returns HTTP 422 on CXS; Bangalore roles seen in search
+  - {name: GE Aerospace, ats: workday, careers_url: "http://careers.geaerospace.com/global/en"}   # ge.wd5 GE_ExternalSite returns HTTP 422
+  - {name: Truist, ats: workday, careers_url: "https://truist.wd1.myworkdayjobs.com/Careers"}   # endpoint live, no India roles
+  - {name: Ally Financial, ats: workday, careers_url: "https://ally.wd1.myworkdayjobs.com/Ally"}   # endpoint live, US roles only
+  - {name: ING, ats: workday, careers_url: "https://ing.wd3.myworkdayjobs.com/en-US/ICSGBLCOR"}   # endpoint live, no India locations
+  - {name: Manulife, ats: workday, careers_url: "https://manulife.wd3.myworkdayjobs.com/MFCJH_Jobs"}   # endpoint live, no India locations
+  - {name: MetLife, ats: unknown, careers_url: "https://www.metlife.com/careers/"}   # Workday probe (metlife.wd5) failed
+  - {name: Discover Financial, ats: unknown, careers_url: "https://www.discover.com/company/careers/"}
+  - {name: Dun & Bradstreet, ats: unknown, careers_url: "https://www.dnb.com/about-us/careers.html"}
+  - {name: Verisk, ats: unknown, careers_url: "https://careers.verisk.com/"}
+  - {name: ICE, ats: unknown, careers_url: "https://www.ice.com/careers"}
+  - {name: Aon, ats: unknown, careers_url: "https://aon.wd1.myworkdayjobs.com/"}   # no Aon plc tenant found; search returned unrelated American Oncology Network
+  - {name: Marsh McLennan, ats: unknown, careers_url: "https://www.marshmclennan.com/careers.html"}
+  - {name: Willis Towers Watson, ats: unknown, careers_url: "https://www.wtwco.com/en-us/careers"}
+  - {name: Allianz, ats: unknown, careers_url: "https://careers.allianz.com/"}
+  - {name: AXA, ats: unknown, careers_url: "https://www.axa.com/en/careers"}
+  - {name: Zurich Insurance, ats: unknown, careers_url: "https://www.zurich.com/en/careers"}
+  - {name: Swiss Re, ats: unknown, careers_url: "https://careers.swissre.com/"}
+  - {name: Munich Re, ats: unknown, careers_url: "https://www.munichre.com/en/careers.html"}
+  # Banks and financial firms: no Workday tenant surfaced in search
+  - {name: Goldman Sachs, ats: unknown, careers_url: "https://www.goldmansachs.com/careers/"}
+  - {name: Standard Chartered, ats: unknown, careers_url: "https://www.sc.com/careers/"}
+  - {name: BNP Paribas, ats: unknown, careers_url: "https://group.bnpparibas/en/careers/all-job-offers/bengaluru"}
+  - {name: UBS, ats: unknown, careers_url: "https://www.ubs.com/global/en/careers.html"}
+  - {name: HDFC Bank, ats: unknown, careers_url: "https://www.hdfcbank.com/personal/about-us/careers"}
+  - {name: ICICI Bank, ats: unknown, careers_url: "https://www.icicibank.com/careers"}
+  - {name: Axis Bank, ats: unknown, careers_url: "https://www.axisbank.com/careers"}
+  - {name: Kotak Mahindra Bank, ats: unknown, careers_url: "https://www.kotak.com/en/careers.html"}
+  - {name: Bajaj Finserv, ats: unknown, careers_url: "https://www.bajajfinserv.in/careers"}
+  - {name: American Express, ats: unknown, careers_url: "https://www.americanexpress.com/en-us/careers/"}
+  # Consulting and IT services
+  - {name: Deloitte, ats: unknown, careers_url: "https://www2.deloitte.com/in/en/careers.html"}   # Workday hits were Deloitte Ireland and France only
+  - {name: EY, ats: unknown, careers_url: "https://www.ey.com/en_in/careers"}   # erm.wd3 hit is ERM, not EY
+  - {name: KPMG, ats: unknown, careers_url: "https://www.kpmg.com/in/en/careers.html"}
+  - {name: Capgemini, ats: unknown, careers_url: "https://www.capgemini.com/careers/"}
+  - {name: Cognizant, ats: unknown, careers_url: "https://careers.cognizant.com/"}   # collaborative.wd1 is a Workday partner, not Cognizant
+  # Retail, industrial, pharma, auto, tech
+  - {name: Lowe's, ats: unknown, careers_url: "https://careers.lowes.com/"}
+  - {name: Siemens, ats: unknown, careers_url: "https://www.siemens.com/careers"}
+  - {name: Schneider Electric, ats: unknown, careers_url: "https://www.se.com/ww/en/work/"}
+  - {name: Mercedes-Benz R&D India, ats: unknown, careers_url: "https://group.mercedes-benz.com/careers/"}
+  - {name: Bosch, ats: unknown, careers_url: "https://www.bosch.in/careers/"}
+  - {name: SAP, ats: unknown, careers_url: "https://jobs.sap.com/"}
+  - {name: Oracle, ats: unknown, careers_url: "https://www.oracle.com/careers/"}
+  - {name: Microsoft, ats: unknown, careers_url: "https://careers.microsoft.com/"}
+  - {name: Amazon, ats: unknown, careers_url: "https://www.amazon.jobs/"}
+  - {name: Flipkart, ats: unknown, careers_url: "https://www.flipkartcareers.com/"}
+  - {name: Myntra, ats: unknown, careers_url: "https://www.myntra.com/careers"}
+  - {name: Jupiter, ats: unknown, careers_url: "https://jupiter.money/careers"}
+  - {name: PhonePe, ats: unknown, careers_url: "https://www.phonepe.com/careers/"}
+  # Analytics firms: no Greenhouse, Lever, Ashby or SmartRecruiters slug resolved
+  - {name: Tiger Analytics, ats: unknown, careers_url: "https://www.tigeranalytics.com/careers/"}
+  - {name: Tredence, ats: unknown, careers_url: "https://www.tredence.com/careers"}
+  - {name: LatentView, ats: unknown, careers_url: "https://www.latentview.com/careers/"}
+  - {name: ZS Associates, ats: unknown, careers_url: "https://www.zs.com/careers"}
+  - {name: Mu Sigma, ats: unknown, careers_url: "https://www.mu-sigma.com/careers"}

@@ -1,0 +1,3 @@
+# Career sites found in stored job links and verified through their public APIs 2026-11-10 (_scratch/add_ats_from_links.py)
+# MUFG removed 2026-11-21: she asked to skip it (settings.json skip_companies) and it needs her answer to the 'Certification' question.
+companies:

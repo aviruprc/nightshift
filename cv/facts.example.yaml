@@ -1,0 +1,108 @@
+# EXAMPLE ONLY - an invented person ("Asha Example"). Copy to cv/facts.yaml and replace EVERY value with your own real facts.
+# This file is the single source of truth for your CV and for every form the bot fills. Tailoring may reorder or re-word what is
+# here, but it NEVER adds anything that is not here. If a fact is missing, the job is parked as needs_you instead of guessed.
+# See docs/CONFIGURING_FACTS.md for every field.
+personal:
+  name: Asha Example
+  first_name: Asha
+  last_name: Example
+  email: asha.example@example.com
+  phone: "+91-9000000001"
+  phone_country_code: "+91"
+  location: Bengaluru, India
+  city: Bengaluru
+  linkedin: linkedin.com/in/asha-example
+  github: ""            # leave empty if you have none: the bot then leaves website/portfolio boxes empty
+headline: "Marketing Analyst | Campaign & Customer Analytics | SQL - Power BI - A/B Testing"
+summary: >
+  Marketing Analyst with 4 years in retail and telecom: campaign reporting, customer segmentation, A/B test analysis and survey
+  insights. Works in SQL, Excel, Power BI, Tableau and Google Analytics. MSc in Statistics. Available immediately.
+experience:
+  - title: Marketing Analyst
+    company: Example Retail Co
+    location: Bengaluru, India
+    start: Sep 2022
+    end: Jan 2025
+    bullets:
+      - Built Power BI dashboards for campaign spend, reach and conversion across online and store channels
+      - Wrote SQL on sales and loyalty data to segment customers and size promotions
+      - Analysed A/B tests on email and app campaigns and presented the results to the marketing team
+      - Automated the weekly campaign report in Excel, cutting preparation time
+  - title: Operations Intern
+    company: Sample Logistics
+    location: Pune, India
+    start: Jan 2021
+    end: Mar 2021
+    bullets:
+      - Tracked delivery delays in Excel and summarised root causes for the operations lead
+  - title: Customer Insights Associate
+    company: Demo Telecom
+    location: Chennai, India
+    start: Oct 2018
+    end: Jul 2020
+    bullets:
+      - Analysed customer survey and churn data with SQL and Excel
+      - Maintained Tableau dashboards on complaints and customer satisfaction scores
+projects:
+  - name: Public Dataset Dashboard
+    tech: SQL, Tableau
+    year: "2024"
+    link: ""
+    bullets:
+      - Modelled a public transport dataset in SQL and published a Tableau dashboard
+certifications:
+  - "Example Online Course - Digital Marketing Analytics"
+skills:
+  Tools: [SQL, Power BI, Tableau, Excel (Advanced), Google Analytics, PostgreSQL]
+  Analytical: [Marketing Analytics, A/B Testing, Customer Segmentation, Survey Analysis, KPI Reporting, Dashboard Development, Data Analysis & Validation]
+  Domain: [Retail, Telecom, Customer Insights]
+  Management: [Stakeholder Reporting, Documentation]
+education:
+  - degree: MSc (Statistics)
+    institution: Larkmoor University, Westfield School of Statistics (WSS)
+    year: "2022"
+    start_year: "2020"
+    start: "Aug 2020"     # month + year as on your degree certificate; a form asking for a month you did not record is parked
+    end: "Jun 2022"
+    field: Statistics
+  - degree: BSc (Mathematics)
+    institution: Brightwater College of Science
+    year: "2018"
+    start_year: "2015"
+    start: "Jul 2015"
+    end: "Jun 2018"
+    field: Mathematics
+# Skills you do NOT have: never claimed on a form or CV, and treated as gaps when scoring.
+not_claimable: [Python, PySpark, Scala, R, Snowflake, dbt, Alteryx, Azure, AWS, GCP, Databricks, Informatica Cloud (IICS), SAS]
+
+# How the bot searches and scores for you (all optional; see docs/CONFIGURING_FACTS.md).
+preferences:
+  # Locations you accept, as a regular expression matched against a posting's location (case-insensitive).
+  home_location_regex: "bengaluru|bangalore|bangaluru|karnataka"
+  # One paragraph the AI scorer and form-filler read about you (facts only; defaults to `summary`).
+  candidate_profile: >
+    4 years: Marketing Analyst at a retailer (campaign dashboards in Power BI, SQL segmentation, A/B test analysis) and Customer
+    Insights Associate at a telecom (survey and churn analysis, Tableau). MSc Statistics. Bengaluru.
+  # Roles you are eligible for (the scorer gives these 55+ unless a mandatory skill is missing).
+  eligible_roles: >
+    marketing / campaign / growth analyst, customer insights, data / BI / reporting / MIS analyst, business analyst, KYC / AML
+    operations, operations analyst, survey and market research analyst, returnship programmes.
+  # Fields you are NOT eligible for (scored below 35).
+  unrelated_fields: "engineering, medicine, sales, HR, design, software development"
+  # Skip jobs whose stated minimum experience is this many years or more (0 = no cap).
+  max_stated_min_years: 5
+  # Mandatory licences/qualifications you do not hold (named to the scorer).
+  missing_qualifications: "CA, CFA charter, law degree"
+  # Optional: Python level to state when a form asks (only if true for you). Leave empty to state nothing.
+  python_level: "basic exposure only (Beginner / less than 1 year)"
+  # Languages you speak (used for language rows on forms; proficiency levels are never invented).
+  languages: [English, Tamil]
+
+# Startup outreach emails (apply/outreach.py) - optional. {company} is replaced by the company name.
+outreach:
+  subject: "Application: Marketing / Data Analyst - Asha Example (4 years, SQL, Power BI, Tableau)"
+  pitch: >
+    I am a Marketing Analyst with 4 years of experience, most recently at Example Retail Co, where I built Power BI campaign
+    dashboards, segmented customers with SQL and analysed A/B tests. My tools are SQL, Power BI, Tableau, Excel and Google
+    Analytics, and I hold an MSc in Statistics.
+  ask: "marketing analyst, customer insights or BI"

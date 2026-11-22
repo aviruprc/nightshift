@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispatch desk · Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e13; --panel:#0f151d; --panel2:#151d27; --line:#1a2330; --line2:#263340;
+  --ink:#e7edf4; --mute:#8b99ab; --faint:#586779;
+  --page:#3ddc97; --account:#6ea8e8; --email:#a99bf0; --wait:#f6b73c; --need:#ff6b6b;
+  --fx-sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fx-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 var(--fx-sans);font-variant-numeric:tabular-nums}
+a{color:var(--account);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--account);outline-offset:2px;border-radius:4px}
+h1,h2,h3,p{margin:0}
+.btn{appearance:none;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);padding:5px 10px;border-radius:7px;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn:hover:not(:disabled){border-color:var(--mute);background:#1a2431}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.primary{background:var(--ink);color:#0a0e13;border-color:var(--ink)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--mute)}
+.btn.ghost:hover:not(:disabled){color:var(--ink);background:var(--panel2);border-color:var(--line2)}
+.btn.danger{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line2))}
+.btn.amber{background:color-mix(in srgb,var(--wait) 85%,#000);border-color:var(--wait);color:#1a1100}
+.btn.redfill{background:color-mix(in srgb,var(--need) 85%,#000);border-color:var(--need);color:#1c0505}
+.btn.sm{padding:2px 7px;font-size:11px;border-radius:5px}
+.top{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;padding:10px clamp(12px,3vw,24px);background:rgba(10,14,19,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-size:16px;font-weight:800;font-stretch:115%;letter-spacing:-.01em}
+.brand .ops{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--wait);border:1px solid color-mix(in srgb,var(--wait) 45%,var(--line2));padding:1px 7px;border-radius:999px}
+.clock{color:var(--faint);font-size:12px}
+.clock b{color:var(--mute);font-weight:600;font-size:12.5px;margin-right:6px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;border:1px solid var(--line2);font-weight:700;font-size:11.5px;background:var(--panel);color:var(--mute)}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.pill.live{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line2))}
+.pill.live .dot{background:var(--page);animation:pulse 1.6s infinite}
+.pill.dry{color:var(--account);border-color:color-mix(in srgb,var(--account) 45%,var(--line2))}
+.pill.dry .dot{background:var(--account);animation:pulse 1.6s infinite}
+.pill.bad{color:var(--need);border-color:color-mix(in srgb,var(--need) 45%,var(--line2))}
+.pill.bad .dot{background:var(--need)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.spacer{flex:1}
+.actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.slider{display:flex;align-items:center;gap:9px;padding:0 10px 0 12px;height:28px;border:1px solid var(--line2);border-radius:6px;background:var(--panel)}
+.slider .lbl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+.slider b{font-family:var(--fx-mono);font-size:13px;color:var(--ink);min-width:26px;text-align:right;font-weight:500}
+.slider input[type=range]{-webkit-appearance:none;appearance:none;width:126px;height:3px;border-radius:3px;background:linear-gradient(to right,var(--page) var(--fill,10%),var(--line2) var(--fill,10%));outline:none}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--page);border:0;cursor:pointer;box-shadow:0 0 0 3px rgba(61,220,151,.12)}
+.slider input[type=range]::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:var(--page);cursor:pointer}
+.slider input[type=range]:disabled{opacity:.45;cursor:not-allowed}
+.shell{max-width:1240px;margin:0 auto;padding:14px clamp(12px,3vw,24px) 40px;display:grid;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0}
+.ph{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:11px 16px 8px}
+.ph h2{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.ph .n{font-weight:700;font-size:11px;padding:0 7px;border-radius:999px;background:var(--panel2);color:var(--mute)}
+.ph .hint{margin-left:auto;color:var(--faint);font-size:11.5px}
+.body{padding:0 16px 14px;min-width:0}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.stack{display:grid;gap:14px;min-width:0}
+.scroll{max-height:420px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.empty{padding:6px 0;color:var(--faint);font-size:12px}
+.empty b{color:var(--mute)}
+.more{padding:7px 0 0;text-align:center}
+
+/* health + systems chips */
+.chips{display:flex;flex-wrap:wrap;gap:2px 18px;padding:0 16px 10px;align-items:baseline}
+.sys{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--mute);min-width:0}
+.sys i{width:7px;height:7px;border-radius:50%;background:var(--page);flex:none}
+.sys.warn i{background:var(--wait)}
+.sys.bad{color:var(--need)}
+.sys.bad i{background:var(--need)}
+.sys.stale{color:var(--wait)}
+.sys.stale i{background:none;border:1.5px solid currentColor;width:6px;height:6px}
+.sys small{font-weight:500;color:var(--faint);max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hlast{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:baseline;padding:2px 16px 10px;font-size:11px;color:var(--faint)}
+.hlast b{font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10px}
+.hlast code{font:11px/1.4 var(--fx-mono);color:#a9b4c2;overflow-wrap:anywhere;flex:1 1 340px;min-width:0}
+.hlast .lmeta{white-space:nowrap}
+
+/* provider rows */
+.ai-head{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:baseline;padding:0 16px 8px;font-size:11.5px;color:var(--faint)}
+.ai-head b{color:var(--ink);font-weight:700}
+.prov{display:flex;align-items:baseline;gap:8px;font-size:11.5px;color:var(--mute);padding:4px 0;border-top:1px solid var(--line);min-width:0}
+.prov:first-child{border-top:0}
+.prov i{width:6px;height:6px;border-radius:50%;background:var(--page);flex:none;align-self:center}
+.prov i.warn{background:var(--wait)} .prov i.bad{background:var(--need)} .prov i.off{background:none;border:1.5px solid var(--faint);width:5px;height:5px}
+.prov b{color:var(--ink);font-size:12px;white-space:nowrap}
+.prov small{color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.pbtns{margin-left:auto;display:inline-flex;gap:2px;flex-wrap:wrap;justify-content:flex-end}
+.provnote{font-size:10.5px;color:var(--faint);padding:0 0 5px}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.kpi{background:var(--panel);padding:11px 14px 10px;min-width:0}
+.kpi .v{font-size:27px;font-weight:700;line-height:1.05;font-stretch:112%;letter-spacing:-.02em}
+.kpi .v small{font-size:13px;color:var(--mute);font-weight:600}
+.kpi .l{font-weight:700;font-size:11.5px;margin-top:4px}
+.kpi .s{color:var(--faint);font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.need .v{color:var(--need)}
+.kpi.wait .v{color:var(--wait)}
+.kpi.good .v{color:var(--page)}
+.counts{display:flex;flex-wrap:wrap;gap:4px 12px;padding:9px 16px 12px;border-top:1px solid var(--line);font-size:11px;color:var(--faint)}
+.counts b{color:var(--mute);font-weight:600}
+
+/* rows */
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:8px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top-color:transparent}
+.row .head{display:flex;gap:8px;align-items:baseline;min-width:0}
+.row .head .co{flex:none;max-width:60%;font-weight:700;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .head .ti{color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.row .right{text-align:right;color:var(--faint);font-size:11px;white-space:nowrap}
+.row .proof{grid-column:1/-1;display:flex;gap:10px;align-items:baseline;font-size:11px;min-width:0}
+.row .proof .txt{flex:1 1 0;min-width:0;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .proof .kind,.row .proof .links{flex:none}
+.kind{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:10.5px;color:var(--mute);white-space:nowrap}
+.kind::before{content:"";width:6px;height:6px;border-radius:2px;background:currentColor}
+.kind.page{color:var(--page)} .kind.account{color:var(--account)} .kind.email{color:var(--email)}
+.kind.wait{color:var(--wait)} .kind.wait::before{background:none;border:1.5px dashed currentColor}
+.kind.need{color:var(--need)}
+.links{display:flex;gap:10px;font-size:11px;font-weight:600}
+.need-row{border-left:2px solid var(--need);padding-left:11px}
+.need-row.ask{border-left-color:var(--wait)}
+.need-row .why{grid-column:1/-1;color:var(--ink);font-size:11.5px;overflow-wrap:anywhere}
+.btns{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:4px}
+.ask-box{grid-column:1/-1;display:grid;gap:5px;margin-top:3px}
+.ask-box label{font-size:11.5px;color:var(--mute);display:grid;gap:2px}
+.ask-box label b{color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.ask-box input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:5px;padding:4px 8px;color:var(--ink)}
+.ask-box .perjob{display:flex;flex-direction:row;gap:6px;align-items:center;font-size:11px}
+.fit{display:flex;align-items:center;gap:7px;justify-content:flex-end;min-width:130px}
+.fit .chip{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--panel2);color:var(--mute)}
+.fit .bar{width:58px;height:5px;background:var(--line2);border-radius:3px;overflow:hidden}
+.fit .bar i{display:block;height:100%;background:var(--account)}
+.fit .bar i.hi{background:var(--page)}
+.fit b{font-size:11.5px;color:var(--ink);min-width:20px;text-align:right}
+
+/* tables */
+.tablewrap{overflow:auto;padding-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-weight:600;color:var(--faint);text-align:right;padding:5px 7px;border-bottom:1px solid var(--line);font-size:11px;white-space:nowrap}
+td{padding:5px 7px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left;padding-left:0;white-space:nowrap}
+th:last-child,td:last-child{padding-right:0}
+tr:last-child td{border-bottom:0}
+td.zero{color:var(--faint)}
+td.g{color:var(--page);font-weight:700} td.r{color:var(--need);font-weight:700} td.a{color:var(--wait);font-weight:700}
+td.tk{color:var(--faint);white-space:nowrap}
+.hit{display:flex;gap:1px;height:3px;width:100%;max-width:120px;margin-top:4px;border-radius:2px;overflow:hidden;background:var(--line2)}
+.hit i{display:block;height:100%}
+.caps{display:flex;flex-wrap:wrap;gap:3px 14px;padding:8px 0 0;color:var(--faint);font-size:11px}
+.caps b{color:var(--mute)}
+
+/* failures */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:18px;min-width:0}
+.flist{display:grid;gap:0}
+.fline{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--mute);min-width:0}
+.fline:first-child{border-top:0}
+.fline .k{font-weight:700;color:var(--ink);white-space:nowrap}
+.fline .why{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fline .n{font-weight:800;color:var(--need);white-space:nowrap}
+.lesson{border-top:1px solid var(--line)}
+.lesson:first-of-type{border-top:0}
+.lesson summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:130px minmax(0,1fr) 30px 10px;gap:9px;padding:6px 0;align-items:baseline}
+.lesson summary::-webkit-details-marker{display:none}
+.lesson .pf{font-weight:700;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lesson .rs{font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.lesson .cnt{font-weight:800;color:var(--need);text-align:right}
+.lesson .caret{color:var(--faint);font-size:9px}
+.lesson[open] .caret{transform:rotate(90deg)}
+.lesson .ex{padding:0 0 8px 139px;display:grid;gap:5px}
+.lesson .ex div{font-size:11px;color:var(--faint);overflow-wrap:anywhere}
+.lesson .ex b{color:var(--ink);font-weight:600}
+.st{font-size:10px;font-weight:700;padding:0 5px;border-radius:4px;border:1px solid var(--line2);margin-left:5px;color:var(--faint)}
+.st.ok{color:var(--page);border-color:color-mix(in srgb,var(--page) 45%,var(--line))}
+
+/* key/value */
+.kv{display:grid;grid-template-columns:180px minmax(0,1fr);gap:3px 12px;font-size:11.5px}
+.kv b{color:var(--faint);font-weight:600}
+.kv span{color:var(--mute);overflow-wrap:anywhere}
+
+/* log */
+.logtoggle{display:inline-flex;gap:6px;align-items:center;font-size:11px;color:var(--faint);cursor:pointer;margin-left:auto}
+.logtoggle input{accent-color:var(--page)}
+.log{max-height:340px;overflow:auto;font:11px/1.45 var(--fx-mono);padding:0 16px 10px;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.ln{display:grid;grid-template-columns:52px 36px minmax(0,1fr);gap:0 6px;padding:2px 0}
+.ln .tm{color:var(--faint)}
+.ln .kd{font-weight:500;color:var(--k,var(--mute));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ln .ms{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;color:#c3cdd9}
+.ln .ms b{font-weight:500;color:var(--ink)}
+.ln.k-step{--k:#7fa2d8} .ln.k-fill{--k:#6b7a8d} .ln.k-portal{--k:#4fc3d6} .ln.k-ai{--k:var(--email)} .ln.k-llm{--k:#8f7bd6}
+.ln.k-park{--k:var(--wait)} .ln.k-result{--k:var(--page)} .ln.k-info{--k:var(--mute)} .ln.k-error{--k:var(--need)}
+.ln.k-error .ms,.ln.k-park .ms{color:color-mix(in srgb,var(--k) 75%,#fff)}
+.ln.k-result .ms{color:color-mix(in srgb,var(--page) 70%,#fff)}
+
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#0a0e13;padding:8px 15px;border-radius:8px;font-weight:600;font-size:12.5px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#toast.err{background:var(--need);color:#1c0505}
+
+@media (max-width:1000px){
+  .cols,.split{grid-template-columns:minmax(0,1fr)}
+  .lesson .ex{padding-left:0}
+  .kv{grid-template-columns:130px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><h1>Dispatch desk</h1><span class="ops">Ops / performance</span><span class="clock" id="clock"></span></div>
+  <span class="pill idle" id="pill"><i class="dot"></i><span>Connecting</span></span>
+  <span class="spacer"></span>
+  <div class="actions" id="actions"></div>
+</header>
+
+<main class="shell">
+  <section class="panel">
+    <div class="ph"><h2>Automation health</h2><span class="hint">live process scan + heartbeat + guardian snapshot + newest worker log</span></div>
+    <div class="chips" id="health"></div>
+    <div id="hlast"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Connections &amp; AI providers</h2><span class="hint">integration snapshot age is shown, never hidden</span></div>
+    <div class="chips" id="conns"></div>
+    <div id="ai"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Performance today</h2><span class="hint">internal metrics: kept off the main dashboard on purpose</span></div>
+    <div class="tiles" id="perf"></div>
+    <div class="counts" id="counts"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Failures</h2><span class="hint" id="lesson-note"></span></div>
+    <div class="body"><div class="split">
+      <div><div class="ph" style="padding:0 0 6px"><h2>By class</h2></div><div class="flist" id="failclasses"></div></div>
+      <div><div class="ph" style="padding:0 0 6px"><h2>Top reasons</h2></div><div class="flist" id="failreasons"></div></div>
+    </div></div>
+    <div class="body" style="padding-top:10px"><div class="ph" style="padding:0 0 6px"><h2>What is failing</h2></div><div id="lessons"></div></div>
+  </section>
+
+  <div class="cols">
+    <section class="panel">
+      <div class="ph"><h2>Next up</h2><span class="n" id="n-plan">0</span><span class="hint">best fit first</span></div>
+      <div class="body"><div class="scroll" id="plan"></div></div>
+    </section>
+    <section class="panel">
+      <div class="ph"><h2>Needs you</h2><span class="n" id="n-needs">0</span><span class="hint">CAPTCHA, unknown questions, blocked portals</span></div>
+      <div class="body"><div class="scroll" id="needs"></div></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="ph"><h2>Awaiting proof</h2><span class="n" id="n-await">0</span><span class="hint">sent, no receipt/badge yet</span></div>
+    <div class="body"><div class="scroll" id="await"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>By platform</h2><span class="hint">today, and all time</span></div>
+    <div class="body"><div class="tablewrap" id="plat"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Tokens &amp; LLM usage</h2><span class="hint">recorded from data/llm_usage.jsonl · calls in brackets</span></div>
+    <div class="body"><div id="tokens"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Guardian / supervisor</h2><span class="hint" id="snap-note"></span></div>
+    <div class="body"><div class="kv" id="guardian"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><h2>Live log</h2><label class="logtoggle"><input type="checkbox" id="quiet"> Hide fill and step lines</label></div>
+    <div class="log" id="log" role="log" aria-label="Live activity"></div>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = (u) => /^https?:\/\//i.test(u || "") ? u : "";
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+let S = null, offset = 0, uiVersion = null, firstRender = true;
+const drafts = {};
+let open = {};
+try { open = JSON.parse(store.get("jh.open") || "{}") || {}; } catch(e){ open = {}; }
+const LIM = {plan: 8, needs: 6, await: 8, plat: 10, lessons: 8, log: 40};
+const cap = (sec, list) => open[sec] ? list : list.slice(0, LIM[sec]);
+const more = (sec, total) => total <= LIM[sec] ? "" : '<div class="more"><button class="btn sm ghost" data-act="more" data-sec="' + sec + '" aria-expanded="' + (!!open[sec]) + '">' + (open[sec] ? "Show fewer" : "Show all " + total) + "</button></div>";
+const cache = new Map();
+function setHTML(el, html){
+  if (cache.get(el.id) === html) return;
+  cache.set(el.id, html);
+  const ae = document.activeElement;
+  const key = ae && el.contains(ae) && ae.dataset ? ae.dataset.key : null;
+  const pos = key && ae.selectionStart != null ? ae.selectionStart : null;
+  el.innerHTML = html;
+  if (key){
+    const n = el.querySelector('[data-key="' + CSS.escape(key) + '"]');
+    if (n){ n.focus(); if (pos != null && n.setSelectionRange) try { n.setSelectionRange(pos, pos); } catch(e){} }
+  }
+}
+const nowSec = () => Date.now() / 1000 + offset;
+function ago(t){
+  if (!t) return "";
+  const s = Math.max(0, nowSec() - t);
+  if (s < 45) return "just now";
+  if (s < 3600) return Math.round(s / 60) + "m ago";
+  if (s < 86400) return Math.round(s / 3600) + "h ago";
+  return Math.round(s / 86400) + "d ago";
+}
+const isoSec = (iso) => { const d = iso ? new Date(iso) : null; return d && !isNaN(d) ? d.getTime() / 1000 : 0; };
+const hhmmss = (t) => new Date(t * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false});
+const platShort = (p) => String(p || "other").replace("LinkedIn Easy Apply", "LinkedIn Easy").replace("Oracle HCM", "Oracle").replace("SmartRecruiters","SmartRec.");
+const KIND = {
+  page: {label: "Confirmation page", short: "Page"}, account: {label: "Shows in account", short: "Acct"},
+  email: {label: "Email receipt", short: "Email"}, none: {label: "Sent, no proof yet", short: "No proof"}
+};
+const proofText = (j) => String(j.email_proof || "").replace(/^(PAGE|ACCOUNT|NAUKRI):\s*/i, "");
+const jobLink = (j) => safeUrl(j.apply_url) || safeUrl(j.url);
+const defTip = (s, k) => { const v = s && s.numbers && s.numbers.defs ? s.numbers.defs[k] : ""; return v ? ' title="' + esc(v) + '"' : ""; };
+const kTok = (v) => {
+  v = v || 0;
+  if (v >= 1e6) return (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + "M";
+  if (v >= 1e3) return Math.round(v / 1e3) + "k";
+  return String(v);
+};
+
+/* ---------- actions ---------- */
+let toastT;
+function toast(msg, bad){
+  const t = $("#toast");
+  t.textContent = msg; t.className = "on" + (bad ? " err" : "");
+  clearTimeout(toastT); toastT = setTimeout(() => { t.className = ""; }, 4200);
+}
+async function post(body){
+  try {
+    const r = await fetch("/api/action", {method: "POST", headers: {"Content-Type": "application/json", "X-JH": "1"}, body: JSON.stringify(body)});
+    const j = await r.json();
+    toast(j.message || (j.ok ? "Done." : "Could not do that."), !j.ok);
+  } catch(e){ toast("Could not reach the dashboard server.", true); }
+  poll();
+}
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-act]");
+  if (!b || b.disabled) return;
+  const a = b.dataset.act, id = b.dataset.id;
+  if (a === "run"){
+    const n = +(b.dataset.n || targetN);
+    if (!confirm("Start applying for real to " + n + " jobs?")) return;
+    post({type: "start_run", live: true, target: n});
+  } else if (a === "more"){
+    open[b.dataset.sec] = !open[b.dataset.sec]; store.set("jh.open", JSON.stringify(open)); if (S) render(S);
+  } else if (a === "stop"){ post({type: "stop_run"});
+  } else if (a === "gmail"){ post({type: "check_email_proof"});
+  } else if (a === "requeue"){
+    const n = (S && S.counts ? (S.counts.needs_you || 0) + (S.counts.failed || 0) + (S.counts.blocked_portal || 0) : 0);
+    if (!confirm("Put the parked jobs back in the queue (about " + n + ", CAPTCHA ones stay)?")) return;
+    post({type: "requeue_all"});
+  } else if (a === "discover"){ post({type: "discover"});
+  } else if (a === "captcha"){ post({type: "captcha_tab", id});
+  } else if (a === "job"){ post({type: "job_action", id, action: b.dataset.do});
+  } else if (a === "tool"){ post({type: b.dataset.t, name: b.dataset.name});
+  } else if (a === "answer"){
+    const q = b.dataset.q, key = b.dataset.key;
+    const ans = (drafts[key] || "").trim();
+    if (!ans){ toast("Type an answer first.", true); return; }
+    post({type: "answer", question: q, answer: ans, id, per_job: !!drafts[id + ":pj"]});
+    delete drafts[key];
+  }
+});
+let targetN = +(store.get("jh.target") || 10);  // shared with the main dashboard: one number, remembered
+document.addEventListener("input", (ev) => {
+  const t = ev.target;
+  if (t.id === "target"){
+    targetN = +t.value;
+    store.set("jh.target", targetN);
+    const box = t.closest(".slider"), out = box && box.querySelector("b");
+    if (out) out.textContent = targetN;
+    t.style.setProperty("--fill", Math.round(100 * (targetN - t.min) / (t.max - t.min)) + "%");
+    return;
+  }
+  if (t.dataset && t.dataset.key){ drafts[t.dataset.key] = t.type === "checkbox" ? t.checked : t.value; }
+});
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter" && ev.target.matches && ev.target.matches('input[type=text][data-key]')){
+    const b = ev.target.closest(".ask-box").querySelector('button[data-key="' + CSS.escape(ev.target.dataset.key) + '"]');
+    if (b) b.click();
+  }
+});
+$("#quiet").checked = store.get("jh.quiet") === "1";
+$("#quiet").addEventListener("change", (e) => { store.set("jh.quiet", e.target.checked ? "1" : "0"); cache.delete("log"); if (S) renderLog(S); });
+
+/* ---------- renderers ---------- */
+function runMode(s){
+  const r = s.run || {};
+  if (r.alive) return r.dry_run ? "dry" : "live";
+  if (r.status === "stalled") return "bad";
+  return "idle";
+}
+function renderTop(s){
+  const r = s.run || {}, m = runMode(s);
+  const alive = !!r.alive;
+  const label = m === "live" ? "Live applying" : m === "dry" ? "Dry run" : m === "bad" ? "Stalled" : "Idle";
+  const p = $("#pill");
+  p.className = "pill " + m;
+  p.innerHTML = '<i class="dot"></i><span>' + label + "</span>";
+  const dis = alive ? ' disabled title="A run is already in progress"' : "";
+  setHTML($("#actions"),
+    '<a class="btn" href="/" title="Back to today and the applications">&larr; Main dashboard</a>' +
+    '<span class="slider" title="How many jobs this run aims for"><span class="lbl">Apply to</span>' +
+    '<input type="range" id="target" data-key="target" min="1" max="100" step="1" value="' + targetN + '" aria-label="How many jobs to apply to"' + dis + ">" +
+    "<b>" + targetN + "</b></span>" +
+    '<button class="btn primary" data-act="run"' + (alive ? ' disabled title="A run is already in progress"' : "") + ">Start</button>" +
+    '<button class="btn danger" data-act="stop"' + (alive ? "" : " disabled") + ">Stop</button>" +
+    '<button class="btn ghost" data-act="gmail">Check Gmail receipts</button>' +
+    '<button class="btn ghost" data-act="requeue">Retry parked jobs</button>' +
+    '<button class="btn ghost" data-act="discover"' + (alive ? ' disabled title="Wait for the current run to finish"' : "") + ">Find new jobs</button>");
+}
+
+function ageTxt(sec){
+  if (sec == null) return "unknown";
+  const s = Math.max(0, Math.round(sec));
+  if (s < 90) return s + "s ago";
+  if (s < 5400) return Math.round(s / 60) + "m ago";
+  return Math.round(s / 3600) + "h ago";
+}
+function renderHealth(s){
+  const h = s.health || {}, r = s.run || {}, n = s.numbers || {};
+  const chips = [];
+  const hb = r.updated_at ? Math.max(0, nowSec() - r.updated_at) : null;
+  const running = !!r.alive, runStatus = r.status || "idle", scan = h.proc_scan_ok !== false;
+  let cls, note;
+  if (!scan){
+    cls = running ? "" : (runStatus === "stalled" ? "bad" : "idle");
+    note = "run state: " + runStatus + (hb != null ? " · heartbeat " + ageTxt(hb) : "") + " · process scan unavailable";
+  }
+  else if (h.worker_procs > 0 && running){ cls = ""; note = "alive · heartbeat " + ageTxt(hb); }
+  else if (h.worker_procs > 0){ cls = "warn"; note = "process alive · run state " + runStatus; }
+  else if (running){ cls = "bad"; note = "run state says running, but no hunt.py run process"; }
+  else if (runStatus === "stalled"){ cls = "bad"; note = "stalled · no heartbeat for 4+ min"; }
+  else { cls = "idle"; note = "idle · no process"; }
+  chips.push('<span class="sys ' + cls + '" title="Live process scan for \'hunt.py run\' plus the run_state heartbeat"><i></i>Applier <small>' + esc(note) + "</small></span>");
+  const gAge = h.guardian_last_check_age_s;
+  if (!scan){ cls = gAge != null && gAge < 420 ? "" : "warn"; note = (gAge != null ? "last check " + ageTxt(gAge) : "no health snapshot") + " · process scan unavailable"; }
+  else if (h.guardian_procs > 0 && gAge != null && gAge < 420){ cls = ""; note = "alive · last check " + ageTxt(gAge); }
+  else if (h.guardian_procs > 0){ cls = "warn"; note = (gAge == null ? "alive · no health snapshot" : "alive · last check " + ageTxt(gAge)); }
+  else { cls = "bad"; note = "NO PROCESS" + (gAge != null ? " · last check " + ageTxt(gAge) : ""); }
+  chips.push('<span class="sys ' + cls + '" title="Last guardian.log line: ' + esc(h.guardian_last || "(empty)") + '"><i></i>Guardian <small>' + esc(note) + "</small></span>");
+  chips.push('<span class="sys" title="data/run_state.json (written by hunt.py run)"><i></i>Run <small>' + esc(runStatus) + " · " + esc(r.attempts || 0) + " attempts / target " + esc(r.target || 0) + (r.dry_run ? " · dry run" : "") + "</small></span>");
+  chips.push('<span class="sys" title="' + esc((n.defs || {}).queue || "") + '"><i></i>Queue <small>' + esc(n.queue == null ? "?" : n.queue) + " (fit ≥45, ≤7d)" + (h.queue_worker != null ? " · worker ranked " + esc(h.queue_worker) : "") + "</small></span>");
+  chips.push('<span class="sys ' + (n.awaiting ? "warn" : "idle") + '" title="' + esc((n.defs || {}).awaiting || "") + '"><i></i>Awaiting proof <small>' + esc(n.awaiting == null ? "?" : n.awaiting) + (n.awaiting_undated ? " · " + esc(n.awaiting_undated) + " undated" : "") + "</small></span>");
+  const rr = n.needs_reasons || [];
+  chips.push('<span class="sys ' + (n.waiting ? "bad" : "idle") + '" title="Top reasons (all ' + esc(n.waiting || 0) + '): ' + esc(rr.map((x) => x.n + "× " + x.reason).join(" · ") || "nothing parked") + '"><i></i>Needs you <small>' + esc(n.waiting || 0) + (rr.length ? " · " + esc(rr[0].reason.slice(0, 46)) : "") + "</small></span>");
+  setHTML($("#health"), chips.join(""));
+  const tail = (h.log_last || "").slice(0, 150);
+  setHTML($("#hlast"),
+    '<div class="hlast"><b>Last log line</b><code>' + esc(tail || "no log line yet") + '</code><span class="lmeta">' +
+    esc(h.log_file || "no worker log") + (h.log_age_s != null ? " · file " + ageTxt(h.log_age_s) : "") + "</span></div>");
+}
+
+const CONN_LABEL = {gmail: "Gmail", naukri: "Naukri", linkedin: "LinkedIn"};
+function providerRows(ai){
+  const dot = {ready: "", resting: "warn", nokey: "bad", off: "off"};
+  const rows = (ai.providers || []).map((p) => {
+    const b = (t, label, tip) => '<button class="btn sm ghost" data-act="tool" data-t="' + t + '" data-name="' + esc(p.name) + '" title="' + tip + '">' + label + "</button>";
+    const state = {ready: "ready", resting: p.why || "resting", nokey: "no key", off: "off"}[p.state] || p.state || "?";
+    let acts = b("llm_up", "&#9650;", "ask earlier") + b("llm_down", "&#9660;", "ask later") +
+      b("llm_toggle", p.state === "off" ? "turn on" : "turn off", "switch this provider on or off") +
+      b("llm_test", "test", "send a tiny test call");
+    if (p.type !== "browser" && p.type !== "codex") acts += b("llm_addkey", p.state === "nokey" ? "add key" : "new key", "opens a PowerShell window to paste the key (hidden)");
+    if (p.state === "resting" && p.why) acts += b("llm_wake", "retry", "ignore the rest period");
+    if (p.type === "browser") acts += b("llm_login", "sign in", "opens a normal Edge window on DeepSeek: sign in, then close it");
+    return '<div class="prov"><i class="' + (dot[p.state] || "") + '"></i><b>' + esc(p.name) + '</b><small title="' + esc((p.model || "") + " " + (p.why || "")) + '">' + esc(p.model || "") + " · " + esc(state) + '</small><span class="pbtns">' + acts + "</span></div>";
+  });
+  if (ai.claude_reserved) rows.push('<div class="prov"><i class="off"></i><b>Claude</b><small>reserved for you, the bot does not use it</small></div>');
+  return '<div class="provnote">Priority order: the first ready provider answers. ▲ asks earlier, ▼ later.</div>' + (rows.join("") || '<div class="prov"><small>no providers configured</small></div>');
+}
+function renderSystems(s){
+  const sy = s.systems || {}, ig = sy.integrations || {}, ai = sy.ai || null, bk = sy.backup || {};
+  const chips = [];
+  const ageMin = ig.at ? (Date.now() - new Date(ig.at).getTime()) / 60000 : null;
+  const stale = ageMin != null && ageMin > 40;
+  Object.keys(CONN_LABEL).forEach((k) => {
+    const v = ig[k]; if (!v) return;
+    let cls = v.ok ? "" : "bad", note = v.ok ? "" : (v.detail || "not ok");
+    if (ageMin == null){ cls = "stale"; note = "no check yet"; }
+    else if (stale){ cls = "stale"; note = (v.ok ? "ok" : "failed") + " · last checked " + Math.round(ageMin) + "m ago"; }
+    chips.push('<span class="sys ' + cls + '" title="' + esc((v.detail || "") + (ageMin != null ? " | checked " + Math.round(ageMin) + " min ago" : "")) + '"><i></i>' + CONN_LABEL[k] + (note ? " <small>" + esc(note) + "</small>" : "") + "</span>");
+  });
+  setHTML($("#conns"), chips.join("") || '<span class="empty">No integration snapshot yet.</span>');
+  if (!ai){ setHTML($("#ai"), '<div class="ai-head">AI status unavailable.</div>'); return; }
+  const nAns = (bk.backup_30m || 0) + (bk.claude_30m || 0);
+  const u = s.usage || {}, t = s.tokens || {};
+  let cls, note;
+  if (!ai.any){ cls = "bad"; note = "no AI available, AI-heavy jobs are paused"; }
+  else if (sy.llm_login_needed){ cls = "bad"; note = "backup AI signed out, Claude is being used"; }
+  else if (ai.ready.length && nAns === 0){ cls = "warn"; note = (ai.ready[0] || "AI") + " ready, no call in 30 min"; }
+  else { cls = ""; note = (ai.ready.length ? ai.ready[0] + " first" : "Claude only") + " · " + nAns + " answers in 30 min"; }
+  setHTML($("#ai"),
+    '<div class="ai-head"><span class="sys ' + cls + '"><i></i><b>AI</b> <small>' + esc(note) + "</small></span>" +
+    '<span>' + (u.ai_answers || 0) + " of " + (u.ai_asked || 0) + " questions answered · " + (u.llm_calls || 0) + " LLM calls today · ~" + kTok(t.today) + " tokens today</span></div>" +
+    '<div class="body">' + providerRows(ai) + "</div>");
+}
+
+function renderPerf(s){
+  const n = s.numbers || {}, d = n.defs || {};
+  const k = (v, label, sub, cls, def) => '<div class="kpi ' + (cls || "") + '"' + (def && d[def] ? ' title="' + esc(d[def]) + '"' : "") + '><div class="v">' + (v == null ? "-" : esc(v)) + '</div><div class="l">' + label + '</div><div class="s">' + (sub || "") + "</div></div>";
+  const rate = n.success_rate_today;
+  setHTML($("#perf"),
+    k(n.attempts_today, "Attempts today", (n.failed_today || 0) + " did not submit", "", "attempts_today") +
+    k(n.failed_today, "Failed today", "attempts with no submission", "need", "failed_today") +
+    k(rate == null ? "-" : rate + "%", "Submit rate today", (n.sent_today || 0) + " of " + (n.attempts_today || 0) + " attempts submitted", "", "success_rate_today") +
+    k((n.proven_rate_today == null ? "-" : n.proven_rate_today + "%"), "Proven rate today", (n.proven_today || 0) + " proven of " + (n.attempts_today || 0) + " attempts", "good", "proven_rate_today") +
+    k(n.queue, "In the queue", "fit ≥45, ≤7d old", "", "queue") +
+    k(n.retrying, "Retrying", "candidate with a next attempt", "", "retrying") +
+    k(n.awaiting, "Awaiting proof", (n.awaiting_undated || 0) + " undated", "wait", "awaiting") +
+    k(n.waiting, "Needs you", "parked for a human", "wait", "waiting"));
+  const counts = s.counts || {};
+  const order = ["applied", "unconfirmed", "needs_you", "failed", "blocked_portal", "candidate", "dry_run_ok", "skipped", "closed", "stale"];
+  const seen = order.filter((x) => counts[x] != null).map((x) => "<span>" + esc(x.replace("_", " ")) + " <b>" + counts[x] + "</b></span>");
+  Object.keys(counts).filter((x) => !order.includes(x)).forEach((x) => seen.push("<span>" + esc(x.replace("_", " ")) + " <b>" + counts[x] + "</b></span>"));
+  setHTML($("#counts"), "All jobs by status: " + seen.join(""));
+}
+
+function renderFails(s){
+  const n = s.numbers || {};
+  const classes = n.fail_classes || [];
+  // The class vocabulary has ONE definition (apply/errors.py); the API sends a human label plus the stable key, so a legacy alias that was
+  // merged into its canonical key still reads plainly and the key stays visible in the tooltip.
+  setHTML($("#failclasses"), classes.length ? classes.map((c) => '<div class="fline"><span class="k" title="' + esc(c.cls) + '">' + esc(c.label || c.cls) + '</span><span class="why"></span><span class="n">' + esc(c.n) + "</span></div>").join("") : '<div class="empty">No failure classes recorded.</div>');
+  const reasons = n.fail_reasons || [];
+  setHTML($("#failreasons"), reasons.length ? reasons.map((r) => '<div class="fline"><span class="why" title="' + esc(r.reason) + '">' + esc(r.reason) + '</span><span class="n">' + esc(r.n) + "</span></div>").join("") : '<div class="empty">No failure reasons recorded.</div>');
+  const L = s.lessons || {}, allCls = L.classes || [], cls = cap("lessons", allCls);
+  $("#lesson-note").textContent = L.generated ? "last " + (L.days || "?") + " days, updated " + L.generated : "";
+  setHTML($("#lessons"), cls.length ? cls.map((c) => {
+    const ex = (c.examples || []);
+    const first = ex[0];
+    return '<details class="lesson"><summary><span class="pf">' + esc(c.portal) + '</span><span class="rs" title="' + esc(first ? first.detail || "" : "") + '">' + esc(c.reason) +
+      '</span><span class="cnt">' + esc(c.n) + '</span><span class="caret">&#9654;</span></summary><div class="ex">' +
+      ex.map((e) => {
+        const u = safeUrl(e.url);
+        return "<div><b>" + esc(e.job) + "</b> <span class=\"st" + (/applied/.test(e.now || "") ? " ok" : "") + '">' + esc(e.now || "") + "</span><br>" + esc(e.detail || "") + " at " + esc(e.at || "") + (u ? ' &ndash; <a href="' + esc(u) + '" target="_blank" rel="noopener">Open page</a>' : "") + "</div>";
+      }).join("") + "</div></details>";
+  }).join("") + more("lessons", allCls.length) : '<div class="empty">No failure patterns recorded.</div>');
+}
+
+function renderPlan(s){
+  const pl = s.plan || [];
+  $("#n-plan").textContent = pl.length;
+  setHTML($("#plan"), pl.length ? cap("plan", pl.slice(0, 25)).map((j) => {
+    const sc = j.score == null ? 0 : j.score;
+    return '<div class="row"><div class="who head"><span class="co">' + esc(j.company) + '</span><span class="ti" title="' + esc(j.title) + '">' + esc(j.title) + "</span></div>" +
+      '<div class="fit"><span class="chip">' + esc(platShort(j.portal)) + '</span><span class="bar" title="Fit ' + sc + '"><i class="' + (sc >= 80 ? "hi" : "") + '" style="width:' + Math.max(0, Math.min(100, sc)) + '%"></i></span><b>' + (j.score == null ? "-" : esc(j.score)) + "</b></div></div>";
+  }).join("") + more("plan", Math.min(pl.length, 25)) : '<div class="empty">The queue is empty.</div>');
+}
+
+function renderAwait(s){
+  const aw = s.awaiting || [];
+  $("#n-await").textContent = (s.numbers ? s.numbers.awaiting : aw.length);
+  setHTML($("#await"), aw.length ? cap("await", aw).map((j) => {
+    const t = isoSec(j.applied_at), link = jobLink(j);
+    return '<div class="row"><div class="who head"><span class="co">' + esc(j.company) + '</span><span class="ti" title="' + esc(j.title) + '">' + esc(j.title) + "</span></div>" +
+      '<div class="right">' + esc(platShort(j.portal)) + ", " + (t ? ago(t) : "date not recorded") + "</div>" +
+      '<div class="proof"><span class="kind ' + (j.page_proof ? "page" : "wait") + '">' + (j.page_proof ? "Confirmation page seen" : "No proof yet") + '</span><span class="txt" title="' + esc(j.page_proof || j.status_detail || "") + '">' + esc(j.page_proof ? String(j.page_proof).replace(/^PAGE:\s*/, "") + " (email receipt pending)" : (j.status_detail || "")) + "</span>" +
+      '<span class="links">' + (j.proof_url ? '<a href="' + esc(j.proof_url) + '" target="_blank" rel="noopener">Confirmation</a>' : "") +
+      (j.form_url ? '<a href="' + esc(j.form_url) + '" target="_blank" rel="noopener">Form before submit</a>' : "") +
+      (link ? '<a href="' + esc(link) + '" target="_blank" rel="noopener">Open job</a>' : "") + "</span></div>" +
+      '<div class="btns"><button class="btn sm" data-act="job" data-do="done" data-id="' + esc(j.id) + '">I confirmed it myself</button>' +
+      '<button class="btn sm ghost" data-act="job" data-do="retry" data-id="' + esc(j.id) + '">Retry</button></div></div>';
+  }).join("") + more("await", aw.length) : '<div class="empty"><b>Nothing waiting.</b> Every application sent so far has proof.</div>');
+}
+
+const OTP = /verification code|\botp\b|one[- ]time/i;
+function renderNeeds(s){
+  const nd = s.needs || [];
+  $("#n-needs").textContent = (s.numbers ? s.numbers.waiting : nd.length);
+  setHTML($("#needs"), nd.length ? cap("needs", nd).map((j) => {
+    const reason = String(j.needs_you_reason || j.status_detail || "");
+    const id = esc(j.id), link = jobLink(j);
+    const openLink = link ? '<a class="links" href="' + esc(link) + '" target="_blank" rel="noopener">Open job</a>' : "";
+    const head = '<div class="who head"><span class="co">' + esc(j.company) + '</span><span class="ti" title="' + esc(j.title) + '">' + esc(j.title) + '</span></div><div class="right">' + esc(platShort(j.portal)) + "</div>";
+    const mine = '<button class="btn sm ghost" data-act="job" data-do="done" data-id="' + id + '">I applied myself</button>' +
+                 '<button class="btn sm ghost" data-act="job" data-do="skip" data-id="' + id + '">Skip</button>';
+    if (/captcha/i.test(reason)){
+      return '<div class="row need-row captcha">' + head + '<div class="why">' + esc(reason) + "</div>" +
+        '<div class="btns"><button class="btn sm redfill" data-act="captcha" data-id="' + id + '">Open CAPTCHA tab</button>' + mine + openLink + "</div></div>";
+    }
+    const m = reason.match(/^unanswered required:\s*(.*)$/i);
+    if (m){
+      const qs = m[1].split(";").map((x) => x.trim()).filter((x) => x && !OTP.test(x)).slice(0, 4);
+      if (qs.length){
+        const boxes = qs.map((q, i) => {
+          const key = j.id + ":" + i;
+          return '<label><b>' + esc(q) + '</b><span style="display:flex;gap:6px"><input type="text" data-key="' + esc(key) + '" value="' + esc(drafts[key] || "") + '" placeholder="Your answer" style="flex:1" aria-label="' + esc(q) + '">' +
+            '<button class="btn sm amber" data-act="answer" data-id="' + id + '" data-q="' + esc(q) + '" data-key="' + esc(key) + '">Save and retry</button></span></label>';
+        }).join("");
+        return '<div class="row need-row ask">' + head + '<div class="why"><em>The form asked:</em></div><div class="ask-box">' + boxes +
+          '<label class="perjob"><input type="checkbox" data-key="' + esc(j.id + ":pj") + '"' + (drafts[j.id + ":pj"] ? " checked" : "") + '> Only use this answer for this job</label></div>' +
+          '<div class="btns">' + mine + openLink + "</div></div>";
+      }
+    }
+    return '<div class="row need-row">' + head + '<div class="why">' + esc(reason) + '</div>' +
+      '<div class="btns"><button class="btn sm amber" data-act="job" data-do="retry" data-id="' + id + '">Retry</button>' + mine + openLink + "</div></div>";
+  }).join("") + more("needs", nd.length) : '<div class="empty"><b>Nothing needs you.</b> CAPTCHA and unknown questions will land here.</div>');
+}
+
+function renderPlat(s){
+  const raw = (s.numbers && s.numbers.platforms) || {};
+  const rows = {};
+  const add = (name, b) => { const r = rows[name] || (rows[name] = {n: 0, proven: 0, awaiting: 0, waiting: 0, failed: 0, blocked: 0, today_sent: 0, today_failed: 0, today_attempts: 0}); r.n++; for (const k in b) r[k] += b[k]; };
+  Object.entries(raw).forEach(([name, b]) => add(/\./.test(name) ? "Other sites" : name, b));
+  const list = Object.entries(rows).sort((a, b) => (b[1].today_attempts - a[1].today_attempts) || (b[1].proven - a[1].proven));
+  const tot = {proven: 0, awaiting: 0, waiting: 0, failed: 0, today_sent: 0, today_failed: 0};
+  const shown = open.plat ? list : list.slice(0, LIM.plat);
+  list.forEach(([name, r]) => { const bad = r.failed + r.blocked; tot.proven += r.proven; tot.awaiting += r.awaiting; tot.waiting += r.waiting; tot.failed += bad; tot.today_sent += r.today_sent; tot.today_failed += r.today_failed; });
+  const body = shown.map(([name, r]) => {
+    const bad = r.failed + r.blocked, all = r.proven + r.awaiting + r.waiting + bad || 1;
+    const c = (v, cls) => '<td class="' + (v ? cls : "zero") + '">' + v + "</td>";
+    return "<tr><td>" + esc(name) + (name === "Other sites" ? ' <span style="color:var(--faint)">(' + r.n + ")</span>" : "") +
+      '<div class="hit" title="' + r.proven + " proven, " + (r.awaiting + r.waiting) + " pending, " + bad + ' failed, all time"><i style="width:' + (100 * r.proven / all) + '%;background:var(--page)"></i><i style="width:' + (100 * (r.awaiting + r.waiting) / all) + '%;background:var(--wait)"></i><i style="width:' + (100 * bad / all) + '%;background:var(--need)"></i></div></td>' +
+      c(r.today_sent, "g") + c(r.today_failed, "r") + c(r.proven, "") + c(r.awaiting + r.waiting, "a") + c(bad, "r") + "</tr>";
+  }).join("");
+  const caps = s.caps || {};
+  const capTxt = Object.entries(caps).map(([k, v]) => "<span>" + esc(k.replace("_", " ")) + " <b>" + v.used + "/" + v.limit + "</b></span>").join("");
+  setHTML($("#plat"),
+    '<table><thead><tr><th>Platform</th><th title="Sent today">Sent</th><th title="Failed or parked today">Failed</th><th title="Applied with proof, all time">Proven</th><th title="Awaiting proof or waiting on you">Pending</th><th title="Failed or blocked, all time">Failed</th></tr></thead><tbody>' + body +
+    '</tbody><tfoot><tr><td><b>All platforms</b></td><td class="g">' + tot.today_sent + '</td><td class="r">' + tot.today_failed + "</td><td><b>" + tot.proven + '</b></td><td class="a">' + (tot.awaiting + tot.waiting) + '</td><td class="r">' + tot.failed + "</td></tr></tfoot></table>" + more("plat", list.length) +
+    '<div class="caps">Daily caps: ' + capTxt + "</div>");
+}
+
+function renderTokens(s){
+  const u = s.usage || {}, t = s.tokens || {}, n = s.numbers || {}, ll = s.llm || {};
+  const per = (n.per_day || []).map((d) => '<tr><td>' + esc(d.day) + "</td><td>" + (d.tokens ? "~" + kTok(d.tokens) : "–") + "</td><td>" + (d.calls || 0) + "</td></tr>").join("");
+  const modelRows = Object.entries(u.by_model_tokens || {})
+    .sort((a, b) => (((b[1].today || {}).tokens) || 0) - (((a[1].today || {}).tokens) || 0));
+  const models = modelRows.map(([name, v]) => {
+    const td = v.today || {}, mo = v.month || {}, avg = td.calls ? Math.round((td.tokens || 0) / td.calls) : 0;
+    return "<tr><td>" + esc(name) + "</td><td>" + (td.tokens ? "~" + kTok(td.tokens) : "–") + "</td><td>" + (td.calls || 0) +
+      "</td><td>" + (td.calls ? avg.toLocaleString() : "–") + "</td><td>" + (mo.tokens ? "~" + kTok(mo.tokens) : "–") + "</td><td>" + (mo.calls || 0) + "</td></tr>";
+  }).join("");
+  const purposeRows = Object.entries(u.by_purpose_tokens || {})
+    .sort((a, b) => (((b[1].today || {}).tokens) || 0) - (((a[1].today || {}).tokens) || 0));
+  const purposes = purposeRows.slice(0, 12).map(([name, v]) => {
+    const td = v.today || {}, mo = v.month || {};
+    return "<tr><td>" + esc(name) + "</td><td>" + (td.tokens ? "~" + kTok(td.tokens) : "–") + "</td><td>" + (td.calls || 0) + "</td><td>" + (mo.tokens ? "~" + kTok(mo.tokens) : "–") + "</td></tr>";
+  }).join("");
+  setHTML($("#tokens"),
+    '<div class="kv" style="margin-bottom:10px">' +
+    "<b>Today</b><span>~" + kTok(t.today) + " tokens · " + (t.calls_today || 0) + " calls</span>" +
+    "<b>This month</b><span>~" + kTok(t.month) + " tokens</span>" +
+    "<b>AI questions</b><span>" + (u.ai_answers || 0) + " answered of " + (u.ai_asked || 0) + " asked · " + (u.ai_rounds || 0) + " rounds</span>" +
+    "<b>LLM calls today</b><span>" + (u.llm_calls || 0) + (u.llm_failed ? " · " + u.llm_failed + " failed" : "") + " · " + (ll.calls || 0) + " done this session · " + (ll.secs || 0) + "s</span>" +
+    (ll.last ? "<b>Last AI event</b><span>" + esc(ll.last.msg || "") + " · " + ageTxt(nowSec() - (ll.last.t || 0)) + "</span>" : "") +
+    "</div>" +
+    '<div class="split" style="gap:18px">' +
+      '<div><div class="ph" style="padding:0 0 5px"><h2>Per provider (tokens, input+output)</h2></div><div class="tablewrap"><table><thead><tr><th>Provider</th><th>Today</th><th>Calls</th><th>Avg/call</th><th>Month</th><th>Calls</th></tr></thead><tbody>' + (models || '<tr><td colspan="6" class="zero">no recorded usage</td></tr>') + "</tbody></table></div></div>" +
+      '<div><div class="ph" style="padding:0 0 5px"><h2>Per purpose</h2><span class="hint">top ' + Math.min(12, purposeRows.length) + ' by today&rsquo;s tokens</span></div><div class="tablewrap"><table><thead><tr><th>Purpose</th><th>Today</th><th>Calls</th><th>Month</th></tr></thead><tbody>' + (purposes || '<tr><td colspan="4" class="zero">no recorded usage</td></tr>') + "</tbody></table></div></div>" +
+    "</div>" +
+    '<div class="ph" style="padding:10px 0 5px"><h2>Per day</h2></div><div class="tablewrap"><table><thead><tr><th>Day</th><th title="Tokens recorded in data/llm_usage.jsonl">Tokens</th><th>Calls</th></tr></thead><tbody>' + per + "</tbody></table></div>");
+}
+
+function renderGuardian(s){
+  const sy = s.systems || {}, hl = sy.health || {}, h = s.health || {}, ig = sy.integrations || {};
+  $("#snap-note").textContent = hl.at ? "guardian snapshot " + hl.at : "no guardian snapshot";
+  const rows = [
+    ["Process scan", h.proc_scan_ok === false ? "unavailable" : "ok"],
+    ["Worker processes", h.worker_procs == null ? "?" : h.worker_procs],
+    ["Guardian processes", h.guardian_procs == null ? "?" : h.guardian_procs],
+    ["Guardian last check", h.guardian_last_check_age_s == null ? "unknown" : ageTxt(h.guardian_last_check_age_s)],
+    ["Guardian log", (h.guardian_log_age_s == null ? "missing" : "file " + ageTxt(h.guardian_log_age_s)) + (h.guardian_last ? " · " + h.guardian_last : "")],
+    ["Worker log", (h.log_file || "none") + (h.log_age_s != null ? " · file " + ageTxt(h.log_age_s) : "")],
+    ["Snapshot supervisor", hl.supervisor == null ? "?" : String(hl.supervisor)],
+    ["Snapshot workers", hl.workers == null ? "?" : String(hl.workers)],
+    ["Worker queue (run state)", h.queue_worker == null ? "?" : String(h.queue_worker)],
+  ];
+  Object.keys(CONN_LABEL).forEach((k) => {
+    const v = ig[k]; if (!v) return;
+    rows.push([CONN_LABEL[k], (v.ok ? "ok" : "NOT OK") + (v.detail ? " · " + v.detail : "") + (ig.at ? " · snapshot " + ig.at : "")]);
+  });
+  setHTML($("#guardian"), rows.map(([k, v]) => "<b>" + esc(k) + "</b><span>" + esc(v) + "</span>").join(""));
+}
+
+function renderLog(s){
+  const quiet = $("#quiet").checked;
+  let a = (s.activity || []).slice().reverse().filter((x) => x.kind !== "llm");
+  if (quiet) a = a.filter((x) => x.kind !== "fill" && x.kind !== "step");
+  setHTML($("#log"), cap("log", a.slice(0, 120)).map((x) =>
+    '<div class="ln k-' + esc(x.kind) + '"><span class="tm">' + hhmmss(x.t) + '</span><span class="kd">' + esc(x.kind) + '</span><span class="ms" title="' + esc((x.company ? x.company + ": " : "") + x.msg) + '">' + (x.company ? "<b>" + esc(x.company) + "</b> " : "") + esc(x.msg) + "</span></div>").join("") + more("log", Math.min(a.length, 120)) ||
+    '<div class="empty">No activity yet.</div>');
+}
+
+function render(s){
+  renderTop(s); renderHealth(s); renderSystems(s); renderPerf(s); renderFails(s);
+  renderPlan(s); renderNeeds(s); renderAwait(s); renderPlat(s); renderTokens(s); renderGuardian(s); renderLog(s);
+  firstRender = false;
+}
+
+/* ---------- poll + clock ---------- */
+let busy = false;
+async function poll(){
+  if (busy) return; busy = true;
+  try {
+    const r = await fetch("/api/state", {cache: "no-store"});
+    const s = await r.json();
+    offset = s.now - Date.now() / 1000;
+    if (uiVersion == null) uiVersion = s.ui_version;
+    else if (s.ui_version !== uiVersion){ location.reload(); return; }
+    S = s; render(s);
+  } catch(e){
+    const p = $("#pill"); p.className = "pill bad"; p.innerHTML = '<i class="dot"></i><span>Server not reachable</span>';
+    cache.delete("actions");
+  } finally { busy = false; }
+}
+function tick(){
+  const d = new Date();
+  $("#clock").innerHTML = "<b>" + d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false}) + "</b>" + d.toLocaleDateString([], {weekday: "short", day: "numeric", month: "short"});
+}
+tick(); setInterval(tick, 1000);
+poll(); setInterval(poll, 3000);
+</script>
+</body>
+</html>

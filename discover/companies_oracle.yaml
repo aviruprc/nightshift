@@ -1,0 +1,22 @@
+# Career sites on Oracle Recruiting Cloud / Taleo / iCIMS. Every entry returned Bengaluru jobs live on 2026-11-03 via ats_oracle.py.
+# Each entry has a unique `tenant` so ats_api.load_companies (dedupe key = ats + slug/tenant) keeps all of them.
+# location_id = cached Bengaluru (or Karnataka, with client-side filtering) geography id; auto-resolved if absent.
+companies:
+  - {name: "JPMorgan Chase", ats: "oracle_hcm", tenant: "jpmc", host: "jpmc.fa.oraclecloud.com", site: "CX_1001", tier: "bank", location_id: 300000081145775}
+  - {name: "Goldman Sachs", ats: "oracle_hcm", tenant: "hdpc", host: "hdpc.fa.us2.oraclecloud.com", site: "LateralHiring", tier: "bank", location_id: 300000622945763}
+  - {name: "Honeywell", ats: "oracle_hcm", tenant: "ibqbjb", host: "ibqbjb.fa.ocs.oraclecloud.com", site: "CX_1", tier: "mnc", location_id: 100000013395554}
+  - {name: "Honeywell Aerospace", ats: "oracle_hcm", tenant: "icfcjb", host: "icfcjb.fa.ocs.oraclecloud.com", site: "Aerospace", tier: "mnc", location_id: 100000002337655}
+  - {name: "KPMG India", ats: "oracle_hcm", tenant: "ejgk", host: "ejgk.fa.em2.oraclecloud.com", site: "CX_3", tier: "mnc", location_id: 300002240961169}
+  - {name: "EXL", ats: "oracle_hcm", tenant: "fa-ewjt-saasfaprod1", host: "fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com", site: "CX_2", tier: "mnc", location_id: 100001217565039}
+  - {name: "American Express", ats: "oracle_hcm", tenant: "egug", host: "egug.fa.us2.oraclecloud.com", site: "CX_1", tier: "bank", location_id: 300000032718926}
+  - {name: "Oracle", ats: "oracle_hcm", tenant: "eeho", host: "eeho.fa.us2.oraclecloud.com", site: "jobsearch", tier: "mnc", location_id: 300001842985425}
+  - {name: "Bristlecone", ats: "oracle_hcm", tenant: "iaagiz", host: "iaagiz.fa.ocs.oraclecloud.com", site: "bristlecone-careers", tier: "mnc", location_id: 100000003213033}
+  - {name: "Kotak Mahindra Bank", ats: "oracle_hcm", tenant: "hcbt", host: "hcbt.fa.em2.oraclecloud.com", site: "CX", tier: "bank", location_id: 100000693765093}
+  - {name: "Texas Instruments", ats: "oracle_hcm", tenant: "edbz", host: "edbz.fa.us2.oraclecloud.com", site: "CX", tier: "mnc", location_id: 100001734561645}
+  - {name: "Mashreq Bank", ats: "oracle_hcm", tenant: "hcld", host: "hcld.fa.em2.oraclecloud.com", site: "CX_1", tier: "bank", location_id: 100000145376428}
+  - {name: "Fortive", ats: "oracle_hcm", tenant: "ejta", host: "ejta.fa.us6.oraclecloud.com", site: "CX_2001", tier: "mnc", location_id: 100006419305636}
+  - {name: "Tata Capital", ats: "oracle_hcm", tenant: "eofh", host: "eofh.fa.em2.oraclecloud.com", site: "CX_3001", tier: "bank", location_id: 300000002768134}
+  - {name: "Datavail", ats: "oracle_hcm", tenant: "eifn", host: "eifn.fa.us6.oraclecloud.com", site: "ExternalCareerSite", tier: "mnc", location_id: 300000041403718}
+  - {name: "Mercedes-Benz R&D India (Daimler)", ats: "taleo", tenant: "daimler", host: "daimler", section: "ex", portal: "101430233", tier: "mnc"}
+  - {name: "Textron", ats: "taleo", tenant: "textron", host: "textron", section: "textron", portal: "8140753014", tier: "mnc"}
+  - {name: "MSCI", ats: "icims", tenant: "globalcareers-msci", sub: "globalcareers-msci", tier: "bank"}   # 1 Bengaluru job (HRIS Specialist, posted 2026-10-05); verified with max_age_days=60

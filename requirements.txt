@@ -1,0 +1,12 @@
+# Runtime dependencies. Built from an import scan of this repository; versions are the ones it was tested with (Python 3.10).
+playwright>=1.40            # browser automation (then run: python -m playwright install chromium)
+PyYAML>=6.0
+rapidfuzz>=3.0
+keyring>=24.0               # passwords and API keys in the OS credential store (Windows Credential Manager)
+requests>=2.31
+pypdf>=4.0                  # CV checks (cv/ats_check.py)
+openpyxl>=3.1               # tracker.xlsx export
+python-jobspy>=1.1          # Indeed / Naukri discovery (discover/boards.py)
+beautifulsoup4>=4.12        # LinkedIn guest pages (discover/linkedin.py)
+psutil>=5.9                 # process checks (track/guardian.py, track/live.py)
+win11toast>=0.35; sys_platform == "win32"   # desktop notifications (optional; Windows only)

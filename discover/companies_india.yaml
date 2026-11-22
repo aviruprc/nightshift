@@ -1,0 +1,7 @@
+# Indian IT / engineering employers with in-house career portals. Verified live 2026-11-05; each fetcher is
+# fail-soft (an HTTP/parse error logs and returns [], so it can never break discovery).
+companies:
+  - {name: Infosys, ats: infosys, tier: it-services}                    # getCareerSearchJobs JSON; 1187 BLR jobs, full descriptions
+  - {name: Larsen & Toubro, ats: lnt, tier: engineering, delay_s: 0.2}  # PeopleStrong jobs/v1 + searchString; few analyst roles
+  - {name: Tech Mahindra, ats: techmahindra, tier: it-services, delay_s: 0.2}  # ASP.NET async search; HTML cards, no per-job page
+  - {name: IBM, ats: ibm, tier: bigtech, delay_s: 0.2}                  # search/api/v2 (India filter); no posted date, snippet descriptions

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job hunt - today</title>
+<style>
+  :root { --bg:#f6f5f1; --card:#ffffff; --ink:#1d1d1b; --muted:#6b6a65; --line:#e4e2da; --accent:#0b6e4f; --warn:#b4541a; --soft:#eef5f1; --bar:#cfe5db; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#161715; --card:#1f201e; --ink:#ecebe6; --muted:#a09f98; --line:#30312e; --accent:#5fc9a2; --warn:#e79a5d; --soft:#22302a; --bar:#2f4a3e; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.45 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+  header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  h1 { font-size: 22px; margin:0; font-weight:650; }
+  header a { color:var(--muted); font-size:14px; margin-left:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+  h2 { font-size:15px; margin:0 0 10px; font-weight:650; }
+  h2 small { color:var(--muted); font-weight:400; margin-left:6px; }
+  .nums { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; }
+  .num b { display:block; font-size:30px; line-height:1.1; font-variant-numeric: tabular-nums; }
+  .num span { color:var(--muted); font-size:13.5px; }
+  .doing { display:flex; gap:10px; align-items:flex-start; }
+  .dot { width:10px; height:10px; border-radius:50%; margin-top:7px; flex:none; background:var(--muted); }
+  .working .dot { background:var(--accent); } .idle .dot, .stopped .dot { background:var(--warn); }
+  table { width:100%; border-collapse:collapse; font-size:14.5px; }
+  th { text-align:left; color:var(--muted); font-weight:500; font-size:13px; padding:4px 8px 6px 0; border-bottom:1px solid var(--line); }
+  td { padding:7px 8px 7px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td { border-bottom:0; }
+  td.n, th.n { text-align:right; font-variant-numeric: tabular-nums; white-space:nowrap; }
+  .week { display:flex; gap:8px; align-items:flex-end; height:92px; }
+  .week div { flex:1; text-align:center; font-size:12px; color:var(--muted); }
+  .week i { display:block; background:var(--bar); border-radius:5px 5px 0 0; margin:0 auto 4px; width:70%; position:relative; min-height:2px; }
+  .week i u { position:absolute; left:0; right:0; bottom:0; background:var(--accent); border-radius:5px 5px 0 0; }
+  .week b { display:block; color:var(--ink); font-size:13px; font-weight:600; }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .tabs button { border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:999px; padding:5px 12px; font:inherit; font-size:14px; cursor:pointer; }
+  .tabs button[aria-pressed=true] { background:var(--soft); border-color:var(--accent); }
+  .need { padding:9px 0; border-bottom:1px solid var(--line); }
+  .need:last-child { border-bottom:0; }
+  .need a { color:var(--accent); font-weight:600; text-decoration:none; }
+  .need a:hover { text-decoration:underline; }
+  .need p { margin:2px 0 0; color:var(--muted); font-size:14px; overflow-wrap:anywhere; }
+  .muted { color:var(--muted); font-size:13.5px; }
+  .scroll { overflow-x:auto; }
+  .ok { color:var(--accent); } .wait { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header><h1>Job hunt: today</h1><div><span class="muted" id="clock"></span><a href="/">Full dashboard</a><a href="/ops">Machine health</a></div></header>
+  <section class="card"><div class="nums" id="nums"></div></section>
+  <section class="card"><h2>What the bot is doing</h2><div class="doing" id="doing"><i class="dot"></i><div id="doingtext">Loading</div></div></section>
+  <section class="card"><h2>Last 7 days <small>dark = confirmed by the employer or site, light = sent and waiting for confirmation</small></h2><div class="week" id="week"></div></section>
+  <section class="card"><h2>Needs you <small id="needsn"></small></h2><div class="tabs" id="tabs"></div><div id="needs"></div></section>
+  <section class="card"><h2>By job site, last 7 days</h2><div class="scroll"><table id="portals"></table></div></section>
+  <section class="card"><h2>Sent today</h2><div class="scroll"><table id="recent"></table></div></section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const NAMES = { naukri: "Naukri", linkedin: "LinkedIn", workday: "Workday (company sites)", oracle_hcm: "Oracle (company sites)", greenhouse: "Greenhouse",
+  lever: "Lever", ashby: "Ashby", smartrecruiters: "SmartRecruiters", successfactors: "SuccessFactors", eightfold: "Eightfold", shine: "Shine",
+  foundit: "Foundit", apna: "Apna", instahyre: "Instahyre", hirist: "Hirist", indeed: "Indeed", taleo: "Taleo", icims: "iCIMS" };
+const KIND = { question: "Questions", password: "Passwords", captcha: "CAPTCHA", other: "Other" };
+let tab = null, last = null;
+function safeUrl(u) { return /^https?:\/\//i.test(u || "") ? u : "#"; }
+function render(S) {
+  last = S;
+  const t = S.today;
+  $("#clock").textContent = "updated " + new Date(S.now * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  $("#nums").innerHTML = [[t.sent, "applications sent today"], [t.proven, "confirmed"], [t.waiting_receipt, "waiting for confirmation"],
+    [t.companies, "different companies"], [t.sent - t.naukri, "not through Naukri"], [S.queue, "jobs ready in the queue"]]
+    .map(x => '<div class="num"><b>' + esc(x[0]) + "</b><span>" + esc(x[1]) + "</span></div>").join("");
+  $("#doing").className = "doing " + esc(S.doing.state);
+  $("#doingtext").textContent = S.doing.text;
+  const mx = Math.max(1, ...S.week.map(d => d.sent));
+  $("#week").innerHTML = S.week.map(d => '<div><b>' + d.sent + '</b><i style="height:' + Math.round(54 * d.sent / mx) + 'px"><u style="height:' +
+    (d.sent ? Math.round(100 * d.proven / d.sent) : 0) + '%"></u></i>' + esc(d.day) + "</div>").join("");
+  const kinds = Object.keys(KIND).filter(k => S.needs_counts[k]);
+  if (!tab || !S.needs_counts[tab]) tab = kinds[0] || null;
+  $("#needsn").textContent = S.needs.length ? "one action each; the bot does the rest" : "nothing right now";
+  $("#tabs").innerHTML = kinds.map(k => '<button data-k="' + k + '" aria-pressed="' + (k === tab) + '">' + KIND[k] + " (" + S.needs_counts[k] + ")</button>").join("");
+  const rows = S.needs.filter(n => n.kind === tab);
+  $("#needs").innerHTML = rows.length ? '<p class="muted">' + esc(rows[0].action) + "</p>" + rows.slice(0, 60).map(n =>
+    '<div class="need"><a href="' + esc(safeUrl(n.url)) + '" target="_blank" rel="noopener">' + esc(n.company) + "</a> &middot; " + esc(n.title) +
+    "<p>" + esc(n.reason) + "</p></div>").join("") : "";
+  $("#portals").innerHTML = '<tr><th>Job site</th><th class="n">Sent today</th><th class="n">Sent, 7 days</th><th class="n">Failed</th><th class="n">Waiting in queue</th></tr>' +
+    S.portals.map(p => "<tr><td>" + esc(NAMES[p.portal] || p.portal) + '</td><td class="n">' + p.today + '</td><td class="n">' + p.sent + '</td><td class="n">' + p.failed +
+    '</td><td class="n">' + p.waiting + "</td></tr>").join("");
+  $("#recent").innerHTML = S.recent.length ? '<tr><th>Time</th><th>Company</th><th>Role</th><th>Job site</th><th>Status</th></tr>' + S.recent.map(r =>
+    "<tr><td>" + esc(r.at) + "</td><td>" + esc(r.company) + "</td><td>" + esc(r.title) + "</td><td>" + esc(NAMES[r.portal] || r.portal) + '</td><td class="' +
+    (r.proven ? "ok" : "wait") + '">' + (r.proven ? "confirmed" : "waiting") + "</td></tr>").join("") : '<tr><td class="muted">Nothing sent yet today.</td></tr>';
+}
+document.addEventListener("click", e => { const b = e.target.closest("#tabs button"); if (b && last) { tab = b.dataset.k; render(last); } });
+async function tick() {
+  try { render(await (await fetch("/api/simple", { cache: "no-store" })).json()); }
+  catch (e) { $("#doingtext").textContent = "The dashboard cannot read the data right now; it retries by itself."; }
+}
+tick(); setInterval(tick, 20000);
+</script>
+</body>
+</html>
