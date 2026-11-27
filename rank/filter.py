@@ -146,6 +146,9 @@ def _analyst_role_misread(hit: str, title: str) -> bool:
         return bool(_QA_IN_HER_FIELD.search(title)) and not re.search(r"software|automation|selenium|test", title, re.I)
     if h == "sales":
         return bool(_ANALYST_OF_SALES.search(title)) and not re.search(r"account executive|sales (?:manager|executive|officer|representative)|business development", title, re.I)
+    if h in ("testing", "tester"):
+        # 'Risk Control Testing Analyst' / 'Controls Testing Associate': control testing is audit / risk work, not software QA.
+        return bool(re.search(r"\b(?:risk|controls?|audit|compliance|sox|icfr|kyc|aml|operational)\b", title, re.I)) and not re.search(r"software|automation|selenium|performance|api|mobile|manual tester|qa engineer|sdet", title, re.I)
     return False
 
 

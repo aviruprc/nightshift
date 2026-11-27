@@ -1,15 +1,6 @@
-LICENSE NOT YET CHOSEN - OWNER TO CONFIRM BEFORE PUBLISHING
-
-Until a license is chosen, all rights are reserved by the copyright holder and nobody else may
-legally copy, modify or redistribute this code.
-
-Suggested (not assumed): the MIT License. If the owner agrees, replace this whole file with the
-text below, with the year and the copyright holder's name filled in.
-
---------------------------------------------------------------------------------
 MIT License
 
-Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+Copyright (c) 2026 Nightshift contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,4 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
---------------------------------------------------------------------------------

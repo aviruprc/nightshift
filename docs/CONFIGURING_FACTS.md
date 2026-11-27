@@ -107,6 +107,7 @@ saved here and reused for every identical question, at every company. The keys t
 | Education | `highest_degree`, `degree_level_option`, `holds_degree`, `institution`, `school_or_university`, `field_of_study`, `graduation_year` |
 | Declarations | `over_18`, `knows_no_insider` (you know no director/employee: referral and relative questions get No), `no_compliance_flags` (no criminal record, sanctions, conflicts, non-competes, PEP relatives, disciplinary history), `how_did_you_hear` |
 | Skill years | `skill_years: {regex: years}` and `skill_years_confirmed: true`. Skill-specific year questions are answered only from this table, and only once you confirm it. |
+| Explicit answers (all optional) | `skill_years_explicit: {regex: years}` (your own per-skill figure, 0 allowed: a Yes/No "experience in X?" then follows it), `form_preferences` (`travel`, `shifts`, `face_to_face_interview`, `contract_roles`, `industry`, `basic_accounting`, `manufacturing`, `support_experience`), `language_proficiency` (one level for every language, or `{language: {read|write|speak: full|below_full}}`), `pan_number` (used only for a question that names the PAN) |
 
 Rules the code enforces whatever you write:
 
@@ -116,9 +117,12 @@ Rules the code enforces whatever you write:
 - A place (city, country) is never the answer to a yes/no question, and a work-authorisation question about a country other
   than `current_country` is answered from the facts (not authorised there; sponsorship needed), unless you set
   `authorized_in_other_countries: true`.
+- Whether a posting is "foreign" is decided from its location text (a place outside `current_country`, with your city, state and `city_aliases` counting as home),
+  never from the absence of the country's name.
+- An SMS / text / WhatsApp opt-in ("I agree that X may reach out to me via SMS") is answered No.
 - A question that names one of your former employers ("have you worked for X before?") is never answered with a blanket No.
 - Self-ratings ("rate yourself out of 10"), commercial preferences (contract, third-party payroll, shifts) and ID numbers
-  always come to you.
+  always come to you, unless you recorded the answer under `form_preferences` / `pan_number` above.
 
 **Common answers / the answer cache.** Besides `answers.yaml`, the bot keeps a cache of non-personal answers in the
 database (`answers_cache`, for example consent and "how did you hear" choices) so that one answer is reused across

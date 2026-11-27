@@ -51,6 +51,8 @@ RULES = [
     ("personal", r"accounts\.google\.com|google account challenge|sign in with google"),
     # a company: a Naukri WALK-IN listing has no apply flow (in-person interview, button "I am interested"): hers to decide.
     ("personal", r"walk-in interview listing"),
+    # a portal whose sign-in texts a code to the user's PHONE (a new account there): only the person holding the phone can finish it.
+    ("personal", r"sms (?:code|otp)|code (?:sent|texted) (?:by|via) sms|signs in with a code sent by sms"),
 ]
 BACKOFF_MIN = [5, 20, 60]
 MAX_TRANSIENT = 2  # a retry redoes the whole (LLM-driven) session: keep it to one

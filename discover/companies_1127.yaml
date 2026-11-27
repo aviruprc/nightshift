@@ -1,0 +1,60 @@
+# Probed 2026-11-27 against the public ATS APIs: each entry answered a live ATS API call with jobs located in Bengaluru/India/Remote, and the slug matches the company.
+companies:
+  - {name: "2U", ats: greenhouse, slug: 2u, tier: probed}
+  - {name: "Airtable", ats: greenhouse, slug: airtable, tier: probed}
+  - {name: "Asana", ats: greenhouse, slug: asana, tier: probed}
+  - {name: "Beyondtrust", ats: greenhouse, slug: beyondtrust, tier: probed}
+  - {name: "Binance", ats: greenhouse, slug: binance, tier: probed}
+  - {name: "Bitgo", ats: greenhouse, slug: bitgo, tier: probed}
+  - {name: "Buffer", ats: ashby, slug: buffer, tier: probed}
+  - {name: "Bybit", ats: greenhouse, slug: bybit, tier: probed}
+  - {name: "Calendly", ats: greenhouse, slug: calendly, tier: probed}
+  - {name: "Circle", ats: ashby, slug: circle, tier: probed}
+  - {name: "ClickUp", ats: ashby, slug: clickup, tier: probed}
+  - {name: "Cloudflare", ats: greenhouse, slug: cloudflare, tier: probed}
+  - {name: "Cockroach Labs", ats: greenhouse, slug: cockroachlabs, tier: probed}
+  - {name: "Cribl", ats: greenhouse, slug: cribl, tier: probed}
+  - {name: "Dremio", ats: greenhouse, slug: dremio, tier: probed}
+  - {name: "Dropbox", ats: greenhouse, slug: dropbox, tier: probed}
+  - {name: "Duolingo", ats: greenhouse, slug: duolingo, tier: probed}
+  - {name: "Elsevier", ats: greenhouse, slug: elsevier, tier: probed}
+  - {name: "Expensify", ats: ashby, slug: expensify, tier: probed}
+  - {name: "Fastly", ats: greenhouse, slug: fastly, tier: probed}
+  - {name: "Fi", ats: lever, slug: fi, tier: probed}
+  - {name: "Figma", ats: greenhouse, slug: figma, tier: probed}
+  - {name: "FullStory", ats: ashby, slug: fullstory, tier: probed}
+  - {name: "Funding Circle", ats: ashby, slug: fundingcircle, tier: probed}
+  - {name: "Gemini", ats: greenhouse, slug: gemini, tier: probed}
+  - {name: "Grafana Labs", ats: greenhouse, slug: grafanalabs, tier: probed}
+  - {name: "Honeycomb", ats: greenhouse, slug: honeycomb, tier: probed}
+  - {name: "Jumio", ats: greenhouse, slug: jumio, tier: probed}
+  - {name: "LaunchDarkly", ats: greenhouse, slug: launchdarkly, tier: probed}
+  - {name: "Lemonade", ats: ashby, slug: lemonade, tier: probed}
+  - {name: "Mercury", ats: greenhouse, slug: mercury, tier: probed}
+  - {name: "Mollie", ats: ashby, slug: mollie, tier: probed}
+  - {name: "Neo4j", ats: greenhouse, slug: neo4j, tier: probed}
+  - {name: "Netskope", ats: greenhouse, slug: netskope, tier: probed}
+  - {name: "Nubank", ats: ashby, slug: nubank, tier: probed}
+  - {name: "OakNorth", ats: ashby, slug: oaknorth, tier: probed}
+  - {name: "OKX", ats: greenhouse, slug: okx, tier: probed}
+  - {name: "Outreach", ats: lever, slug: outreach, tier: probed}
+  - {name: "Paxos", ats: ashby, slug: paxos, tier: probed}
+  - {name: "Pendo", ats: greenhouse, slug: pendo, tier: probed}
+  - {name: "Ping Identity", ats: greenhouse, slug: pingidentity, tier: probed}
+  - {name: "Plaid", ats: ashby, slug: plaid, tier: probed}
+  - {name: "PlanetScale", ats: greenhouse, slug: planetscale, tier: probed}
+  - {name: "Pleo", ats: ashby, slug: pleo, tier: probed}
+  - {name: "Pocket FM", ats: lever, slug: pocketfm, tier: probed}
+  - {name: "Qonto", ats: ashby, slug: qonto, tier: probed}
+  - {name: "Redis", ats: ashby, slug: redis, tier: probed}
+  - {name: "Salesloft", ats: greenhouse, slug: salesloft, tier: probed}
+  - {name: "Sentry", ats: ashby, slug: sentry, tier: probed}
+  - {name: "Sigma Computing", ats: greenhouse, slug: sigmacomputing, tier: probed}
+  - {name: "Skillsoft", ats: greenhouse, slug: skillsoft, tier: probed}
+  - {name: "Snyk", ats: ashby, slug: snyk, tier: probed}
+  - {name: "Socure", ats: ashby, slug: socure, tier: probed}
+  - {name: "Starburst", ats: greenhouse, slug: starburst, tier: probed}
+  - {name: "Tanium", ats: greenhouse, slug: tanium, tier: probed}
+  - {name: "Wealthsimple", ats: ashby, slug: wealthsimple, tier: probed}
+  - {name: "Zapier", ats: ashby, slug: zapier, tier: probed}
+  - {name: "Zscaler", ats: greenhouse, slug: zscaler, tier: probed}

@@ -85,11 +85,24 @@ def fit_queue(d) -> int:
     'queue low -> discover' rule never fired and the worker idled ."""
     try:
         from apply import runner
-        now = datetime.now().isoformat(timespec="seconds")
-        rows = d.rows("status='candidate' AND (next_attempt_at IS NULL OR next_attempt_at<=?)", (now,))
-        return sum(1 for r in rows if (r["score"] or 0) >= runner.min_score(r))
+        return len(runner.runnable_rows(d))   # what the WORKER can run now, not every scored candidate (a counter that includes stale / hand-only rows never reads "low")
     except Exception:  # noqa: BLE001
         return 0
+
+
+NAUKRI_LOW = 10
+
+
+def naukri_supply() -> int:
+    """Naukri rows the worker could run now (fresh, scored, not paused) - the fast route with a hard proof."""
+    try:
+        from apply import naukri_apply, runner
+        from core import db
+        if naukri_apply.paused():
+            return 999   # a human-check pause: searching more cannot help until it ends
+        return sum(1 for r in runner.runnable_rows(db.DB()) if runner.is_naukri(r))
+    except Exception:  # noqa: BLE001
+        return 999
 
 
 def counts() -> dict:
@@ -221,6 +234,13 @@ def main():
                 log("HEAL", "daily full discovery (LinkedIn + boards)")
             # 5. queue
             if c["queue"] < QUEUE_LOW and time.time() - last_disc > 3600 and not procs("hunt.py naukri", "python.exe"):
+                discover()
+                last_disc = time.time()
+            # The TOTAL queue can be large (company-site rows with no recent success) while almost no NAUKRI row is left - the source that makes most of a
+            # day's sends. Naukri supply is watched on its own: fewer than NAUKRI_LOW runnable Naukri rows starts the Naukri search (at most every 30 minutes),
+            # whatever the total says.
+            if naukri_supply() < NAUKRI_LOW and time.time() - last_disc > 1800 and not procs("hunt.py naukri", "python.exe"):
+                log("HEAL", f"naukri supply low ({naukri_supply()} runnable): searching Naukri")
                 discover()
                 last_disc = time.time()
             # a low queue used to refill from Naukri only, while the full search (career sites,

@@ -400,6 +400,7 @@ RULES
 - Use only listed elements (by "i"). Required fields first. Tick terms/privacy/consent; never marketing/newsletter/alert/SMS opt-ins (Opt Out); "consider me for other roles": Yes.
 - Repeated sections (education, experience) show "row": "n of m" and "rowctx" on every element: labels repeat, so pick the element whose ROW and rowctx name the right record. Never rely on the first match.
 - Compliance questions (relatives in government, sanctions, criminal record, conflicts, non-compete, previously employed here) and work authorisation / sponsorship: answer ONLY as stated in CANDIDATE; if CANDIDATE does not state it, {{"done":"blocked","why":"<the question> not recorded"}}.
+- SPONSORSHIP / VISA: 'Will you now or in the future require sponsorship / a visa?' is NO for a job located in the candidate's home country (the candidate needs NO sponsorship there); Yes ONLY when the job itself is located in another country. Never answer Yes just because other countries would need sponsorship.
 - Dropdown / combobox / search / multi-select: {{"do":"select","i":n,"value":"<option text>"}} (the tool opens, searches, picks, verifies). Never click options yourself.
 - Box looks ticked but page still demands it: "uncheck", then "click" its label text.
 - If the page offers applying WITHOUT an account (upload your CV / apply as guest / apply with resume), do that instead of Register or Login (for example: use the CV upload).
@@ -897,21 +898,39 @@ def _facts_compact() -> str:
     langs = a.get("languages") or ", ".join(pr.get("languages") or []) or nr
     links = a.get("linkedin") or ("https://www." + str(p["linkedin"]) if p.get("linkedin") else "")
     github = a.get("github") or p.get("github") or ""
+    lang_prof = a.get("language_proficiency")
+    if isinstance(lang_prof, dict) and lang_prof:
+        parts = []
+        for lang, lv in lang_prof.items():
+            lv = lv if isinstance(lv, dict) else {}
+            parts.append(f"{lang} = " + ", ".join(f"{k} {'FULL' if v == 'full' else 'a bit below full'}" for k, v in lv.items()))
+        lang_note = ("recorded proficiency: " + "; ".join(parts) + ". Choose the TOP level the form offers for 'full' (Advanced / Fluent / Full Professional); for 'a bit below full' "
+                     "choose the nearest option BELOW full (Professional / Intermediate / Working / Good / Moderate); if the form offers no such option, stop as blocked with why "
+                     "'language proficiency: level not offered'. Never choose Basic or Conversational for a skill that is recorded, and never 'Native' unless it is the only top option")
+    else:
+        lang_note = ("proficiency levels NOT recorded: if a form REQUIRES a reading/writing/speaking level, stop as blocked with why "
+                     "'language proficiency required, not recorded'")
+    prefs = a.get("form_preferences") if isinstance(a.get("form_preferences"), dict) else {}
+    pref_note = ("RECORDED PREFERENCES (answer exactly these, never the opposite): " + "; ".join(f"{k.replace('_', ' ')} = {v}" for k, v in prefs.items() if v not in (None, "")) + ". "
+                 if prefs else "")
+    pan_note = (f"PAN {a['pan_number']} - ONLY for a field that itself names the PAN / Permanent Account Number; never in an Aadhaar or national-ID field. "
+                if a.get("pan_number") else "")
     return (f"{p.get('name', '')}, {a.get('current_location') or p.get('location', '')}. {profile.total_years_text() or '?'} yrs total experience. "
             f"Employers: {exp}. Education: {edu}. Skills: {skills}. "
             f"NOT their skills: {', '.join(f.get('not_claimable') or [])}. CTC expected {a.get('expected_ctc_lpa', nr)}, last {a.get('last_ctc_lpa', nr)}; "
             f"notice {a.get('notice_period', nr)}; DOB {a.get('date_of_birth', nr)}; gender {a.get('gender', nr)}; nationality {a.get('nationality', nr)}; "
             f"phone {profile.phone_digits() or nr} ({profile.phone_country_code() or 'country code ' + nr}); address {a.get('address', nr)}; "
-            f"languages {langs} (proficiency levels NOT recorded: if a form REQUIRES a reading/writing/speaking level, stop as blocked with why "
-            f"'language proficiency required, not recorded'); race/ethnicity, disability, veteran: Decline to self-identify (choose 'prefer not to say'/"
+            f"languages {langs} ({lang_note}); race/ethnicity, disability, veteran: Decline to self-identify (choose 'prefer not to say'/"
             f"'decline' when offered); pronouns NOT recorded (leave optional pronoun fields empty); career gap: {a.get('career_gap_reason', nr)}. "
             #  (SmartRecruiters): "LinkedIn profile URL is required by the form but not provided" - it was recorded, it was just never sent.
             f"LinkedIn {links or nr}" + (f"; GitHub {github}" if github else "") +
             " (no other website, portfolio or social profile is recorded: leave those boxes empty). "
-            + (f"Work authorisation: authorised to work in {a['current_country']} only; other countries No, sponsorship for other countries Yes. "
+            + (f"Work authorisation: authorised to work in {a['current_country']} only. For a job located in {a['current_country']}: authorised Yes and sponsorship / visa NO (needs none); "
+               f"only for a job located in another country: authorised No, sponsorship Yes. "
                if a.get("current_country") and not a.get("authorized_in_other_countries") else "")
             + ("Compliance: confirmed none apply (relatives in government, sanctions, criminal record, conflicts, non-compete, previously employed "
                "at the hiring company unless it is an employer above) -> No. " if str(a.get("no_compliance_flags") or "").lower() in ("yes", "true") else "")
+            + pref_note + pan_note
             + "CV PDF via the upload action.")
 
 
@@ -953,6 +972,14 @@ Q_SHAPE = re.compile(r"^\s*(?:q(?:uestion)?\s*\d{1,2}[).:]?\s*)?(?:are|do|does|d
 SAVE_NAV = re.compile(r"save and continue|save & continue|^\s*(save|next|continue|continue application)\s*$", re.I)
 
 
+_HIGH_STAKES_Q = re.compile(r"sponsor|visa|work (?:authori[sz]ation|permit|eligib)|authori[sz]ed to work|eligib\w* to work|right to work|legally (?:entitled|authori[sz]ed)|"
+                            r"citizen|national of|employment (?:status|eligibility)", re.I)
+
+
+def _label_question(e: dict) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"^\s*(?:error-|\*)\s*", "", str(e.get("label") or ""))).strip(" *")
+
+
 def answered_questions(els: list) -> dict:
     """{question: 'Yes'|'No'} for the yes/no answers VISIBLE on the page right now.
 
@@ -962,9 +989,19 @@ def answered_questions(els: list) -> dict:
     for e in els or []:
         q = re.sub(r"\s+", " ", str(e.get("group") or "")).strip()
         val = str(e.get("text") or "").strip()
-        if not q or val not in ("Yes", "No") or not Q_SHAPE.match(q):
+        if not q or val not in ("Yes", "No") or not (Q_SHAPE.match(q) or re.search(r"\b(?:sms|text messages?|whatsapp)\b", q, re.I)):
             continue
         if e.get("tag") == "button" or e.get("checked") is True:
+            if q in shown and shown[q] != val:
+                ambiguous.add(q)
+            shown.setdefault(q, val)
+    for e in els or []:   # SuccessFactors / Oracle comboboxes, native selects and Workday dropdown BUTTONS whose label (not `group`) is the question
+        if e.get("tag") not in ("input", "select", "button") or str(e.get("type") or "") in ("checkbox", "radio", "password", "file", "hidden"):
+            continue
+        if e.get("tag") == "button" and not _HIGH_STAKES_Q.search(str(e.get("label") or "")):
+            continue   # a plain button is judged only for the high-stakes questions (Yes/No pills are ambiguous by nature)
+        q, val = _label_question(e), str(e.get("value") or e.get("text") or "").strip()
+        if val in ("Yes", "No") and q and (Q_SHAPE.match(q) or _HIGH_STAKES_Q.search(q)):
             if q in shown and shown[q] != val:
                 ambiguous.add(q)
             shown.setdefault(q, val)
@@ -1146,6 +1183,25 @@ def dialog_controls(els: list, name: str, limit: int = 5) -> str:
     return ", ".join(f"#{e.get('i')} '{(e.get('label') or e.get('text') or '')[:24]}'" for e in got[:limit]) or "none listed"
 
 
+_LACKS_REQ = re.compile(r"(?:candidate|she|he|they|applicant)\s+(?:lacks|does not have|doesn.t have|has no)\s+(?:the\s+)?(?:required|mandatory|necessary)\b|"
+                       r"\blacks? (?:the )?(?:required|mandatory) (?:skills?|experience|qualification|certification)", re.I)
+
+
+def lacks_required_skill(why: str) -> bool:
+    """The model's own wording for 'this posting needs something the candidate does not hold' (an eligibility verdict, not a page state)."""
+    return bool(_LACKS_REQ.search(why or ""))
+
+
+_HUMAN_WALL = re.compile(r"quick security check|confirm (?:that )?you.?re (?:a )?human|verify (?:that )?you are (?:a )?human|checking your browser before|just a moment\.\.\.|"
+                        r"check the box to let us know you.?re human", re.I)
+
+
+def human_wall_page(snap: dict) -> bool:
+    """A bot-detection wall ('Quick security check', 'Please confirm you're human', a Cloudflare interstitial) in the page's first words."""
+    head = " ".join((snap.get("heads") or [])[:2]) + " " + (snap.get("text") or "")[:300]
+    return bool(_HUMAN_WALL.search(head))
+
+
 def confirmation_proof(snap: dict) -> str:
     """The words that prove THIS page is a confirmation, from whichever rule made `_confirmed` true (KB-82).
 
@@ -1203,7 +1259,7 @@ def _is_answer_action(do: str, el: dict | None, value: str = "") -> bool:
         if _CONSENT_TICK.search(lab) or (do == "uncheck" and _OPTOUT_TICK.search(lab)):
             return False
         return True
-    if do == "fill" and _FACT_FILL.search(f"{label} {text}"):
+    if do == "fill" and (_FACT_FILL.search(f"{label} {text}") or _HIGH_STAKES_Q.search(f"{label} {text}")):
         return True                      # fluency / proficiency / languages are not in her record: never a stored value
     if do == "click" and (text or label) and not _NAV_CLICK.match(text or label):
         # Oracle HCM: recipes held clicks on pill buttons (a gender, a pronoun, an ethnicity, a passport type, a years band,
@@ -1625,6 +1681,10 @@ def fill_code(pg, code: str, loc=None) -> bool:
     """Type a code into the page: one box per digit when the page gives that many boxes, else type like a person."""
     try:
         boxes = pg.locator(CODE_BOX_SEL)
+        if boxes.count() >= 6 and boxes.count() > len(code):
+            # The page has more boxes than the code has digits (eight 'Digit k of 8' boxes and the mail reader returned a 4-digit year, which was typed and
+            # submitted). A code shorter than the boxes is not this page's code: type nothing (the caller reports "no code" = transient).
+            return False
         if boxes.count() >= len(code):  # one box per digit
             for k, ch in enumerate(code):
                 boxes.nth(k).fill(ch)
@@ -2174,6 +2234,12 @@ def navigate(pg, ctx, url: str, pdf, job: dict, dry_run: bool, max_steps: int = 
                     snap = pg.evaluate(SNAP_JS)
                 except Exception:  # noqa: BLE001
                     pass
+            if human_wall_page(snap):
+                # 'Quick security check - please confirm you're human' above a 'Loading...' skeleton was filed as "the page's sections never rendered".
+                # A human check is the user's to pass: never bypassed, never filed as our rendering bug.
+                pg.screenshot(path=str(shot))
+                res.update(status="captcha", detail=f"human check on {urlparse(pg.url).netloc}: {snap.get('heads', [''])[0] if snap.get('heads') else 'security check'}"[:200], screenshot=str(shot))
+                return _done(res)
             if page_loading(snap):
                 # a company: 'Personal information Loading / Terms and Conditions Loading' with 11 controls, and the
                 # navigator clicked Save and Continue 16 times. A skeleton is not a form: wait, reload once, and name it if it never renders.
@@ -2700,10 +2766,18 @@ def navigate(pg, ctx, url: str, pdf, job: dict, dry_run: bool, max_steps: int = 
                     if proof_txt and final_step is not None and step - final_step <= 2:  # proof only after OUR final click (not a stale one)
                         res.update(status="applied", detail="navigator: confirmation page", proof=f"PAGE: '{proof_txt}'", screenshot=str(shot),
                                    proof_shot=engine.proof_shot(pg, job.get("id", "job")))
-                    elif final_step is None and already_applied_notice(snap.get("text", "")):
+                    elif already_applied_notice(snap.get("text", "")):
+                        # Our Submit drew "You have already applied for this job opening" and the row used to be stored `unconfirmed` although the SITE said an
+                        # earlier application exists: not a send made now. The notice wins whether or not a final click happened in this run (a real
+                        # confirmation is checked first, above).
                         # a company: the portal itself says "You already applied for this job." That is the account's own proof of an earlier application
                         # (her own or an earlier run), so it is not a failure - and it is not credited as a send made today (runner keeps applied_at = EARLIER).
                         res.update(status="already_applied", detail=f"{urlparse(pg.url).netloc} says: {already_applied_notice(snap.get('text', ''))}"[:200], screenshot=str(shot))
+                    elif final_step is None and proof_txt:
+                        # The page itself said "Application Submitted! You applied to <role>" after a one-step apply click that carries no 'Submit' label, so it was filed
+                        # 'never clicked a final Submit; nothing was sent'. The SITE's own confirmation wording is evidence the model's word is not: keep it as
+                        # `unconfirmed` (waits for a receipt, never `applied`) instead of discarding a real send.
+                        res.update(status="unconfirmed", detail=f"navigator: the site shows '{proof_txt[:80]}' after a one-step apply click; waiting for the receipt", screenshot=str(shot))
                     elif final_step is None:
                         # the model's word alone is not a send (a company lesson). No final Submit was ever clicked in this run: nothing was sent.
                         res.update(status="failed", detail="navigator claimed 'submitted' but never clicked a final Submit; nothing was sent", screenshot=str(shot))
@@ -2758,6 +2832,10 @@ def navigate(pg, ctx, url: str, pdf, job: dict, dry_run: bool, max_steps: int = 
                         if log:
                             log(f"   · {ask}")
                         res.update(status="needs_you", detail=ask[:300], screenshot=str(shot))
+                    elif done == "blocked" and lacks_required_skill(why_txt):
+                        # "Candidate lacks required skills (...)" was stored as a failure and would come back as a retry. A requirement the candidate does not hold is
+                        # an ELIGIBILITY answer, not a page problem: skip it and name the skill (the missing-skill score cap keeps the pattern out of the queue).
+                        res.update(status="skipped", detail=f"not eligible (the model read the posting): {why_txt[:190]}", screenshot=str(shot))
                     elif done == "blocked" and _signin_wall(why_txt, accounts.is_verified(host),
                                                              saved_password=accounts.get(host) is not None, rejected=signin_rejected) \
                             and not accounts.reset_allowed(host):
@@ -2791,7 +2869,12 @@ def navigate(pg, ctx, url: str, pdf, job: dict, dry_run: bool, max_steps: int = 
                 shown = "••••" if pw and pw in val else val[:40]
                 el = next((e for e in snap["els"] if e["i"] == i), None) if i is not None else None
                 loc = pg.locator(f'[data-ag="{i}"]').first if i is not None else None
-                what = f"{do} #{i} {(el or {}).get('label') or (el or {}).get('text') or ''}"[:70] + (f" = {shown}" if val else "")
+                # A Workday question dropdown is a button labelled 'Select One' and the QUESTION sits in `group`: without it the audit trail
+                # ("select #7 Select One = Yes") cannot say which fact was answered.
+                _lab = (el or {}).get("label") or (el or {}).get("text") or ""
+                if (el or {}).get("group") and (not _lab or re.match(r"^\s*(?:select|choose)\b", _lab, re.I)):
+                    _lab = f"[{str((el or {}).get('group'))[:60]}] {_lab}"
+                what = f"{do} #{i} {_lab}"[:100] + (f" = {shown}" if val else "")
                 el_text = (el or {}).get("text") or ""
                 if do == "click" and el and SEARCH_NAV.search((el_text + " " + ((el or {}).get("label") or "")).strip()) and _on_job_posting(snap):
                     # a company careers: the navigator pressed the site's "Search" control on the job page, landed on

@@ -15,7 +15,7 @@ DECLINE = re.compile(r"decline|prefer not|do not wish|not to (say|disclose|answe
 CONSENT_YES_RX = r"\bi (?:consent|agree|accept)\b|\bexplicit consent\b|\bconsent to (?:that|the|this|such)\b|\bread and (?:agree|accept|understood)\b"
 FOREIGN = re.compile(r"\b(us|u\.s\.|usa|united states|uk|united kingdom|canada|europe|eu|uae|dubai|singapore|australia|germany|ireland|"
                      r"netherlands|japan|saudi|qatar|new zealand)\b", re.I)
-AUTH = re.compile(r"authori[sz]ed|work authori|right to work|sponsor|visa|eligible to work|legally", re.I)
+AUTH = re.compile(r"authori[sz]ed|work authori|right to work|sponsor|visa|eligible to work|eligibility to work|legally", re.I)
 # KB-56: "a place" is never the answer to a yes/no question, and a sentence that merely contains the word "country" is not a
 # country field. `answer_for("Are you legally entitled to work in the country where the job is located?")` used to return "India" - the
 # bare `country -> India` rule matched the sentence - which on a free-text form would have written a false work-authorisation answer.
@@ -302,6 +302,133 @@ def skill_years(phrase: str):
     hits = [v for rx, v in rules if re.search(rx, low, re.I)]
     return min(hits, key=int) if hits else None   # several owned skills in one question: the most conservative figure
 
+# --- where a posting is: "foreign" means the location NAMES a place outside the home country --------------------------------------------------
+_INDIA_MARK = re.compile(r"\bindia\b|\bind\b|\bin\b$|,\s*in\s*,|bengaluru|bangalore|bangaluru|karnataka|\bka\b|hyderabad|chennai|mumbai|pune|delhi|gurugram|gurgaon|noida|kolkata", re.I)
+_FOREIGN_PLACE = re.compile(
+    r"\b(us|u\.s\.|usa|united states|uk|united kingdom|england|scotland|canada|europe|eu|uae|dubai|abu dhabi|singapore|australia|germany|ireland|netherlands|"
+    r"japan|saudi|qatar|new zealand|poland|krakow|warsaw|france|paris|spain|madrid|italy|milan|switzerland|zurich|sweden|norway|denmark|belgium|portugal|"
+    r"brazil|mexico|argentina|china|hong kong|malaysia|philippines|manila|indonesia|thailand|vietnam|israel|egypt|south africa|nigeria|kenya|turkey|"
+    r"namer|north america|latam|emea|new york|london|san francisco|toronto|sydney|melbourne|dublin|amsterdam|berlin|munich|tokyo|seoul|korea)\b", re.I)
+
+
+def job_is_foreign(loc: str) -> bool:
+    """True only when the posting's location NAMES a place outside the home country (answers.yaml current_country, city, state, city_aliases).
+
+    This used to be `home not in loc.lower()`, so a posting written 'Bengaluru, KA' or 'Bengaluru, IND-29, IN, 560035' (no word 'India') counted as a
+    FOREIGN job: work authorisation was answered 'No' and sponsorship 'Yes' for a citizen applying in her own city - false statements on a real form.
+    A home marker wins; 'Remote' with no country is not foreign (the queue only admits remote roles open to the home country). A place the list
+    below does not know is treated as not foreign, which the location gate (rank/filter) has already kept out of the queue."""
+    low = (loc or "").strip().lower()
+    if not low:
+        return False
+    A = profile.answers()
+    home = str(A.get("current_country") or "").strip().lower()
+    names = [home, A.get("current_city"), A.get("current_state")] + list(A.get("city_aliases") or [])
+    for n in names:
+        n = str(n or "").strip().lower()
+        if n and re.search(r"(?<![a-z])" + re.escape(n) + r"(?![a-z])", low):
+            return False
+    if home == "india" and _INDIA_MARK.search(low):
+        return False
+    m = _FOREIGN_PLACE.search(low)
+    return bool(m) and m.group(0).lower() != home
+
+
+# An SMS / text / WhatsApp OPT-IN is never answered Yes: nobody authorised being messaged. (A question that merely ASKS for a phone number is not an opt-in.)
+SMS_OPTIN = re.compile(r"(?=.*\b(?:sms|text messages?|text me|whatsapp)\b)(?=.*\b(?:agree|consent|opt|receive|reach out|contact me|permission|allow|authori[sz]e|may (?:send|contact|text))\b)", re.I | re.S)
+# A question that NAMES the tax / national id the user chose to record (answers.yaml pan_number). "Pan India" is not the PAN; Aadhaar / national id stay unanswered.
+PAN_Q = re.compile(r"\bpan\b\s*(?:card)?\s*(?:number|no\b|#|details)|permanent account number|\bpan\b\s*\??\s*$", re.I)
+
+_FULL_LEVELS = ["fluent", "full professional", "advanced", "expert", "proficient", "native or bilingual", "native"]   # preference order for 'full proficiency'
+_BELOW_FULL = ["professional", "intermediate", "working", "good", "moderate", "proficient"]                            # the nearest options BELOW full
+
+
+def language_level(language: str, skill: str, options) -> str | None:
+    """The option to pick for 'how well do you read / write / speak <language>?'. answers.yaml `language_proficiency` is either one level for every
+    language (a plain string: treated as full) or {language: {read|write|speak: full|below_full}}. `full` -> the first of _FULL_LEVELS the form offers;
+    `below_full` -> the nearest option below full; None (= park, never guess) when nothing is recorded for that language/skill or the form lacks a
+    matching option (for example only Fluent / Basic)."""
+    rec = profile.answers().get("language_proficiency")
+    if isinstance(rec, dict):
+        want = ((rec.get(str(language or "").strip().lower()) or {}).get(str(skill or "").strip().lower()))
+    elif str(rec or "").strip():
+        want = "full"
+    else:
+        want = None
+    low = [str(o).strip().lower() for o in (options or []) if str(o).strip()]
+    by_low = {str(o).strip().lower(): str(o).strip() for o in (options or []) if str(o).strip()}
+
+    def pick(order):
+        for name in order:
+            for k in low:
+                if name in k and not (name == "professional" and "full" in k):
+                    return by_low[k]
+        return None
+    if want == "full":
+        return pick(_FULL_LEVELS)
+    if want == "below_full":
+        return pick(_BELOW_FULL)
+    return None
+
+
+def explicit_years(low: str):
+    """The user's own per-skill figure (answers.yaml `skill_years_explicit`: regex -> whole years, 0 allowed) for 'how many years of X?', or Yes/No for
+    'do you have experience in X?'. None when the phrase is not covered, or it also names a skill she lacks and gave NO figure for (that stays parked)."""
+    table = profile.answers().get("skill_years_explicit") or {}
+    if not isinstance(table, dict) or not table or not YEARS_Q.search(low):
+        return None
+    hits = [str(v) for rx, v in table.items() if re.search(rx, low, re.I)]
+    if not hits:
+        return None
+    for rx in vocab.LACKED_RE.values():
+        m = rx.search(low)
+        if m and not any(re.search(k, m.group(0), re.I) for k in table):
+            return None   # a skill she lacks and has NOT given a figure for: park, never guess
+    yrs = min(hits, key=int)   # several covered skills in one question: the most conservative figure
+    if re.search(r"how many|years? of|number of years|\byrs?\b|duration", low):
+        return yrs
+    return "No" if yrs == "0" else "Yes"
+
+
+def _local_travel_rx() -> re.Pattern:
+    """A 'travel' question that is really about the daily commute (her own city, the office) is not about travelling."""
+    A = profile.answers()
+    names = [A.get("current_city"), A.get("current_state")] + list(A.get("city_aliases") or [])
+    names = sorted({re.escape(str(n).strip().lower()) for n in names if n}, key=len, reverse=True)
+    return re.compile("|".join(names + [r"commut", r"office", r"work location", r"site"]), re.I)
+
+
+def recorded_preference(low: str):
+    """Answers the user RECORDED for recurring commercial / preference questions (answers.yaml `form_preferences`, every key optional):
+    travel, shifts, face_to_face_interview, contract_roles, industry, basic_accounting, manufacturing, support_experience. A key that is not
+    recorded answers None (the job parks). Nothing here is ever invented."""
+    prefs = profile.answers().get("form_preferences") or {}
+    if not isinstance(prefs, dict) or not prefs:
+        return None
+
+    def p(k):
+        v = prefs.get(k)
+        return str(v) if v not in (None, "") else None
+    if re.search(r"\btravel", low) and not _local_travel_rx().search(low):
+        return p("travel")
+    if re.search(r"\b(?:shifts?|night shift|rotational|weekend)\b", low) and re.search(r"willing|ok with|open to|comfortable|ready|can you", low):
+        return p("shifts")
+    if re.search(r"f2f|face[- ]to[- ]face|in[- ]person interview", low):
+        return p("face_to_face_interview")
+    if re.search(r"(?:6|six)[- ]months?[^?]{0,30}contract|contract[^?]{0,30}(?:6|six)[- ]months?|contract[- ]to[- ]hire|contractual (?:position|role|basis)", low) \
+            and re.search(r"willing|ok with|open to|comfortable|ready|can you|are you", low):
+        return p("contract_roles")
+    if INDUSTRY_Q.search(low):
+        return p("industry")
+    if re.search(r"basic accounting|journal entries|ledger posting", low):
+        return p("basic_accounting")
+    if re.search(r"manufacturing industry|experience in (?:the )?manufacturing", low):
+        return p("manufacturing")
+    if re.search(r"quality analyst \(bpo\)|\bbpo\b[^?]{0,20}customer support|customer support\?", low) and re.search(r"experience", low):
+        return p("support_experience")
+    return None
+
+
 def canonical_question(label: str) -> str:
     """A SHORT, stable form of the portal question: no counters, no doubled spaces, always ends with '?'.
     Identical questions across jobs produce the SAME string, so the dashboard shows one entry and one answer is reused."""
@@ -367,6 +494,14 @@ def answer_for(label: str, job_id: str | None = None):
         return answers[s]
     if canon and canon in answers:
         return answers[canon]
+    if PAN_Q.search(low) and not re.search(r"aadhaar|aadhar|national id|passport|ssn|social security", low):
+        return str(answers.get("pan_number") or "").strip() or None   # only a question that NAMES the PAN, and only a value she recorded
+    pref = recorded_preference(low)
+    if pref is not None:
+        return pref
+    ex = explicit_years(low)
+    if ex is not None:
+        return ex
     if YEARS_Q.search(low):
         if any(rx.search(low) for rx in vocab.LACKED_RE.values()):
             return None
@@ -385,9 +520,11 @@ def answer_for(label: str, job_id: str | None = None):
     home = str(answers.get("current_country") or "").strip().lower()
     if AUTH.search(low) and home and not answers.get("authorized_in_other_countries"):
         loc = _job_location(job_id)
-        foreign_job = bool(loc) and home not in loc.lower()
+        foreign_job = job_is_foreign(loc)
         if (FOREIGN.search(low) or foreign_job) and home not in low:
             return "Yes" if re.search(r"sponsor|visa", low) else "No"
+    if SMS_OPTIN.search(low) and not re.search(r"\b(?:number|phone|mobile|digits)\b\s*\??\s*$", low):
+        return "No"   # an SMS / text / WhatsApp opt-in is never a Yes (a 'Yes' to 'I agree that <company> may reach out to me via SMS' was submitted once)
     if _RULES is None:
         _RULES = build_rules()
     names_own_employer = any(n in low for n in employer_words())

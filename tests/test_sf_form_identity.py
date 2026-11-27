@@ -56,3 +56,38 @@ def test_relevant_experience_in_data_analytics_is_her_recorded_figure():
     from apply import answers_map
     assert answers_map.answer_for("Relevant experience in data analytics") == "4"
     assert agent.her_unrecorded_answers([_i("Relevant experience in data analytics", "4")], "j") == []
+
+
+def test_a_sponsorship_yes_on_a_successfactors_combobox_is_a_wrong_answer():
+    """Three applications went out with 'Will you now or in the future require sponsorship for an employment visa? = Yes' for a citizen applying in her
+    own country. SuccessFactors renders the question as a combobox INPUT (label = question), which only Workday buttons and checked radios were judged."""
+    els = [{"tag": "input", "type": "text", "label": "* Will you now or in the future require sponsorship for an employment visa?", "value": "Yes"},
+           {"tag": "input", "type": "text", "label": "* Please confirm your eligibility to work in India", "value": "Yes"}]
+    bad = agent.question_mismatches(els, "j")
+    assert len(bad) == 1 and bad[0][1] == "Yes" and bad[0][2] == "No" and "sponsorship" in bad[0][0]
+    ok = [dict(els[0], value="No")]
+    assert agent.question_mismatches(ok, "j") == []
+    assert "SPONSORSHIP / VISA" in agent.PROMPT
+
+
+def test_a_workday_dropdown_button_labelled_with_the_sponsorship_question_is_judged():
+    """A Workday dropdown that is a BUTTON labelled with the question (no group) was submitted as 'Yes' to 'need sponsorship to work'."""
+    els = [{"tag": "button", "type": "button", "label": "Error-Will you now or in the future need sponsorship to work in India?", "text": "Yes"}]
+    bad = agent.question_mismatches(els, "j")
+    assert len(bad) == 1 and bad[0][1] == "Yes" and bad[0][2] == "No"
+    assert agent.question_mismatches([{"tag": "button", "label": "Open menu", "text": "Yes"}], "j") == []
+
+
+def test_the_audit_line_names_the_question_of_a_select_one_dropdown():
+    src = inspect.getsource(agent.navigate)
+    assert "(el or {}).get(\"group\") and (not _lab or re.match(" in src and "[{str((el or {}).get('group'))[:60]}]" in src
+
+
+def test_an_sms_opt_in_answered_yes_is_a_wrong_answer():
+    """'I agree that <company> may reach out to me via SMS regarding my application' = Yes (the audit line that names the question exposed it)."""
+    from apply import answers_map
+    q = "I agree that Acme may reach out to me via SMS regarding my application"
+    assert answers_map.answer_for(q, "j") == "No"
+    els = [{"tag": "button", "type": "button", "label": "Select One Required", "group": q, "text": "Yes"}]
+    assert agent.question_mismatches(els, "j")[0][2] == "No"
+    assert answers_map.answer_for("Do you agree to the terms and conditions?", "j") is None   # ordinary consent is untouched

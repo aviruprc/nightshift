@@ -78,3 +78,11 @@ def test_audit_1122_qa_in_kyc_and_sales_reporting_analyst_titles_pass_but_engine
     assert not ok("Software QA Analyst")
     assert not ok("Senior Account Executive, Sales")
     assert not ok("Sales Manager - Retail Loans")
+
+
+def test_audit_control_testing_titles_pass_software_testing_does_not():
+    from rank import filter as flt
+    ok = lambda t: flt.check({"title": t, "description": "x" * 500, "location": "Bengaluru"}, skip_location=True)[1] is None   # noqa: E731
+    assert ok("Risk Control Testing Analyst")
+    assert not ok("Software Testing Analyst")
+    assert not ok("Automation Testing Engineer")

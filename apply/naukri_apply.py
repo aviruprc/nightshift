@@ -2,6 +2,7 @@
 Dry run never clicks Apply (one click = real submission)."""
 import re
 from datetime import datetime
+from pathlib import Path
 
 from apply import engine
 
@@ -434,6 +435,12 @@ def answer_chat(pg, job_id: str):
             # the Power BI answer just typed) and word bubbles are history ('Yes'). Only range/descriptive chips ("1-3 years") are real choices.
             options = [o for o in options if re.search(r"\d\s*(-|to|\+)|year|yr|less|more|above|below|under|over", o, re.I) and not re.fullmatch(r"\d{1,2}", o.strip())]
         if ans is None or (options and pick_option(q, options, ans) is None):
+            if isinstance(ans, str) and ans.strip().lower() == "no" and options and _skip_offer(drawer):
+                # A recorded "No" (e.g. "do you have QA / support experience: No") against chips that offer only the experiences plus 'Skip this question':
+                # the honest answer is 'none of these' - take the portal's own Skip instead of parking a question that has been answered.
+                activity.log("portal", f"Naukri: '{q[:70]}' = No (none of the offered options); used the portal's Skip", portal="Naukri")
+                pg.wait_for_timeout(800)
+                continue
             if am.needs_her(q):
                 # her recorded facts do not answer this: park it as ONE stable question. Never let a model invent a
                 # skill-years figure or a commercial preference.
@@ -518,6 +525,37 @@ def answer_chat(pg, job_id: str):
     return False, (f"unanswered required: too many questions ({12} turns); last asked: {_canon(last_q) if last_q else 'unknown'}")[:300]
 
 
+PAUSE_FILE = Path(__file__).resolve().parents[1] / "data" / "naukri_pause.json"   # persisted: a worker relaunch must not forget the wall
+PAUSE = {"until": 0.0}   # a Naukri human check (reCAPTCHA) pauses every Naukri page load for a while - never bypassed
+HUMAN_CHECK = re.compile(r"check the box to let us know you.?re human|i.?m not a robot|verify you are (?:a )?human|unusual (?:activity|traffic)", re.I)
+
+
+def human_check(body: str) -> bool:
+    """Naukri's own reCAPTCHA wall ('To continue your request please check the box to let us know you're human')."""
+    return bool(HUMAN_CHECK.search((body or "")[:1500]))
+
+
+def note_human_check(minutes: int = 60) -> None:
+    import json
+    import time
+    PAUSE["until"] = time.time() + minutes * 60
+    try:
+        PAUSE_FILE.write_text(json.dumps({"until": PAUSE["until"], "at": time.strftime("%H:%M:%S")}), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def paused() -> bool:
+    import json
+    import time
+    until = PAUSE["until"]
+    try:
+        until = max(until, float(json.loads(PAUSE_FILE.read_text(encoding="utf-8")).get("until") or 0))
+    except Exception:  # noqa: BLE001
+        pass
+    return time.time() < until
+
+
 def upload_profile_resume(ctx, pdf, tries: int = 2) -> bool:
     """Upload the tailored CV to the Naukri profile; confirmed only by the page's own "Uploaded on <today>" line.
     a company (first jobs after the machine woke): ONE slow page load returned False and the job was parked as `needs_you`
@@ -565,6 +603,14 @@ def apply_naukri(ctx, url: str, pdf, dry_run: bool, job_id: str) -> dict:
         body = pg.inner_text("body")[:6000]
         if re.search(r"no longer (accepting|available|open)|job (has )?expired|job you are looking for", body, re.I):
             res.update(status="closed", detail="Naukri listing closed")
+            return res
+        if human_check(body):
+            # After a long offline spell every Naukri job page can show Naukri's reCAPTCHA wall; the missing Apply button was then filed as "signed out",
+            # retried, and burned attempts on every Naukri job. A human check is the user's to pass, never bypassed: pause Naukri for an hour and say so.
+            pg.screenshot(path=str(shot), full_page=True)
+            note_human_check()
+            res.update(status="failed", screenshot=str(shot),
+                       detail="Naukri is showing its human check (reCAPTCHA) on job pages; Naukri is paused for 60 minutes (a person can pass it once in the bot browser: python hunt.py login); retried later")
             return res
         texts = {}
         for el in pg.locator("button:visible, a:visible").all()[:120]:

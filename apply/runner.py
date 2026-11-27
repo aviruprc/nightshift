@@ -124,6 +124,8 @@ def skipped_company(r) -> bool:
 
 
 ATS_FRESH_DAYS = 45
+NAUKRI_FRESH_DAYS = 14
+QUARANTINE_LOSSES = 8   # a portal with this many losses and no win in the learning window runs last
 
 
 def fresh(rows, days=7):
@@ -132,13 +134,25 @@ def fresh(rows, days=7):
     # apply step checks the page is still open, so their limit is ATS_FRESH_DAYS; job boards (reposts, expired cards) keep the short limit.
     def limit(r):
         try:
-            return max(days, ATS_FRESH_DAYS) if (r["source"] or "").startswith("ats:") else days
+            src = r["source"] or ""
+            if src.startswith("ats:"):
+                return max(days, ATS_FRESH_DAYS)
+            # A row FOUND on a board whose apply link is the company's own career site / ATS (a Naukri "apply on company site", a LinkedIn external link)
+            # is a company-site posting: it stays live for weeks like any ATS feed row, and the apply step checks the page itself. Aging it out at the
+            # board limit emptied the queue while the company sites still listed the jobs.
+            target = r["apply_url"] or r["url"] or ""
+            if target and not engine.ONE_CLICK.search(urlparse(target).netloc):
+                return max(days, ATS_FRESH_DAYS)
+            # A Naukri listing stays open ~30 days and the apply step reads "listing closed" from the page, so it keeps a longer limit than the reposting boards.
+            if src == "board:naukri":
+                return max(days, NAUKRI_FRESH_DAYS)
+            return days
         except (KeyError, IndexError, TypeError):
             return days
     return [r for r in rows if _fam(r) == "returnship" or (ghost.age_or(r["posted_at"], r["first_seen"])) <= limit(r)]
 
 
-JUNK_HOSTS = re.compile(r"flexiple\.com|cutshort.io|getmereferred\.com|naukrimitra\.in|docthub\.com|jobaaj\.com|jobsora|jooble\.org|whatjobs|jobrapido|talent\.com|careerjet|himalayas\.app/companies", re.I)  # aggregators with no real form
+JUNK_HOSTS = re.compile(r"mycareernet\.co|iitjobs\.com|bandana\.com|flexiple\.com|cutshort.io|getmereferred\.com|naukrimitra\.in|docthub\.com|jobaaj\.com|jobsora|jooble\.org|whatjobs|jobrapido|talent\.com|careerjet|himalayas\.app/companies", re.I)  # aggregators with no real form
 
 
 def one_click_host(url: str) -> bool:
@@ -157,6 +171,9 @@ def browser_description(ctx, url: str) -> str:
         pg.goto(url, wait_until="domcontentloaded", timeout=45000)
         pg.wait_for_timeout(3500)
         text = pg.inner_text("body")
+        if naukri_apply.human_check(text):
+            naukri_apply.note_human_check()   # Naukri's own reCAPTCHA wall: never bypassed, Naukri pauses for a while
+            return ""
         i = text.lower().find("job description")
         return re.sub(r"\n{2,}", "\n", text[i:i + 7000] if i >= 0 else text[:7000]).strip()
     except Exception:  # noqa: BLE001
@@ -183,9 +200,19 @@ def plan_order(rows: list, d) -> list:
         # back at the FRONT every run: 15 minutes and six attempts after the restart, nothing had been submitted. A job that has failed three times goes
         # BEHIND every fresh one - it still gets its retry, just not ahead of the jobs that can succeed.
         try:
-            return 1 if int(r["attempts"] or 0) >= 3 else 0
+            if int(r["attempts"] or 0) >= 3:
+                return 1
         except (KeyError, IndexError, TypeError, ValueError):
-            return 0
+            pass
+        # A portal with QUARANTINE_LOSSES+ losses and no win in the learning window goes behind every other portal (it still runs when nothing else is
+        # left): the front of the queue was portals with no success in 14 days while the sources that send waited behind them on an exploration bonus.
+        try:
+            sp = st.get(learn.portal(r)) or {}
+            if sp.get("win", 0) == 0 and sp.get("loss", 0) >= QUARANTINE_LOSSES:
+                return 1
+        except Exception:  # noqa: BLE001
+            pass
+        return 0
 
     # look at LinkedIn jobs for LOW COMPETITION first. The first LI_PASS not-yet-resolved LinkedIn rows (best fit first) go right
     # behind the returnships, so the applicant counts are read and shown on the dashboard in every run instead of only when a LinkedIn row happens to
@@ -291,6 +318,25 @@ def defer_no_description(d, r, hours: float = 6) -> None:
     when = (datetime.now() + timedelta(hours=hours)).isoformat(timespec="seconds")
     d.c.execute("UPDATE jobs SET next_attempt_at=? WHERE id=?", (when, r["id"]))
     d.c.commit()
+
+
+def runnable_rows(d) -> list:
+    """Rows the worker could actually run NOW, by the same read-only tests prepare_queue applies (freshness, route, hosts, score bar) - without
+    touching any row. A queue counter that treats every scored candidate as runnable (stale rows, aggregator rows nobody applies to, hand-only
+    portals) reads "full" while the worker's real queue is 0, so 'queue low -> discover' never fires and the dashboard sits idle."""
+    pool = fresh(d.rows("status IN ('candidate','dry_run_ok') AND (next_attempt_at IS NULL OR next_attempt_at <= ?)", (dbm.now(),)))
+    done_fp = {r["fingerprint"] for r in d.rows("status IN ('applied','unconfirmed') OR email_proof IS NOT NULL")}
+    out = []
+    for r in pool:
+        u = r["apply_url"] or r["url"] or ""
+        if (flt.location_conflict(r["location"]) or skipped_company(r) or r["fingerprint"] in done_fp or JUNK_HOSTS.search(u)
+                or KNOWN_BAD_HOSTS.search(u) or KNOWN_BAD_HOSTS.search(r["company"] or "") or INVISIBLE_RECAPTCHA_HOSTS.search(u)
+                or r["apply_route"] == "easy_apply" or one_click_host(u) or "jpmc.fa.oraclecloud.com" in u):
+            continue
+        sc = r["score"]
+        if sc is None or sc >= min_score(r) or (_fam(r) == "returnship"):
+            out.append(r)
+    return out
 
 
 def prepare_queue(d, want: int, log, only: str | None = None, ctx=None):
@@ -898,6 +944,9 @@ def run(target=10, dry_run=True, max_attempts=40, show=False, log=print, only=No
             paused = workday_paused(r)
             if paused:
                 _why_skip(paused, r)
+                continue
+            if is_naukri(r) and naukri_apply.paused():
+                _why_skip("Naukri is showing its human check (reCAPTCHA); Naukri paused for an hour, not attempted", r)
                 continue
             # Rows THIS worker will never attempt are skipped BEFORE the company is claimed. Worker B (company sites only) used to claim every Naukri
             # company first and then skip it; it re-claimed them every round, so worker A found all 24 companies "owned" and attempted nothing.

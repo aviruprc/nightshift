@@ -116,4 +116,4 @@ code or logs. The test suite runs against an invented person (`tests/fixtures/pr
 
 ## License
 
-**Not yet chosen.** See [LICENSE](LICENSE). Until the owner picks one, all rights are reserved.
+MIT. See [LICENSE](LICENSE).

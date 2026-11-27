@@ -77,6 +77,24 @@ knows_no_insider: 'Yes'          # you know no director/employee at the companie
 no_compliance_flags: 'Yes'       # no criminal record, sanctions, conflicts, non-competes, PEP relatives, disciplinary history
 how_did_you_hear: Company careers page
 
+# --- optional recorded answers (every key optional; a key that is missing means the question is parked for you) ----------------------
+# Whole years you state yourself, per skill (regex -> years). 0 is allowed and means "no experience" (a Yes/No 'do you have experience in X?' then answers No).
+# skill_years_explicit:
+#   'accounts payable|accounts receivable|bookkeeping': '0'
+#   '\bagile\b|business analysis': '2'
+# Preferences that recur in forms. Every key is optional.
+# form_preferences:
+#   travel: 'No'                     # 'willing to travel?' (a commute inside your own city is never "travel")
+#   shifts: 'Yes'
+#   face_to_face_interview: 'Yes'
+#   contract_roles: 'Yes'            # 6-month / contract / contract-to-hire roles
+#   industry: Retail                 # 'which industry do you specialise in?'
+# Language levels: one plain level for every language (language_proficiency: Advanced), or per language and skill, each full | below_full:
+# language_proficiency:
+#   english: {read: full, write: full, speak: full}
+#   tamil: {read: full, write: below_full, speak: full}
+# pan_number: AAAAA0000A              # used ONLY for a question that names the PAN; never for national-id / Aadhaar questions
+
 # --- skill years -----------------------------------------------------------------------------------------------------------
 # Skill-specific years ("how many years of Tableau?") are answered ONLY after you confirm this table (set skill_years_confirmed: true).
 skill_years_confirmed: true

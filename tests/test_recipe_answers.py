@@ -136,3 +136,8 @@ def test_the_models_own_wording_of_the_proficiency_block_parks_it_for_her():
     was stored as our bug (logic)."""
     why = "Language dialog is open. Candidate's languages are English and Tamil, but proficiency levels are NOT recorded. The form requires them."
     assert agent._blocked_question(why).startswith("unanswered required: Language proficiency")
+
+
+def test_a_sponsorship_or_authorisation_fill_is_an_answer_never_a_route():
+    el = {"tag": "textarea", "type": "textarea", "label": "indicate all locations or countries for which you now, or in the future, require sponsorship", "text": ""}
+    assert agent._is_answer_action("fill", el, "Yes - I require sponsorship for employment in countries other than the home country.")

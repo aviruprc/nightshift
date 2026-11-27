@@ -75,3 +75,17 @@ def test_a_cloudflare_wait_that_never_clears_is_a_human_check_for_her():
 
 def test_a_linkedin_apply_that_opened_nothing_is_a_page_state_not_hers():
     assert errors.classify("needs_you", "Apply did not open an external page") == "transient"
+
+
+def test_a_models_lacks_required_skill_verdict_is_a_skip_not_a_retry():
+    from apply import agent
+    assert agent.lacks_required_skill("Candidate lacks required skills (SAP FI S/4HANA Accounting)")
+    assert not agent.lacks_required_skill("saved password rejected: needs a manual reset")
+    assert "lacks_required_skill(why_txt)" in inspect.getsource(agent.navigate)
+
+
+def test_a_duplicate_rejection_after_our_submit_is_already_applied_not_unconfirmed():
+    from apply import agent
+    assert agent.already_applied_notice("Error Oops! You have already applied for this job opening")
+    src = inspect.getsource(agent.navigate)
+    assert 'elif already_applied_notice(snap.get("text", "")):' in src and 'elif final_step is None and already_applied_notice' not in src
